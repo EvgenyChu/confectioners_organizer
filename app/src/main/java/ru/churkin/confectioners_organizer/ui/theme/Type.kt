@@ -11,20 +11,20 @@ import androidx.compose.ui.unit.sp
 import ru.churkin.confectioners_organizer.R
 
 // Set of Material typography styles to start with
-val Typography = Typography(
+fun MyTypography(onPrimary: Color, background: Color, primary: Color) = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        color = Color(0xFFF7F6F6),
+        color = onPrimary,
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
-        background = Color(0xFF232323)
+        background = primary
     ),
     body2 = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        color = Color(0xFF929292),
+        color = background,
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
-        background = Color(0xFF232323)
+        background = primary
     ),
     /* Other default text styles to override
     button = TextStyle(
@@ -34,7 +34,7 @@ val Typography = Typography(
     ),    */
     caption = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        color = Color(0xFFF7F6F6),
+        color = onPrimary,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp
     )

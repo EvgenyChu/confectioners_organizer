@@ -14,6 +14,7 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Purple700,
     secondary = Purple700
 )
+
 @Stable
 /*private fun LightColorPalette(){
     return lightColors(
@@ -39,7 +40,7 @@ fun AppTheme(
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette
-    } else { 
+    } else {
         lightColors(
             secondary = colorResource(id = R.color.blue_theme),
             secondaryVariant = colorResource(id = R.color.second_blue_theme),
@@ -57,7 +58,13 @@ fun AppTheme(
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
+        typography = MyTypography(
+            colorResource(id = R.color.text),
+            colorResource(id = R.color.second_text),
+            colorResource(
+                id = R.color.black_theme
+            )
+        ),
         shapes = Shapes,
         content = content
     )

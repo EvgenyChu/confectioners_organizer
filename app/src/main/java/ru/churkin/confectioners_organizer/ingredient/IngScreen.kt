@@ -61,7 +61,7 @@ fun IngScreen() {
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
             TextField(
@@ -74,13 +74,18 @@ fun IngScreen() {
                 placeholder = {
                     Text(
                         "Наименование",
-                        style = MaterialTheme.typography.body2,
+                        style = MaterialTheme.typography.body2
                     )
-                })
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = MaterialTheme.colors.onPrimary,
+                    backgroundColor = MaterialTheme.colors.primary
+                )
+            )
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
 
@@ -104,12 +109,16 @@ fun IngScreen() {
                         tint = MaterialTheme.colors.secondaryVariant,
                         contentDescription = "Наличие"
                     )
-                }
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = MaterialTheme.colors.onPrimary,
+                    backgroundColor = MaterialTheme.colors.primary
+                )
             )
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
             Row(
@@ -120,6 +129,7 @@ fun IngScreen() {
                 TextField(
                     value = "",
                     onValueChange = { },
+                    Modifier.weight(3f),
                     textStyle = MaterialTheme.typography.body1,
                     placeholder = {
                         Text(
@@ -127,9 +137,14 @@ fun IngScreen() {
                             style = MaterialTheme.typography.body1,
                             color = MaterialTheme.colors.background
                         )
-                    })
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.primary
+                    )
+                )
                 //   Spacer(modifier = Modifier.fillMaxWidth())
-                Box(Modifier.height(56.dp)) {
+                Box(Modifier.height(56.dp).weight(1f)) {
                     Text(
                         "ед. изм.",
                         modifier = Modifier.padding(top = 16.dp),
@@ -141,7 +156,7 @@ fun IngScreen() {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
                         tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.padding(top = 14.dp),
+                        modifier = Modifier.padding(top = 14.dp).weight(1f),
                         contentDescription = "Выбор ед.изм."
                     )
                 }
@@ -149,7 +164,7 @@ fun IngScreen() {
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
             Row(
@@ -158,7 +173,7 @@ fun IngScreen() {
                     .height(56.dp)
             ) {
                 TextField(
-                    modifier = Modifier.width(215.dp),
+                    modifier = Modifier.weight(3f),
                     value = "",
                     onValueChange = { },
                     textStyle = MaterialTheme.typography.body1,
@@ -168,11 +183,16 @@ fun IngScreen() {
                             style = MaterialTheme.typography.body1,
                             color = MaterialTheme.colors.background
                         )
-                    })
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.primary
+                    )
+                )
 
-                Box(Modifier.height(56.dp)) {
+                Box(Modifier.height(56.dp).weight(2f)) {
                     Text(
-                        "рубль за _______",
+                        "рубль за ______",
                         modifier = Modifier.padding(top = 16.dp),
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.background
@@ -182,7 +202,7 @@ fun IngScreen() {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
                         tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier.padding(top = 14.dp),
+                        modifier = Modifier.padding(top = 14.dp).weight(1f),
                         contentDescription = "Выбор ед.изм."
                     )
                 }
@@ -190,7 +210,7 @@ fun IngScreen() {
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
             TextField(
@@ -211,12 +231,16 @@ fun IngScreen() {
                         tint = MaterialTheme.colors.secondary,
                         contentDescription = "Наличие"
                     )
-                }
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = MaterialTheme.colors.onPrimary,
+                    backgroundColor = MaterialTheme.colors.primary
+                )
             )
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
         }
@@ -225,7 +249,7 @@ fun IngScreen() {
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(2.dp)
                     .background(color = MaterialTheme.colors.secondary)
             )
             BottomAppBar(
@@ -236,8 +260,7 @@ fun IngScreen() {
                 Text(
                     "Жаль, что продукты кончаются)",
                     modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1,
-                    color = colorResource(R.color.text)
+                    style = MaterialTheme.typography.body1
                 )
 
             }
@@ -246,7 +269,9 @@ fun IngScreen() {
             onClick = { },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp)
+                .padding(bottom = 28.dp, end = 16.dp),
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.secondary
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_check_circle_outline_24),
