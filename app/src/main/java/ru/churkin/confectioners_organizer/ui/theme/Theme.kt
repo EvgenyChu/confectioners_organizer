@@ -44,15 +44,16 @@ fun AppTheme(
         lightColors(
             secondary = colorResource(id = R.color.blue_theme),
             secondaryVariant = colorResource(id = R.color.second_blue_theme),
-            primary = colorResource(id = R.color.black_theme),
-            primaryVariant = colorResource(id = R.color.hamburger_menu),
+            primary = colorResource(id = R.color.hamburger_menu),
+            primaryVariant = colorResource(id = R.color.black_theme),
             onPrimary = colorResource(id = R.color.text),
-            background = colorResource(id = R.color.second_text),
-            surface = colorResource(id = R.color.red),
-            error = colorResource(id = R.color.second_red),
+            background = colorResource(id = R.color.background),
+            surface = colorResource(id = R.color.second_red),
+            error = colorResource(id = R.color.red),
             onSecondary = colorResource(id = R.color.green),
             onBackground = colorResource(id = R.color.second_green),
-            onSurface = colorResource(id = R.color.yellow)
+            onSurface = colorResource(id = R.color.yellow),
+            onError = colorResource(id = R.color.second_text)
         )
     }
 
@@ -61,9 +62,7 @@ fun AppTheme(
         typography = MyTypography(
             colorResource(id = R.color.text),
             colorResource(id = R.color.second_text),
-            colorResource(
-                id = R.color.black_theme
-            )
+            colorResource(id = R.color.background)
         ),
         shapes = Shapes,
         content = content

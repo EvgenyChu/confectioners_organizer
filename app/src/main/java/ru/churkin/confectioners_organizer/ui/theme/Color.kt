@@ -16,4 +16,5 @@ val SecondGreen = Color(0xFF4C7A34)
 val HamburgerMenu = Color(0xFF444444)
 val Text = Color(0xFFF7F6F6)
 val SecondText = Color(0xFF929292)
+val Background = Color(0xFF232323)
 

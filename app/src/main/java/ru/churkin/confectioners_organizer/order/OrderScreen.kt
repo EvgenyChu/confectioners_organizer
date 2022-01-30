@@ -1,4 +1,4 @@
-package ru.churkin.confectioners_organizer.ingredient
+package ru.churkin.confectioners_organizer.order
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,16 +6,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
-import java.util.*
 
 @Composable
-fun IngScreen() {
+fun OrderScreen() {
     AppTheme() {
         Box(
             modifier = Modifier
@@ -36,7 +34,7 @@ fun IngScreen() {
                         )
                     }
                     Text(
-                        "Новый ингредиент",
+                        "Новый заказ",
                         style = MaterialTheme.typography.body1,
                     )
                     Spacer(Modifier.weight(1f, true))
@@ -58,14 +56,22 @@ fun IngScreen() {
                 TextField(
                     value = "",
                     onValueChange = { },
-                    modifier = Modifier
-                        .height(56.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     textStyle = MaterialTheme.typography.body1,
                     placeholder = {
                         Text(
-                            "Наименование",
-                            style = MaterialTheme.typography.body2
+                            "ФИО заказчика",
+                            style = MaterialTheme.typography.body2,
                         )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { }){
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                tint = MaterialTheme.colors.secondary,
+                                contentDescription = "Поиск контактов"
+                            )
+                        }
                     },
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = MaterialTheme.colors.onPrimary,
@@ -82,11 +88,68 @@ fun IngScreen() {
                 TextField(
                     value = "",
                     onValueChange = { },
+                    modifier = Modifier
+                        .height(56.dp),
+                    textStyle = MaterialTheme.typography.body1,
+                    placeholder = {
+                        Text(
+                            "Телефон заказчика",
+                            style = MaterialTheme.typography.body2
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.background
+                    )
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+
+                TextField(
+                    value = "",
+                    onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = MaterialTheme.typography.body1,
                     placeholder = {
                         Text(
-                            "Наличие ингредиента",
+                            "дд/мм/гггг",
+                            style = MaterialTheme.typography.body2,
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { }){
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                                tint = MaterialTheme.colors.secondary,
+                                contentDescription = "Календарь"
+                            )
+                        }
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.background
+                    )
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.body1,
+                    placeholder = {
+                        Text(
+                            "Доставка",
                             style = MaterialTheme.typography.body2,
                         )
                     },
@@ -95,7 +158,7 @@ fun IngScreen() {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_check_circle),
                                 tint = MaterialTheme.colors.secondaryVariant,
-                                contentDescription = "Наличие"
+                                contentDescription = "Доставка"
                             )
                         }
                     },
@@ -110,100 +173,31 @@ fun IngScreen() {
                         .height(1.dp),
                     color = MaterialTheme.colors.secondary
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                ) {
-                    TextField(
-                        value = "",
-                        onValueChange = { },
-                        Modifier.weight(3f),
-                        textStyle = MaterialTheme.typography.body1,
-                        placeholder = {
-                            Text(
-                                "Количество,",
-                                style = MaterialTheme.typography.body2
-                            )
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MaterialTheme.colors.onPrimary,
-                            backgroundColor = MaterialTheme.colors.background
-                        )
-                    )
-                    //   Spacer(modifier = Modifier.fillMaxWidth())
-                    Box(
-                        Modifier
-                            .height(56.dp)
-                            .weight(1f)
-                    ) {
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.body1,
+                    placeholder = {
                         Text(
-                            "ед. изм.",
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = MaterialTheme.typography.body2
+                            "Адрес доставки",
+                            style = MaterialTheme.typography.body2,
                         )
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                            tint = MaterialTheme.colors.secondary,
-                            modifier = Modifier
-                                .padding(top = 14.dp)
-                                .weight(1f),
-                            contentDescription = "Выбор ед.изм."
-                        )
-                    }
-                }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { }){
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_location_on_24),
+                                tint = MaterialTheme.colors.secondary,
+                                contentDescription = "Геолокация"
+                            )
+                        }
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.background
+                    )
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                ) {
-                    TextField(
-                        modifier = Modifier.weight(3f),
-                        value = "",
-                        onValueChange = { },
-                        textStyle = MaterialTheme.typography.body1,
-                        placeholder = {
-                            Text(
-                                "Цена,",
-                                style = MaterialTheme.typography.body2
-                            )
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MaterialTheme.colors.onPrimary,
-                            backgroundColor = MaterialTheme.colors.background
-                        )
-                    )
-
-                    Box(
-                        Modifier
-                            .height(56.dp)
-                            .weight(2f)
-                    ) {
-                        Text(
-                            "рубль за ______",
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = MaterialTheme.typography.body2
-                        )
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                            tint = MaterialTheme.colors.secondary,
-                            modifier = Modifier
-                                .padding(top = 14.dp)
-                                .weight(1f),
-                            contentDescription = "Выбор ед.изм."
-                        )
-                    }
-                }
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -217,18 +211,68 @@ fun IngScreen() {
                     textStyle = MaterialTheme.typography.body1,
                     placeholder = {
                         Text(
-                            "Годен до: дд/мм/гггг",
-                            style = MaterialTheme.typography.body2
+                            "Добавьте изделие",
+                            style = MaterialTheme.typography.body2,
                         )
                     },
                     trailingIcon = {
                         IconButton(onClick = { }){
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                                painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
                                 tint = MaterialTheme.colors.secondary,
-                                contentDescription = "Наличие"
+                                contentDescription = "Добавить изделие"
                             )
                         }
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.background
+                    )
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier
+                        .height(56.dp),
+                    textStyle = MaterialTheme.typography.body1,
+                    placeholder = {
+                        Text(
+                            "0 руб.",
+                            style = MaterialTheme.typography.body2
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onPrimary,
+                        backgroundColor = MaterialTheme.colors.background
+                    )
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier
+                        .height(56.dp),
+                    textStyle = MaterialTheme.typography.body1,
+                    placeholder = {
+                        Text(
+                            "Примечание",
+                            style = MaterialTheme.typography.body2
+                        )
                     },
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = MaterialTheme.colors.onPrimary,
@@ -243,6 +287,7 @@ fun IngScreen() {
                 )
             }
 
+
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 Divider(
                     modifier = Modifier
@@ -256,7 +301,7 @@ fun IngScreen() {
                 ) {
 
                     Text(
-                        "Жаль, что продукты кончаются)",
+                        "Рецептов много не бывает)",
                         modifier = Modifier.padding(start = 12.dp),
                         style = MaterialTheme.typography.caption
                     )
@@ -285,8 +330,8 @@ fun IngScreen() {
 
 @Preview
 @Composable
-fun previewIng() {
+fun previewOrder() {
     AppTheme {
-        IngScreen()
+        OrderScreen()
     }
 }
