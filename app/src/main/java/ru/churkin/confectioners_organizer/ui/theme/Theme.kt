@@ -48,12 +48,12 @@ fun AppTheme(
             primaryVariant = colorResource(id = R.color.black_theme),
             onPrimary = colorResource(id = R.color.text),
             background = colorResource(id = R.color.background),
-            surface = colorResource(id = R.color.second_red),
+            surface = colorResource(id = R.color.hamburger_menu),
             error = colorResource(id = R.color.red),
-            onSecondary = colorResource(id = R.color.green),
-            onBackground = colorResource(id = R.color.second_green),
-            onSurface = colorResource(id = R.color.yellow),
-            onError = colorResource(id = R.color.second_text)
+            onSecondary = colorResource(id = R.color.text),
+            onBackground = colorResource(id = R.color.text),
+            onSurface = colorResource(id = R.color.text),
+            onError = colorResource(id = R.color.text)
         )
     }
 

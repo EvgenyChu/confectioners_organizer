@@ -14,7 +14,7 @@ data class Recept(
 
         private var lastId: Int = -1
 
-        fun makeIngredient(
+        fun makeRecept(
             title: String,
             weight: Int,
             time: Int,

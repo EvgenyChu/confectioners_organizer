@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +18,14 @@ import java.util.*
 @Composable
 fun IngScreen() {
     AppTheme() {
+        val colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colors.onPrimary,
+            backgroundColor = MaterialTheme.colors.background,
+            disabledTextColor = MaterialTheme.colors.background,
+            placeholderColor = MaterialTheme.colors.background,
+            disabledPlaceholderColor = MaterialTheme.colors.background,
+            focusedIndicatorColor = Color.Blue
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -27,7 +36,7 @@ fun IngScreen() {
                 Modifier
                     .fillMaxSize()
             ) {
-                TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+                TopAppBar() {
                     IconButton(onClick = { }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
@@ -59,7 +68,7 @@ fun IngScreen() {
                     value = "",
                     onValueChange = { },
                     modifier = Modifier
-                        .height(56.dp),
+                        .height(56.dp).fillMaxWidth(),
                     textStyle = MaterialTheme.typography.body1,
                     placeholder = {
                         Text(
@@ -67,11 +76,8 @@ fun IngScreen() {
                             style = MaterialTheme.typography.body2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
+                    colors = colors
                     )
-                )
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -99,11 +105,8 @@ fun IngScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
+                    colors = colors
                     )
-                )
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -126,10 +129,7 @@ fun IngScreen() {
                                 style = MaterialTheme.typography.body2
                             )
                         },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MaterialTheme.colors.onPrimary,
-                            backgroundColor = MaterialTheme.colors.background
-                        )
+                        colors = colors
                     )
                     //   Spacer(modifier = Modifier.fillMaxWidth())
                     Box(
@@ -176,10 +176,7 @@ fun IngScreen() {
                                 style = MaterialTheme.typography.body2
                             )
                         },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MaterialTheme.colors.onPrimary,
-                            backgroundColor = MaterialTheme.colors.background
-                        )
+                        colors = colors
                     )
 
                     Box(
@@ -230,10 +227,7 @@ fun IngScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
                 Divider(
                     modifier = Modifier
