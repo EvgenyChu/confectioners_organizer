@@ -1,5 +1,6 @@
-package ru.churkin.confectioners_organizer.start
+package ru.churkin.confectioners_organizer.ui.start
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -16,7 +17,8 @@ fun StartScreen() {
     AppTheme() {
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(color = MaterialTheme.colors.background),
             contentAlignment = Alignment.CenterStart
         ) {
 
@@ -36,7 +38,7 @@ fun StartScreen() {
                     .height(16.dp))
                 Text(
                     text = "Confectioner's organizer",
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.h6
                 )
             }
         }

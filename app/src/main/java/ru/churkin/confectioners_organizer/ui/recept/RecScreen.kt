@@ -2,20 +2,36 @@ package ru.churkin.confectioners_organizer.recept
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
+import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
 @Composable
-fun RecScreen() {
+fun RecScreen(vm: ReceptViewModel = viewModel()) {
+
+    val state by vm.state.collectAsState()
+
     AppTheme() {
+        val colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colors.onPrimary,
+            backgroundColor = MaterialTheme.colors.background,
+            disabledTextColor = MaterialTheme.colors.background,
+            placeholderColor = MaterialTheme.colors.background,
+            disabledPlaceholderColor = MaterialTheme.colors.background,
+            focusedIndicatorColor = MaterialTheme.colors.secondary,
+            cursorColor = MaterialTheme.colors.onPrimary
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -25,6 +41,7 @@ fun RecScreen() {
             Column(
                 Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                     IconButton(onClick = { }) {
@@ -36,7 +53,7 @@ fun RecScreen() {
                     }
                     Text(
                         "Новый рецепт",
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
 
@@ -48,98 +65,72 @@ fun RecScreen() {
                         )
                     }
                 }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
-                    value = "",
-                    onValueChange = { },
+                    value = state.title,
+                    onValueChange = { vm.updateTitle(it) },
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Название рецепта",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
+                    colors = colors
                     )
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
 
                 TextField(
-                    value = "",
-                    onValueChange = { },
+                    value = if (state.weight.toString()=="0") ""
+                    else state.weight.toString(),
+                    onValueChange = {vm.updateWeight(it.toInt())},
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Выход, грамм",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
+                    colors = colors
                     )
-                )
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
 
                 TextField(
-                    value = "",
-                    onValueChange = { },
+                    value = if (state.time.toString()=="0") ""
+                    else state.time.toString(),
+                    onValueChange = {vm.updateTime(it.toInt()) },
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Время приготовления, мин.",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
 
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Добавьте ингредиент, кол-во",
-                            style = MaterialTheme.typography.body2,
+                            style = MaterialTheme.typography.subtitle2,
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { }){
+                        IconButton(onClick = { }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
                                 tint = MaterialTheme.colors.secondary,
@@ -147,49 +138,29 @@ fun RecScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Примечание",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
             }
 
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 BottomAppBar(
                     backgroundColor = MaterialTheme.colors.primary,
                     modifier = Modifier.height(56.dp)
@@ -198,7 +169,7 @@ fun RecScreen() {
                     Text(
                         "Рецептов много не бывает)",
                         modifier = Modifier.padding(start = 12.dp),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body1
                     )
 
                 }

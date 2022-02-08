@@ -19,4 +19,9 @@
     <color name="text">#f7f6f6</color>
     <color name="second_text">#929292</color>
     <color name="background">#232323</color>
+    <color name="light_secondary">#FD5523</color>
+    <color name="light_background">#FFFBE6</color>
+    <color name="light_primary">#ccff90</color>
+    <color name="light_primary_variant">#37966F</color>
+    <color name="light_surface">#B9E4Cd</color>
 </resources>

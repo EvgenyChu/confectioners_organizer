@@ -1,14 +1,14 @@
-package ru.churkin.confectioners_organizer.recept
+package ru.churkin.confectioners_organizer.view_models.recept.data
 
-import ru.churkin.confectioners_organizer.ingredient.Ingredient
-import java.util.*
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
 
 data class Recept(
     val id: Int,
     val title: String,
     val weight: Int = 0,
     val time: Int = 0,
-    val listIngredients: List<Ingredient>
+    val listIngredients: List<Ingredient>?,
+    val note: String = "Примечание"
 ) {
     companion object Factory {
 
@@ -18,7 +18,8 @@ data class Recept(
             title: String,
             weight: Int,
             time: Int,
-            listIngredients: List<Ingredient>
+            listIngredients: List<Ingredient>,
+            note: String
 
         ): Recept {
             lastId += 1
@@ -28,7 +29,8 @@ data class Recept(
                 title = title,
                 weight = weight,
                 time = time,
-                listIngredients = listIngredients
+                listIngredients = listIngredients,
+                note = note
             )
         }
     }

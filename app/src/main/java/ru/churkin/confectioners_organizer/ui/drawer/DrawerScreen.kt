@@ -1,4 +1,4 @@
-package ru.churkin.confectioners_organizer.drawer
+package ru.churkin.confectioners_organizer.ui.drawer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -36,7 +36,7 @@ fun DrawerScreen() {
                 )
                 Text(
                     text = DrawerScreens.OrdersScreen.title,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
@@ -54,7 +54,7 @@ fun DrawerScreen() {
                 )
                 Text(
                     text = DrawerScreens.RecsScreen.title,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
@@ -72,7 +72,7 @@ fun DrawerScreen() {
                 )
                 Text(
                     text = DrawerScreens.IngsScreen.title,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
@@ -90,7 +90,7 @@ fun DrawerScreen() {
                 )
                 Text(
                     text = DrawerScreens.HistoryScreen.title,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }

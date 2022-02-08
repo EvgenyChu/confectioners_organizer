@@ -2,10 +2,13 @@ package ru.churkin.confectioners_organizer.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -15,6 +18,15 @@ import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 @Composable
 fun ProductScreen() {
     AppTheme() {
+        val colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colors.onPrimary,
+            backgroundColor = MaterialTheme.colors.background,
+            disabledTextColor = MaterialTheme.colors.background,
+            placeholderColor = MaterialTheme.colors.background,
+            disabledPlaceholderColor = MaterialTheme.colors.background,
+            focusedIndicatorColor = MaterialTheme.colors.secondary,
+            cursorColor = MaterialTheme.colors.onPrimary
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -24,6 +36,7 @@ fun ProductScreen() {
             Column(
                 Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                     IconButton(onClick = { }) {
@@ -35,7 +48,7 @@ fun ProductScreen() {
                     }
                     Text(
                         "Изделие для заказа",
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
 
@@ -47,25 +60,20 @@ fun ProductScreen() {
                         )
                     }
                 }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Название изделия",
-                            style = MaterialTheme.typography.body2,
+                            style = MaterialTheme.typography.subtitle2,
                         )
                     },
                     trailingIcon = {
-                        IconButton(onClick = { }){
+                        IconButton(onClick = { }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_search_24),
                                 tint = MaterialTheme.colors.secondary,
@@ -73,52 +81,61 @@ fun ProductScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
-                Divider(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
-
+                        .height(56.dp)
+                ){
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .weight(3f),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Количество изделия",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
 
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+                Box(
+                    Modifier
+                        .height(56.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        "ед. изм.",
+                        modifier = Modifier.padding(top = 16.dp),
+                        style = MaterialTheme.typography.subtitle2
+                    )
+                }
+                IconButton(onClick = { }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
+                        tint = MaterialTheme.colors.secondary,
+                        modifier = Modifier
+                            .padding(top = 14.dp)
+                            .weight(1f),
+                        contentDescription = "Выбор ед.изм."
+                    )
+                }
+            }
 
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Добавить рецепт",
-                            style = MaterialTheme.typography.body2,
+                            style = MaterialTheme.typography.subtitle2,
                         )
                     },
                     trailingIcon = {
@@ -130,27 +147,18 @@ fun ProductScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
 
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Добавить ингредиент",
-                            style = MaterialTheme.typography.body2,
+                            style = MaterialTheme.typography.subtitle2,
                         )
                     },
                     trailingIcon = {
@@ -162,26 +170,18 @@ fun ProductScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.body1,
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Себестоимость, руб.",
-                            style = MaterialTheme.typography.body2,
+                            style = MaterialTheme.typography.subtitle2,
                         )
                     },
                     trailingIcon = {
@@ -193,51 +193,29 @@ fun ProductScreen() {
                             )
                         }
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
+                    colors = colors
                 )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 TextField(
                     value = "",
                     onValueChange = { },
                     modifier = Modifier
-                        .height(56.dp),
-                    textStyle = MaterialTheme.typography.body1,
+                        .height(56.dp)
+                        .fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.subtitle1,
                     placeholder = {
                         Text(
                             "Стоимость изделия, руб.",
-                            style = MaterialTheme.typography.body2
+                            style = MaterialTheme.typography.subtitle2
                         )
                     },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
-                    )
-                )
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
+                    colors = colors
                 )
             }
 
 
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 BottomAppBar(
                     backgroundColor = MaterialTheme.colors.primary,
                     modifier = Modifier.height(56.dp)
@@ -246,7 +224,7 @@ fun ProductScreen() {
                     Text(
                         "Главное ничего не перепутать)",
                         modifier = Modifier.padding(start = 12.dp),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body1
                     )
 
                 }
@@ -274,28 +252,30 @@ fun ProductScreen() {
 @Composable
 fun ProdRecCard() {
     AppTheme() {
-        Column() {
+        Column(modifier = Modifier
+            .background(color = MaterialTheme.colors.background)) {
             Row(
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .background(color = MaterialTheme.colors.background),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     modifier = Modifier.padding(16.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = MaterialTheme.colors.onSecondary,
+                    tint = colorResource(id = R.color.green),
                     contentDescription = "Наличие"
                 )
                 Text(
                     text = "Бисквит",
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.subtitle1
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = "300 г.",
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.subtitle1
                 )
             }
             Divider(
@@ -311,7 +291,8 @@ fun ProdRecCard() {
 @Composable
 fun ProdIngCard() {
     AppTheme() {
-        Column() {
+        Column(modifier = Modifier
+            .background(color = MaterialTheme.colors.background)) {
             Row(
                 modifier = Modifier
                     .padding(end = 16.dp)
@@ -322,17 +303,17 @@ fun ProdIngCard() {
                 Icon(
                     modifier = Modifier.padding(16.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = MaterialTheme.colors.onSecondary,
+                    tint = colorResource(id = R.color.green),
                     contentDescription = "Наличие"
                 )
                 Text(
                     text = "Мука",
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.subtitle1
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = "300 г.",
-                    style = MaterialTheme.typography.body1
+                    style = MaterialTheme.typography.subtitle1
                 )
             }
             Divider(

@@ -1,4 +1,4 @@
-package ru.churkin.confectioners_organizer.ingredient
+package ru.churkin.confectioners_organizer.view_models.ingredient.data
 
 import java.util.*
 

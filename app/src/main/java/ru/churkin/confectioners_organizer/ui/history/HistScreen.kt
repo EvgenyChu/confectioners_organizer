@@ -1,7 +1,9 @@
-package ru.churkin.confectioners_organizer.ingredient
+package ru.churkin.confectioners_organizer.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,16 +15,18 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
 @Composable
-fun IngsScreen() {
+fun HistoryScreen() {
     AppTheme() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = MaterialTheme.colors.background)
         ) {
 
             Column(
                 Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                     IconButton(onClick = { }) {
@@ -33,16 +37,16 @@ fun IngsScreen() {
                         )
                     }
                     Text(
-                        "Список ингредиентов",
-                        style = MaterialTheme.typography.body1,
+                        "История заказов",
+                        style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
 
                     IconButton(onClick = { }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
                             tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Сортировка"
+                            contentDescription = "Календарь"
                         )
                     }
 
@@ -54,29 +58,23 @@ fun IngsScreen() {
                         )
                     }
                 }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 BottomAppBar(
                     backgroundColor = MaterialTheme.colors.primary,
                     modifier = Modifier.height(56.dp)
                 ) {
-
+                    Icon(
+                        modifier = Modifier.padding(start = 16.dp),
+                        painter = painterResource(id = R.drawable.ic_baseline_alarm_on_24),
+                        tint = MaterialTheme.colors.onPrimary,
+                        contentDescription = "Будильник"
+                    )
                     Text(
-                        "Похоже чего-то не хватает)",
+                        "Есть время! Нет заказов)",
                         modifier = Modifier.padding(start = 12.dp),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body1
                     )
 
                 }
@@ -101,56 +99,10 @@ fun IngsScreen() {
     }
 }
 
-@Composable
-fun IngsCard() {
-    AppTheme() {
-        Column() {
-            Row(
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(16.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = MaterialTheme.colors.onSecondary,
-                    contentDescription = "Наличие"
-                )
-                Text(
-                    text = "Мука",
-                    style = MaterialTheme.typography.body1
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = "300 г.",
-                    style = MaterialTheme.typography.body1
-                )
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
-            )
-        }
-    }
-}
-
-
 @Preview
 @Composable
-fun previewIngsCard() {
+fun previewHistory() {
     AppTheme {
-        IngsCard()
-    }
-}
-
-@Preview
-@Composable
-fun previewIngs() {
-    AppTheme {
-        IngsScreen()
+       HistoryScreen()
     }
 }

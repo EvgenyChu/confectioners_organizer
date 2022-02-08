@@ -2,11 +2,14 @@ package ru.churkin.confectioners_organizer.listOrders
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,11 +24,13 @@ fun OrdersScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = MaterialTheme.colors.background)
         ) {
 
             Column(
                 Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                     IconButton(onClick = { }) {
@@ -37,7 +42,7 @@ fun OrdersScreen() {
                     }
                     Text(
                         "Список заказов",
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
 
@@ -57,20 +62,9 @@ fun OrdersScreen() {
                         )
                     }
                 }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = MaterialTheme.colors.secondary
-                )
+
                 BottomAppBar(
                     backgroundColor = MaterialTheme.colors.primary,
                     modifier = Modifier.height(56.dp)
@@ -84,7 +78,7 @@ fun OrdersScreen() {
                     Text(
                         "Есть время! Нет заказов)",
                         modifier = Modifier.padding(start = 12.dp),
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.body1
                     )
 
                 }
@@ -112,7 +106,8 @@ fun OrdersScreen() {
 @Composable
 fun OrdersCard() {
     AppTheme() {
-        Column() {
+        Column(modifier = Modifier
+            .background(color = MaterialTheme.colors.background)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,13 +132,13 @@ fun OrdersCard() {
                         Icon(
                             modifier = Modifier.padding(end = 16.dp),
                             painter = painterResource(id = R.drawable.ic_baseline_delivery_dining_24),
-                            tint = MaterialTheme.colors.onSecondary,
+                            tint = colorResource(id = R.color.green),
                             contentDescription = "Знак доставки"
                         )
 
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_circle_small_24),
-                            tint = MaterialTheme.colors.onSecondary,
+                            tint = colorResource(id = R.color.green),
                             contentDescription = "Наличие"
                         )
                     }
@@ -157,7 +152,7 @@ fun OrdersCard() {
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = " 6000 руб. ",
-                            style = MaterialTheme.typography.h1,
+                            style = MaterialTheme.typography.caption,
                             modifier = Modifier
                                 .background(
                                     color = MaterialTheme.colors.secondary,
