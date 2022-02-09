@@ -81,12 +81,12 @@ fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typogr
         color = onPrimary
     ),
     subtitle1 = TextStyle(
-        fontFamily = lektonBold,
+        fontFamily = montserrataIternatesMedium,
         fontSize = 17.sp,
         color = onBackground
     ),
     subtitle2 = TextStyle(
-        fontFamily = lektonBold,
+        fontFamily = montserrataIternatesMedium,
         fontSize = 17.sp,
         color = surface
     ),
@@ -104,7 +104,7 @@ fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typogr
         fontSize = 14.sp
     ),
     caption = TextStyle(
-        fontFamily = lektonBold,
+        fontFamily = montserrataIternatesBold,
         fontSize = 14.sp,
         color = onBackground
     ),

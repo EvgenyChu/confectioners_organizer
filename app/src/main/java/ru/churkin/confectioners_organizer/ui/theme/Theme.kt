@@ -55,7 +55,7 @@ fun AppTheme(
                  background = LightBackground,
                  surface = LightSurface,
                  error = Red,
-                 onSecondary = LightPrimaryVariant,
+                 onSecondary = TextOn,
                  onBackground = LightPrimaryVariant,
                  onSurface = LightPrimaryVariant,
                  onError = TextOn

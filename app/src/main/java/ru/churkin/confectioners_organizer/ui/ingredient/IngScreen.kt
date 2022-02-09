@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,16 +22,17 @@ import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientViewModel
-import java.util.*
 
 @Composable
 fun IngScreen(vm: IngredientViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
-    val availabilityIngredient = remember { mutableStateOf("Отсутствует") }
-    val openDialogUnits = remember { mutableStateOf(false) }
-    val openDialogUnitsPrice = remember { mutableStateOf(false) }
-    val isShowDatePicker = remember { mutableStateOf(false) }
+    var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
+    var openDialogUnits by remember { mutableStateOf(false) }
+    var openDialogUnitsPrice by remember { mutableStateOf(false) }
+    var isShowDatePicker by remember { mutableStateOf(false) }
+
+
 
     AppTheme() {
         val colors = TextFieldDefaults.textFieldColors(
@@ -70,7 +71,7 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
 
                     IconButton(onClick = {
                         vm.emptyState()
-                        availabilityIngredient.value = "Отсутствует"
+                        availabilityIngredient = "Отсутствует"
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_delete_24),
@@ -103,7 +104,7 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = availabilityIngredient.value,
+                        text = availabilityIngredient,
                         style = MaterialTheme.typography.subtitle1
                     )
 
@@ -113,8 +114,8 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                         checked = state.availability,
                         onCheckedChange = {
                             vm.updateAvailability(it)
-                            if (state.availability) availabilityIngredient.value = "Отсутствует"
-                            else availabilityIngredient.value = "В наличии"
+                            if (state.availability) availabilityIngredient = "Отсутствует"
+                            else availabilityIngredient = "В наличии"
                         },
                         colors = SwitchDefaults.colors(
                             uncheckedThumbColor = Color(0xFFE61610),
@@ -151,20 +152,15 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                         },
                         colors = colors
                     )
-                    //   Spacer(modifier = Modifier.fillMaxWidth())
-                    Box(
-                        Modifier
-                            .height(56.dp)
-                            .weight(1f)
-                    ) {
-                        Text(
-                            state.unitsAvailable,
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = if (state.unitsAvailable == "ед. изм.") MaterialTheme.typography.subtitle2
-                           else MaterialTheme.typography.subtitle1
-                        )
-                    }
-                    IconButton(onClick = { openDialogUnits.value = true }) {
+
+                    Text(
+                        state.unitsAvailable,
+                        modifier = Modifier.padding(top = 16.dp),
+                        style = if (state.unitsAvailable == "ед. изм.") MaterialTheme.typography.subtitle2
+                        else MaterialTheme.typography.subtitle1
+                    )
+
+                    IconButton(onClick = { openDialogUnits = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
                             tint = MaterialTheme.colors.secondary,
@@ -174,10 +170,10 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                             contentDescription = "Выбор ед.изм."
                         )
                     }
-                    if (openDialogUnits.value) {
+                    if (openDialogUnits) {
                         AlertDialog(
                             onDismissRequest = {
-                                openDialogUnits.value = false
+                                openDialogUnits = false
                             },
                             title = {
                                 Text(
@@ -190,27 +186,35 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                                     Text(
                                         style = MaterialTheme.typography.subtitle1,
                                         text = "Грамм", modifier = Modifier
+                                            .height(44.dp)
+                                            .fillMaxWidth()
                                             .clickable {
                                                 vm.updateUnitsAvailable("г.")
-                                                openDialogUnits.value = false
+                                                openDialogUnits = false
                                             }
                                     )
                                     Text(
                                         style = MaterialTheme.typography.subtitle1,
-                                        text = "Миллилитр", modifier = Modifier
-                                        .clickable {
-                                            vm.updateUnitsAvailable("мл")
-                                            openDialogUnits.value = false
-                                        }
-                                        .padding(top = 16.dp))
+                                        text = "Миллилитр",
+                                        modifier = Modifier
+                                            .height(44.dp)
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                vm.updateUnitsAvailable("мл")
+                                                openDialogUnits = false
+                                            }
+                                    )
                                     Text(
                                         style = MaterialTheme.typography.subtitle1,
-                                        text = "Штука", modifier = Modifier
-                                        .clickable {
-                                            vm.updateUnitsAvailable("шт")
-                                            openDialogUnits.value = false
-                                        }
-                                        .padding(top = 16.dp))
+                                        text = "Штука",
+                                        modifier = Modifier
+                                            .height(44.dp)
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                vm.updateUnitsAvailable("шт")
+                                                openDialogUnits = false
+                                            }
+                                    )
                                 }
                             }
                         )
@@ -224,32 +228,28 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                 ) {
                     TextField(
                         modifier = Modifier.weight(3f),
-                        value = "${if (state.costPrice == 0f) "" else state.costPrice}",
-                        onValueChange = { vm.updatecostPrice(if (it.isEmpty()) 0f else it.toFloat()) },
+                        value = state._costPrice,
+                        onValueChange = { vm.updatecostPrice(it) },
                         textStyle = MaterialTheme.typography.subtitle1,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        placeholder = {
+                        isError = state.errors["costPrice"]?.isNotEmpty() ?: false,
+                        label = {
                             Text(
-                                "Цена",
+                                text = state.errors["costPrice"] ?: "Цена",
                                 style = MaterialTheme.typography.subtitle2
                             )
                         },
                         colors = colors
                     )
 
-                    Box(
-                        Modifier
-                            .height(56.dp)
-                            .weight(2f)
-                    ) {
-                        Text(
-                            state.unitsPrice,
-                            modifier = Modifier.padding(top = 16.dp),
-                            style = if (state.unitsPrice == "рубль за ______") MaterialTheme.typography.subtitle2
-                            else MaterialTheme.typography.subtitle1
-                        )
-                    }
-                    IconButton(onClick = { openDialogUnitsPrice.value = true }) {
+                    Text(
+                        state.unitsPrice,
+                        modifier = Modifier.padding(top = 16.dp),
+                        style = if (state.unitsPrice == "рубль за ______") MaterialTheme.typography.subtitle2
+                        else MaterialTheme.typography.subtitle1
+                    )
+                    //}
+                    IconButton(onClick = { openDialogUnitsPrice = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
                             tint = MaterialTheme.colors.secondary,
@@ -259,10 +259,10 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                             contentDescription = "Выбор ед.изм."
                         )
                     }
-                    if (openDialogUnitsPrice.value)
+                    if (openDialogUnitsPrice)
                         AlertDialog(
                             onDismissRequest = {
-                                openDialogUnitsPrice.value = false
+                                openDialogUnitsPrice = false
                             },
                             title = {
                                 Text(
@@ -276,30 +276,34 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                                         style = MaterialTheme.typography.subtitle1,
                                         text = "Грамм",
                                         modifier = Modifier
+                                            .height(44.dp)
+                                            .fillMaxWidth()
                                             .clickable {
                                                 vm.updateUnitsPrice("руб./г.")
-                                                openDialogUnitsPrice.value = false
+                                                openDialogUnitsPrice = false
                                             }
                                     )
                                     Text(
                                         style = MaterialTheme.typography.subtitle1,
                                         text = "Миллилитр",
                                         modifier = Modifier
-                                        .clickable {
-                                            vm.updateUnitsPrice("руб./мл")
-                                            openDialogUnitsPrice.value = false
-                                        }
-                                        .padding(top = 16.dp)
+                                            .height(44.dp)
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                vm.updateUnitsPrice("руб./мл")
+                                                openDialogUnitsPrice = false
+                                            }
                                     )
                                     Text(
                                         style = MaterialTheme.typography.subtitle1,
                                         text = "Штука",
                                         modifier = Modifier
-                                        .clickable {
-                                            vm.updateUnitsPrice("руб./шт.")
-                                            openDialogUnitsPrice.value = false
-                                        }
-                                        .padding(top = 16.dp)
+                                            .height(44.dp)
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                vm.updateUnitsPrice("руб./шт.")
+                                                openDialogUnitsPrice = false
+                                            }
                                     )
                                 }
                             }
@@ -307,69 +311,68 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                 }
 
 
-            TextField(
-                value = state.sellBy?.format() ?: "",
-                onValueChange = { vm.updateSellBy(it) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                enabled = false,
-                placeholder = {
-                    Text(
-                        "Годен до: дд.мм.гггг",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { isShowDatePicker.value = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Наличие"
+                TextField(
+                    value = state.sellBy?.format() ?: "",
+                    onValueChange = { vm.updateSellBy(it) },
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { isShowDatePicker = true },
+                    textStyle = MaterialTheme.typography.subtitle1,
+                    enabled = false,
+                    placeholder = {
+                        Text(
+                            "Годен до: дд.мм.гггг",
+                            style = MaterialTheme.typography.subtitle2
                         )
-                    }
-                    if (isShowDatePicker.value) DatePicker(
-                        onSelect = {
-                            vm.updateSellBy(it)
-                            isShowDatePicker.value = false
-                        },
-                        onDismiss = { isShowDatePicker.value = false })
-                },
-                colors = colors
-            )
-        }
-
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Жаль, что продукты кончаются)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { isShowDatePicker = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                                tint = MaterialTheme.colors.secondary,
+                                contentDescription = "Наличие"
+                            )
+                        }
+                        if (isShowDatePicker) DatePicker(
+                            onSelect = {
+                                vm.updateSellBy(it)
+                                isShowDatePicker = false
+                            },
+                            onDismiss = { isShowDatePicker = false })
+                    },
+                    colors = colors
                 )
+            }
 
+            Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
+
+                BottomAppBar(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    modifier = Modifier.height(56.dp)
+                ) {
+
+                    Text(
+                        "Жаль, что продукты кончаются)",
+                        modifier = Modifier.padding(start = 12.dp),
+                        style = MaterialTheme.typography.body1
+                    )
+
+                }
+            }
+            FloatingActionButton(
+                onClick = { },
+                modifier = Modifier
+                    .align(alignment = Alignment.BottomEnd)
+                    .padding(bottom = 28.dp, end = 16.dp),
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_done_24),
+                    contentDescription = "Добавить",
+                )
             }
         }
-        FloatingActionButton(
-            onClick = { },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_check_circle_outline_24),
-                modifier = Modifier
-                    .size(64.dp),
-                contentDescription = "Добавить",
-            )
-        }
     }
-}
 }
 
 @Preview
