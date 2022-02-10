@@ -1,13 +1,13 @@
 package ru.churkin.confectioners_organizer.view_models.recept.data
 
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 
 data class Recept(
     val id: Int,
     val title: String,
     val weight: Int = 0,
     val time: Int = 0,
-    val listIngredients: List<Ingredient>?,
+    val listIngredients: List<IngredientState>?,
     val note: String = "Примечание"
 ) {
     companion object Factory {
@@ -18,7 +18,7 @@ data class Recept(
             title: String,
             weight: Int,
             time: Int,
-            listIngredients: List<Ingredient>,
+            listIngredients: List<IngredientState>,
             note: String
 
         ): Recept {

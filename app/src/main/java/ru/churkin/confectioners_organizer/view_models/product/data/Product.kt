@@ -1,6 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.product.data
 
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 
 data class Product(
@@ -9,7 +9,7 @@ data class Product(
     val weight: Int,
     val units: String,
     val listRecepts: List<Recept>,
-    val listIngredients: List<Ingredient>,
+    val listIngredients: List<IngredientState>,
     val costPrice: Int,
     val price: Int
 ) {
@@ -22,7 +22,7 @@ data class Product(
             weight: Int,
             units: String,
             listRecepts: List<Recept>,
-            listIngredients: List<Ingredient>,
+            listIngredients: List<IngredientState>,
             costPrice: Int,
             price: Int
         ): Product {

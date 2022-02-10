@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ingredient.IngsCard
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 
 @Composable
@@ -128,7 +129,7 @@ fun RealRecScreen(recept: Recept) {
                     )
                 }
 
-                    IngsCard()
+                    IngsCard(ingredient = Ingredient())
 
                 Row(
                     modifier = Modifier

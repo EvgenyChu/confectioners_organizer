@@ -6,6 +6,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -14,11 +16,40 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
+import ru.churkin.confectioners_organizer.ui.theme.Green
+import ru.churkin.confectioners_organizer.ui.theme.Red
+import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientViewModel
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
+import ru.churkin.confectioners_organizer.view_models.list_ingredients.ListIngsViewModel
+import java.util.*
 
 @Composable
-fun IngsScreen() {
+fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()) {
+
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "IngScreen") {
+        composable(
+            Screen.ListIngs.route,
+            arguments = listOf(navArgument("title") {
+                defaultValue = Screen.ListIngs.title
+            })
+        ) { IngsScreen(navController) }
+        composable(Screen.Ingredient.route) { IngScreen(navController) }
+    }
+
+    val state by vm.screenState.collectAsState()
+
     AppTheme() {
         Box(
             modifier = Modifier
@@ -61,6 +92,17 @@ fun IngsScreen() {
                         )
                     }
                 }
+                when (val listState = state.ingredientsState) {
+                    is IngredientsState.Empty -> {}
+                    is IngredientsState.Loading -> {}
+                    is IngredientsState.Value -> {
+                        listState.ingredients
+                            .forEach {
+                                IngsCard(ingredient = it)
+                            }
+                    }
+                    is IngredientsState.ValueWithMessage -> {}
+                    }
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 BottomAppBar(
@@ -97,7 +139,7 @@ fun IngsScreen() {
 }
 
 @Composable
-fun IngsCard() {
+fun IngsCard(vm: ListIngsViewModel = viewModel(), ingredient: Ingredient) {
     AppTheme() {
         Column(
             modifier = Modifier
@@ -113,16 +155,17 @@ fun IngsCard() {
                 Icon(
                     modifier = Modifier.padding(16.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = colorResource(id = R.color.green),
+                    tint = if (ingredient.availability) Green
+                    else Red,
                     contentDescription = "Наличие"
                 )
                 Text(
-                    text = "Мука",
+                    text = ingredient.title,
                     style = MaterialTheme.typography.subtitle1
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = "300 г.",
+                    text = "${ingredient.available} ${ingredient.unitsAvailable}",
                     style = MaterialTheme.typography.subtitle1
                 )
             }
@@ -141,14 +184,17 @@ fun IngsCard() {
 @Composable
 fun previewIngsCard() {
     AppTheme {
-        IngsCard()
+        IngsCard(
+            ingredient = Ingredient()
+        )
     }
 }
 
+/*
 @Preview
 @Composable
 fun previewIngs() {
     AppTheme {
         IngsScreen()
     }
-}
+}*/

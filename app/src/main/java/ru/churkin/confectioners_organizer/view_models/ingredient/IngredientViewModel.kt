@@ -4,11 +4,21 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.KSerializer
 import ru.churkin.confectioners_organizer.date.parseDate
 import java.util.*
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientsRepository
 
 class IngredientViewModel() : ViewModel() {
+    val repository: IngredientsRepository = IngredientsRepository()
+
     private val _state: MutableStateFlow<IngredientState> = MutableStateFlow(IngredientState())
 
     val state: StateFlow<IngredientState>
@@ -63,28 +73,56 @@ class IngredientViewModel() : ViewModel() {
     fun emptyState() {
         _state.value = IngredientState()
     }
+
+    fun addIngredient(
+        title: String,
+        availability: Boolean,
+        available: Int,
+        unitsAvailable: String,
+        unitsPrice: String,
+        costPrice: Float,
+        sellBy: Date?
+    ) {
+        val ingredient = Ingredient(
+            title = title,
+            availability = availability,
+            available = available,
+            unitsAvailable = unitsAvailable,
+            unitsPrice = unitsPrice,
+            costPrice = costPrice,
+            sellBy = sellBy
+            )
+        repository.insertIngredient(ingredient)
+    }
 }
 
-@Serializable
 data class IngredientState(
     val id: Int = 0,
     val title: String = "",
     val availability: Boolean = false,
     val available: Int = 0,
-    var unitsAvailable: String = "ед. изм.",
-    var unitsPrice: String = "рубль за ______",
+    val unitsAvailable: String = "ед. изм.",
+    val unitsPrice: String = "рубль за ______",
     val _costPrice: String = "",
     val sellBy: Date? = null,
     val errors: Map<String, String> = emptyMap()
 ) {
     val costPrice: Float
-        get() = if(_costPrice.isEmpty()) 0f else _costPrice.toFloat()
+        get() = if (_costPrice.isEmpty()) 0f else _costPrice.toFloat()
 
     companion object Factory {
 
         private var lastId: Int = -1
 
-        fun makeIngredient(title: String, availability: Boolean, available: Int, unitsAvailable: String, unitsPrice: String, _costPrice: String, sellBy: Date?): IngredientState {
+        fun makeIngredient(
+            title: String,
+            availability: Boolean,
+            available: Int,
+            unitsAvailable: String,
+            unitsPrice: String,
+            _costPrice: String,
+            sellBy: Date?
+        ): IngredientState {
             lastId += 1
 
             return IngredientState(
@@ -99,4 +137,19 @@ data class IngredientState(
             )
         }
     }
+}
+
+@Serializer(forClass = DateSerializer::class)
+object DateSerializer : KSerializer<Date> {
+
+    override fun serialize(output: Encoder, obj: Date) {
+        output.encodeString(obj.time.toString())
+    }
+
+    override fun deserialize(input: Decoder): Date {
+        return Date(input.decodeString().toLong())
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
 }

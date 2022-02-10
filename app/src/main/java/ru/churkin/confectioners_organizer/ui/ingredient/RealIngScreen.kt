@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 import java.util.*
 
 @Composable
-fun RealIngScreen(ingredient: Ingredient) {
+fun RealIngScreen(ingredient: IngredientState) {
     AppTheme() {
         Box(
             modifier = Modifier
@@ -103,7 +103,7 @@ fun RealIngScreen(ingredient: Ingredient) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "В наличии: ${ingredient.available} ${ingredient.units}",
+                        text = "В наличии: ${ingredient.available} ${ingredient.unitsAvailable}",
                         modifier = Modifier
                             .padding(start = 16.dp),
                         style = MaterialTheme.typography.body1,
@@ -122,7 +122,7 @@ fun RealIngScreen(ingredient: Ingredient) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Цена: ${ingredient.costPrice} руб. за ${ingredient.units}",
+                        text = "Цена: ${ingredient.costPrice} ${ingredient.unitsPrice}",
                         modifier = Modifier
                             .padding(start = 16.dp),
                         style = MaterialTheme.typography.body1,
@@ -191,13 +191,14 @@ fun RealIngScreen(ingredient: Ingredient) {
 fun previewRealIng() {
     AppTheme {
         RealIngScreen(
-            ingredient = Ingredient.makeIngredient(
+            ingredient = IngredientState.makeIngredient(
                 title = "Огонь",
-                costPrice = 0,
-                true,
-                10,
-                "грамм",
-                Date()
+                _costPrice = "0.0",
+                availability = true,
+                available = 10,
+                unitsPrice = "руб./г.",
+                sellBy = Date(),
+                unitsAvailable = "г."
             )
         )
     }

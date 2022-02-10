@@ -1,40 +1,18 @@
 package ru.churkin.confectioners_organizer.view_models.ingredient.data
 
+import kotlinx.serialization.Serializable
+import ru.churkin.confectioners_organizer.view_models.ingredient.DateSerializer
 import java.util.*
 
-
+@Serializable
 data class Ingredient(
-    val id: Int,
-    val title: String,
-    val availability: Boolean,
+    val id: Int = 0,
+    val title: String = "",
+    val availability: Boolean = false,
     val available: Int = 0,
-    val units: String,
-    val costPrice: Int,
+    val unitsAvailable: String = "ед. изм.",
+    val unitsPrice: String = "рубль за ______",
+    val costPrice: Float = 0f,
+    @Serializable(with = DateSerializer::class)
     val sellBy: Date? = null
-) {
-    companion object Factory {
-
-        private var lastId: Int = -1
-
-        fun makeIngredient(
-            title: String,
-            costPrice: Int,
-            availability: Boolean,
-            avaliable: Int,
-            units: String,
-            sellBy: Date?
-        ): Ingredient {
-            lastId += 1
-
-            return Ingredient(
-                id = lastId,
-                title = title,
-                costPrice = costPrice,
-                availability = availability,
-                available = avaliable,
-                units = units,
-                sellBy = Date()
-            )
-        }
-    }
-}
+)

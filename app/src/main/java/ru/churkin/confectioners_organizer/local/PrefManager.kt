@@ -5,7 +5,8 @@ import android.content.SharedPreferences
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import ru.churkin.confectioners_organizer.App
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+
 
 object PrefManager {
 
@@ -13,20 +14,20 @@ object PrefManager {
         private val prefs: SharedPreferences =
             context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
-    fun insertIngredient(ingredient: IngredientState) {
+    fun insertIngredient(ingredient: Ingredient) {
         val ingredients = loadIngredients().plus(ingredient)
-        val str = Json.encodeToString(ListSerializer(IngredientState.serializer()), ingredients)
+        val str = Json.encodeToString(ListSerializer(Ingredient.serializer()), ingredients)
 
         prefs.edit()
             .putString("MY_INGREDIENTS", str)
             .apply()
     }
 
-    fun loadIngredients(): List<IngredientState> {
+    fun loadIngredients(): List<Ingredient> {
         val str = prefs.getString("MY_INGREDIENTS", null)
 
         str ?: return emptyList()
-        val ingredients = Json.decodeFromString(ListSerializer(IngredientState.serializer()), str)
+        val ingredients = Json.decodeFromString(ListSerializer(Ingredient.serializer()), str)
         return ingredients
     }
 
@@ -36,9 +37,9 @@ object PrefManager {
         val index = curIngredients.indexOfFirst { it.id == id }
         val ingridients = curIngredients.toMutableList()
         ingridients.removeAt(index)
-        val str = Json.encodeToString(ListSerializer(IngredientState.serializer()), ingridients)
+        val str = Json.encodeToString(ListSerializer(Ingredient.serializer()), ingridients)
         prefs.edit()
-            .putString("MY_INGRIDIENTS", str)
+            .putString("MY_INGREDIENTS", str)
             .apply()
     }
 }

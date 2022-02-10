@@ -17,22 +17,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientViewModel
 
 @Composable
-fun IngScreen(vm: IngredientViewModel = viewModel()) {
+fun IngScreen(navController: NavController, vm: IngredientViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
     var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
     var isShowDatePicker by remember { mutableStateOf(false) }
-
-
 
     AppTheme() {
         val colors = TextFieldDefaults.textFieldColors(
@@ -314,7 +318,8 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                 TextField(
                     value = state.sellBy?.format() ?: "",
                     onValueChange = { vm.updateSellBy(it) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .clickable { isShowDatePicker = true },
                     textStyle = MaterialTheme.typography.subtitle1,
                     enabled = false,
@@ -359,7 +364,17 @@ fun IngScreen(vm: IngredientViewModel = viewModel()) {
                 }
             }
             FloatingActionButton(
-                onClick = { },
+                onClick = {
+                    vm.addIngredient(
+                        state.title,
+                        state.availability,
+                        state.available,
+                        state.unitsAvailable,
+                        state.unitsPrice,
+                        state.costPrice,
+                        state.sellBy
+                    )
+                },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
