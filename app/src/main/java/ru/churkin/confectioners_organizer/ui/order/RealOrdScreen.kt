@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.ingredient.IngsCard
+import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
 import ru.churkin.confectioners_organizer.listRecepts.RecsCard
 import ru.churkin.confectioners_organizer.view_models.order.data.Order
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme

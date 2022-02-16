@@ -3,32 +3,33 @@ package ru.churkin.confectioners_organizer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import ru.churkin.confectioners_organizer.ingredient.IngScreen
-import ru.churkin.confectioners_organizer.ingredient.IngsScreen
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import ru.churkin.confectioners_organizer.ui.ingredient.IngScreen
+import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
-val screens = listOf(
-    Screen.Ingredient,
-    Screen.ListIngs
-)
-
-class MainActivity : ComponentActivity() {
+class RootActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-                // A surface container using the 'background' color from the theme
-                IngsScreen()
+            val navController = rememberNavController()
+            AppTheme() {
+                NavHost(navController = navController, startDestination = Screen.ListIngs.route) {
+                    composable(Screen.ListIngs.route) { IngsScreen(navController = navController) }
+                    composable(Screen.Ingredient.route) { IngScreen(navController = navController) }
+                }
+            }
+
         }
     }
 }
 
 sealed class Screen(val route: String, val title: String) {
     object Ingredient : Screen("ingredient", "ingredient")
-    object ListIngs : Screen("listIngs", "listIngs")
+    object ListIngs : Screen("listIngredients", "listIngs")
 }
+
+

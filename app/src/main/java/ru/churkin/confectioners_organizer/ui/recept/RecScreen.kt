@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
@@ -84,9 +83,8 @@ fun RecScreen(vm: ReceptViewModel = viewModel()) {
 
 
                 TextField(
-                    value = if (state.weight.toString()=="0") ""
-                    else state.weight.toString(),
-                    onValueChange = {vm.updateWeight(it.toInt())},
+                    value = "${if (state.weight == 0) "" else state.weight}",
+                    onValueChange = { vm.updateWeight(if (it.isEmpty()) 0 else it.toInt()) },
                     modifier = Modifier
                         .height(56.dp)
                         .fillMaxWidth(),
@@ -101,9 +99,8 @@ fun RecScreen(vm: ReceptViewModel = viewModel()) {
                     )
 
                 TextField(
-                    value = if (state.time.toString()=="0") ""
-                    else state.time.toString(),
-                    onValueChange = {vm.updateTime(it.toInt()) },
+                    value = "${if (state.time == 0) "" else state.time}",
+                    onValueChange = {vm.updateTime(if (it.isEmpty()) 0 else it.toInt()) },
                     modifier = Modifier
                         .height(56.dp)
                         .fillMaxWidth(),

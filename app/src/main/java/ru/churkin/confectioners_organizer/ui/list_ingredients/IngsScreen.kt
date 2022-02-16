@@ -1,4 +1,4 @@
-package ru.churkin.confectioners_organizer.ingredient
+package ru.churkin.confectioners_organizer.ui.list_ingredients
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,44 +9,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.findNavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientViewModel
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.ListIngsViewModel
-import java.util.*
 
 @Composable
 fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()) {
-
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "IngScreen") {
-        composable(
-            Screen.ListIngs.route,
-            arguments = listOf(navArgument("title") {
-                defaultValue = Screen.ListIngs.title
-            })
-        ) { IngsScreen(navController) }
-        composable(Screen.Ingredient.route) { IngScreen(navController) }
-    }
 
     val state by vm.screenState.collectAsState()
 
@@ -119,7 +100,7 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
                 }
             }
             FloatingActionButton(
-                onClick = { },
+                onClick = {navController.navigate(Screen.Ingredient.route) },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),

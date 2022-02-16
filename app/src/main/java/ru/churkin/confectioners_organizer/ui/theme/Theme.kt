@@ -34,7 +34,7 @@ fun AppTheme(
     } else {
         lightColors(
 
-/*        secondary = BlueTheme,
+        /*secondary = BlueTheme,
         secondaryVariant = SecondBlueTheme,
         primary = HamburgerMenu,
         primaryVariant = BlackTheme,
@@ -45,7 +45,7 @@ fun AppTheme(
         onSecondary = TextOn,
         onBackground = TextOn,
         onSurface = TextOn,
-        onError = TextOn */
+        onError = TextOn*/
 
                  secondary = LightSecondary,
                  secondaryVariant = LightSecondaryVariant,

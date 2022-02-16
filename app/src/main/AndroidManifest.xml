@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Confectioners_organizer">
         <activity
-            android:name=".MainActivity"
+            android:name=".RootActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
