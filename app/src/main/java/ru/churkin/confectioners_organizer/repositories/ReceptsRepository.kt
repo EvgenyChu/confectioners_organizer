@@ -1,7 +1,9 @@
-package ru.churkin.confectioners_organizer.view_models.recept.data
+package ru.churkin.confectioners_organizer.repositories
 
 import ru.churkin.confectioners_organizer.local.PrefManager
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.recept.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 
 class ReceptsRepository {
 
@@ -25,4 +27,9 @@ class ReceptsRepository {
 
     fun countRecepts() = prefs.loadRecepts().size
 
+    fun loadIngredients(): List<Ingredient> = prefs.loadIngredients()
+
+    fun loadReceptIngredientItem(): List<ReceptIngredientItem> = prefs.loadReceptIngredientItem()
+
+    fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) = prefs.insertReceptIngredientItem(receptIngredientItem)
 }

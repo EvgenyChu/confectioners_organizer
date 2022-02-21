@@ -1,20 +1,23 @@
 package ru.churkin.confectioners_organizer.view_models.recept
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientsRepository
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
-import ru.churkin.confectioners_organizer.view_models.recept.data.ReceptsRepository
-import java.util.*
+import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
 class ReceptViewModel() : ViewModel() {
     val repository: ReceptsRepository = ReceptsRepository()
 
-    private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(ReceptState())
+
+    private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(initialState())
+
+    fun initialState(): ReceptState {
+        val ingredients =
+            repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
+        return ReceptState(totalIngredients = ingredients)
+    }
 
     val state: StateFlow<ReceptState>
         get() = _state
@@ -22,17 +25,34 @@ class ReceptViewModel() : ViewModel() {
     val currentState: ReceptState
         get() = state.value
 
-    fun updateTitle (title: String){
+    fun hideCreateDialog() {
+        _state.value = currentState.copy(isCreateDialog = false)
+    }
+
+    fun showCreateDialog() {
+        _state.value = currentState.copy(isCreateDialog = true)
+    }
+
+    fun updateTitle(title: String) {
         _state.value = currentState.copy(title = title)
     }
 
-   fun updateWeight (weight: Int){
+    fun updateWeight(weight: Int) {
         _state.value = currentState.copy(weight = weight)
     }
 
-    fun updateTime (time: Int){
+    fun updateTime(time: Int) {
         _state.value = currentState.copy(time = time)
     }
+
+    fun updateNote(note: String) {
+        _state.value = currentState.copy(note = note)
+    }
+
+    fun updateListIngredientForRecet(listIngredients: List<IngredientItem>) {
+        _state.value = currentState.copy(totalIngredients = listIngredients)
+    }
+
 
     fun addRecept(
         title: String,
@@ -42,7 +62,7 @@ class ReceptViewModel() : ViewModel() {
         note: String
 
     ) {
-        val recept= Recept(
+        val recept = Recept(
             title = title,
             weight = weight,
             time = time,
@@ -51,6 +71,17 @@ class ReceptViewModel() : ViewModel() {
         )
         repository.insertRecept(recept)
     }
+
+    fun createReceptIngredient(title: String, count: Int, availability: Boolean) {
+        val receptIngredientItem = ReceptIngredientItem(title, availability, count)
+        repository.insertReceptIngredientItem(receptIngredientItem)
+    }
+
+    fun loadReceptIngredient(){
+        _state.value = currentState.copy(ingredients = repository.loadReceptIngredientItem())
+        repository.loadReceptIngredientItem()
+    }
+
 }
 
 data class ReceptState(
@@ -58,8 +89,12 @@ data class ReceptState(
     val title: String = "",
     val weight: Int = 0,
     val time: Int = 0,
-    val listIngredients: List<Ingredient> = listOf(),
-    val note: String = "Примечание"
+    val totalIngredients: List<IngredientItem> = listOf(),
+    val ingredients: List<ReceptIngredientItem> = listOf(),
+    val note: String = "Примечание",
+    val isCreateDialog: Boolean = false,
+    val isConfirm: Boolean = false,
+    val available: Int = 0
 ) {
     companion object Factory {
 
@@ -69,7 +104,7 @@ data class ReceptState(
             title: String,
             weight: Int,
             time: Int,
-            listIngredients: List<Ingredient>,
+            listIngredients: List<IngredientItem>,
             note: String
 
         ): ReceptState {
@@ -80,9 +115,11 @@ data class ReceptState(
                 title = title,
                 weight = weight,
                 time = time,
-                listIngredients = listIngredients,
+                totalIngredients = listIngredients,
                 note = note
             )
         }
     }
 }
+
+

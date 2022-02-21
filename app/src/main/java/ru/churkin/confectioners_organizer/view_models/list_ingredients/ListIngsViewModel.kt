@@ -2,10 +2,8 @@ package ru.churkin.confectioners_organizer.view_models.list_ingredients
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientsRepository
+import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 
 class ListIngsViewModel() : ViewModel() {
 

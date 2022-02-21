@@ -14,7 +14,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientsRepository
+import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 
 class IngredientViewModel() : ViewModel() {
     val repository: IngredientsRepository = IngredientsRepository()

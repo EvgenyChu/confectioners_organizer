@@ -6,6 +6,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import ru.churkin.confectioners_organizer.App
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.view_models.recept.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 
 
@@ -70,6 +71,23 @@ object PrefManager {
         val str = Json.encodeToString(ListSerializer(Recept.serializer()), recepts)
         prefs.edit()
             .putString("MY_RECEPTS", str)
+            .apply()
+    }
+
+    fun loadReceptIngredientItem(): List<ReceptIngredientItem> {
+        val str = prefs.getString("RECEPT_INGREDIENTS", null)
+
+        str ?: return emptyList()
+        val ingredients = Json.decodeFromString(ListSerializer(ReceptIngredientItem.serializer()), str)
+        return ingredients
+    }
+
+    fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) {
+        val receptsIngredientItems = loadReceptIngredientItem().plus(receptIngredientItem)
+        val str = Json.encodeToString(ListSerializer(ReceptIngredientItem.serializer()), receptsIngredientItems)
+
+        prefs.edit()
+            .putString("RECEPT_INGREDIENTS", str)
             .apply()
     }
 }

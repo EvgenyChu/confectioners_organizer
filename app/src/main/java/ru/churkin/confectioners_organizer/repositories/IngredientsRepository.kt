@@ -1,6 +1,7 @@
-package ru.churkin.confectioners_organizer.view_models.ingredient.data
+package ru.churkin.confectioners_organizer.repositories
 
 import ru.churkin.confectioners_organizer.local.PrefManager
+import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
 
 class IngredientsRepository {
 
