@@ -10,28 +10,26 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.ListIngsViewModel
 
 @Composable
 fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()) {
 
-    val state by vm.screenState.collectAsState()
+    val state by vm.state.collectAsState()
 
-    AppTheme() {
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -116,12 +114,11 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
                 )
             }
         }
-    }
 }
 
 @Composable
 fun IngsCard(vm: ListIngsViewModel = viewModel(), ingredient: Ingredient) {
-    AppTheme() {
+
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
@@ -156,11 +153,11 @@ fun IngsCard(vm: ListIngsViewModel = viewModel(), ingredient: Ingredient) {
                     .height(1.dp),
                 color = MaterialTheme.colors.secondary
             )
-        }
     }
 }
 
 
+/*
 @Preview
 @Composable
 fun previewIngsCard() {
@@ -170,6 +167,7 @@ fun previewIngsCard() {
         )
     }
 }
+*/
 
 /*
 @Preview

@@ -1,29 +1,37 @@
 package ru.churkin.confectioners_organizer.view_models.recept
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
 class ReceptViewModel() : ViewModel() {
-    val repository: ReceptsRepository = ReceptsRepository()
+    private val repository: ReceptsRepository = ReceptsRepository()
 
 
     private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(initialState())
-
-    fun initialState(): ReceptState {
-        val ingredients =
-            repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
-        return ReceptState(totalIngredients = ingredients)
-    }
 
     val state: StateFlow<ReceptState>
         get() = _state
 
     val currentState: ReceptState
         get() = state.value
+
+    init {
+        viewModelScope.launch {
+            val ingredients =
+                repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
+            _state.value = currentState.copy(totalIngredients = ingredients)
+        }
+    }
+
+    private fun initialState(): ReceptState {
+        return ReceptState()
+    }
 
     fun hideCreateDialog() {
         _state.value = currentState.copy(isCreateDialog = false)
@@ -89,8 +97,8 @@ data class ReceptState(
     val title: String = "",
     val weight: Int = 0,
     val time: Int = 0,
-    val totalIngredients: List<IngredientItem> = listOf(),
-    val ingredients: List<ReceptIngredientItem> = listOf(),
+    val totalIngredients: List<IngredientItem> = emptyList(),
+    val ingredients: List<ReceptIngredientItem> = emptyList(),
     val note: String = "Примечание",
     val isCreateDialog: Boolean = false,
     val isConfirm: Boolean = false,

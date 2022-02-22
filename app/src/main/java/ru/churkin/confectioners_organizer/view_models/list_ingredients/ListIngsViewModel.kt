@@ -1,30 +1,47 @@
 package ru.churkin.confectioners_organizer.view_models.list_ingredients
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 
 class ListIngsViewModel() : ViewModel() {
 
-    val repository: IngredientsRepository = IngredientsRepository()
+    private val repository: IngredientsRepository = IngredientsRepository()
 
-    val screenState = MutableStateFlow(initialState())
+    private val _state = MutableStateFlow(initialState())
+
+    val state: StateFlow<ListIngsState>
+        get() = _state
 
     private val currentState: ListIngsState
-        get() = screenState.value
+        get() = _state.value
 
     private fun initialState(): ListIngsState {
 
         return ListIngsState(
-            ingredientsState = IngredientsState.Value(repository.loadIngredients()),
+            ingredientsState = IngredientsState.Loading,
             ingredients = emptyList()
         )
     }
 
+    init {
+        viewModelScope.launch {
+            val ingredients = repository.loadIngredients()
+            _state.value = currentState.copy(
+                ingredientsState = if (ingredients.isEmpty()) IngredientsState.Empty
+                else IngredientsState.Value(ingredients),
+                ingredients = ingredients
+            )
+        }
+    }
+
     data class ListIngsState(
-       val ingredients: List<Ingredient>,
-       val ingredientsState: IngredientsState = IngredientsState.Empty
+        val ingredients: List<Ingredient>,
+        val ingredientsState: IngredientsState = IngredientsState.Empty
     )
 }
 
@@ -32,6 +49,9 @@ sealed class IngredientsState {
     object Loading : IngredientsState()
     object Empty : IngredientsState()
     data class Value(val ingredients: List<Ingredient>) : IngredientsState()
-    data class ValueWithMessage(val indigrients: List<Ingredient>, val message: String = "Any message") :
+    data class ValueWithMessage(
+        val indigrients: List<Ingredient>,
+        val message: String = "Any message"
+    ) :
         IngredientsState()
 }

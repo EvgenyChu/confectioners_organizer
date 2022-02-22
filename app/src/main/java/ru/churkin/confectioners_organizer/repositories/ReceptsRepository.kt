@@ -1,16 +1,19 @@
 package ru.churkin.confectioners_organizer.repositories
 
 import ru.churkin.confectioners_organizer.local.PrefManager
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.local.db.AppDb
+import ru.churkin.confectioners_organizer.local.db.dao.IngredientDao
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
 
-class ReceptsRepository {
+class ReceptsRepository(
+    val ingredientDao: IngredientDao = AppDb.db.ingredientDao()
+    val receptDao: IngredientDao = AppDb.db.ingredientDao()
+) {
 
     private val prefs = PrefManager
 
-
-    fun loadRecepts(): List<Recept> = prefs.loadRecepts()
     fun insertRecept(recept: Recept) {
         val newInd = prefs.loadRecepts().lastOrNull()?.let { it.id + 1 } ?: 0
         prefs.insertRecept(recept.copy(id = newInd))
@@ -27,7 +30,7 @@ class ReceptsRepository {
 
     fun countRecepts() = prefs.loadRecepts().size
 
-    fun loadIngredients(): List<Ingredient> = prefs.loadIngredients()
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
 
     fun loadReceptIngredientItem(): List<ReceptIngredientItem> = prefs.loadReceptIngredientItem()
 

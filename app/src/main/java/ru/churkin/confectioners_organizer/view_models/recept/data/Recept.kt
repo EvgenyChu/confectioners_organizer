@@ -1,10 +1,8 @@
 package ru.churkin.confectioners_organizer.view_models.recept.data
 
 import kotlinx.serialization.Serializable
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 
-@Serializable
 data class Recept(
     val id: Int  = 0,
     val title: String = "",

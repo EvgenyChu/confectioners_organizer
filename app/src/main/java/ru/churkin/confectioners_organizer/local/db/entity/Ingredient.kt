@@ -1,11 +1,14 @@
-package ru.churkin.confectioners_organizer.view_models.ingredient.data
+package ru.churkin.confectioners_organizer.local.db.entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import ru.churkin.confectioners_organizer.view_models.ingredient.DateSerializer
 import java.util.*
 
-@Serializable
+@Entity(tableName = "ingredient")
 data class Ingredient(
+    @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val title: String = "",
     val availability: Boolean = false,
@@ -13,6 +16,5 @@ data class Ingredient(
     val unitsAvailable: String = "ед. изм.",
     val unitsPrice: String = "рубль за ______",
     val costPrice: Float = 0f,
-    @Serializable(with = DateSerializer::class)
     val sellBy: Date? = null
 )

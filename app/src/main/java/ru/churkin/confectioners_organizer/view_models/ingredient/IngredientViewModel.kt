@@ -2,8 +2,10 @@ package ru.churkin.confectioners_organizer.view_models.ingredient
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import ru.churkin.confectioners_organizer.date.parseDate
 import java.util.*
@@ -13,7 +15,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 
 class IngredientViewModel() : ViewModel() {
@@ -92,7 +94,9 @@ class IngredientViewModel() : ViewModel() {
             costPrice = costPrice,
             sellBy = sellBy
             )
-        repository.insertIngredient(ingredient)
+        viewModelScope.launch {
+            repository.insertIngredient(ingredient)
+        }
     }
 }
 

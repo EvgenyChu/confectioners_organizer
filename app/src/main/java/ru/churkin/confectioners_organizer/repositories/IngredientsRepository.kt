@@ -1,27 +1,21 @@
 package ru.churkin.confectioners_organizer.repositories
 
-import ru.churkin.confectioners_organizer.local.PrefManager
-import ru.churkin.confectioners_organizer.view_models.ingredient.data.Ingredient
+import ru.churkin.confectioners_organizer.local.db.AppDb
+import ru.churkin.confectioners_organizer.local.db.dao.IngredientDao
+import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 
-class IngredientsRepository {
+class IngredientsRepository(
+    private val ingredientDao: IngredientDao = AppDb.db.ingredientDao()
+) {
 
-    private val prefs = PrefManager
-
-
-    fun loadIngredients(): List<Ingredient> = prefs.loadIngredients()
-    fun insertIngredient(ingredient: Ingredient) {
-        val newInd = prefs.loadIngredients().lastOrNull()?.let { it.id + 1 } ?: 0
-        prefs.insertIngredient(ingredient.copy(id = newInd))
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
+    suspend fun insertIngredient(ingredient: Ingredient) {
+        ingredientDao.insert(ingredient = ingredient)
     }
 
-    fun removeIngredient(id: Int) {
-        val ingredients = prefs.loadIngredients()
-        val index = ingredients.indexOfFirst { it.id == id }
-        if (index == -1) return
-        prefs.removeIngredient(id)
+    suspend fun removeIngredient(id: Int) {
+       ingredientDao.delete(ingredientId = id)
     }
 
-    fun isEmptyIngredients() = prefs.loadIngredients().isEmpty()
-
-    fun countIngredients() = prefs.loadIngredients().size
+    suspend fun isEmptyIngredients() = ingredientDao.loadAll().isEmpty()
 }
