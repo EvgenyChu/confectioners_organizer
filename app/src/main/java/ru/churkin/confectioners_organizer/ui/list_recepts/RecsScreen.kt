@@ -1,6 +1,7 @@
 package ru.churkin.confectioners_organizer.listRecepts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,16 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
-import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
 
@@ -77,7 +74,9 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                     is ReceptsState.Value -> {
                         listState.recepts
                             .forEach {
-                                RecsCard(recept = it)
+                                ReceptItem(recept = it, onClick = { id ->
+                                    navController.navigate("recepts/$id")
+                                })
                             }
                     }
                     is ReceptsState.ValueWithMessage -> {}
@@ -117,7 +116,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
     }
 
 @Composable
-fun RecsCard(vm: RecsViewModel = viewModel(), recept: Recept) {
+fun ReceptItem(recept: Recept, onClick : (Long)-> Unit) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
@@ -126,6 +125,7 @@ fun RecsCard(vm: RecsViewModel = viewModel(), recept: Recept) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
+                    .clickable { onClick(recept.id) }
                     .padding(end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

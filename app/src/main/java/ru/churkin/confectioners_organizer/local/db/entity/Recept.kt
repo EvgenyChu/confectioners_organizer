@@ -3,21 +3,19 @@ package ru.churkin.confectioners_organizer.local.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import kotlinx.serialization.Serializable
-import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 
 @Entity(tableName = "recepts")
 data class Recept(
     @PrimaryKey(autoGenerate = true)
-    val id: Int  = 0,
+    val id: Long = 0,
     val title: String = "",
     val weight: Int = 0,
     val time: Int = 0,
-    val note: String = "Примечание"
+    val note: String = ""
 )
 
 data class ReceptFull(
-    val id: Int  = 0,
+    val id: Long = 0,
     val title: String = "",
     val weight: Int = 0,
     val time: Int = 0,
