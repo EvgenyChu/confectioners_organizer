@@ -1,21 +1,27 @@
 package ru.churkin.confectioners_organizer.view_models.recept
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
+@InternalCoroutinesApi
 class ReceptViewModel() : ViewModel() {
     private val repository: ReceptsRepository = ReceptsRepository()
 
     private val receptsIngredients: MutableList<ReceptIngredientItem> = mutableListOf()
 
-    private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(initialState())
+    private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(ReceptState())
 
     val state: StateFlow<ReceptState>
         get() = _state
@@ -25,9 +31,18 @@ class ReceptViewModel() : ViewModel() {
 
     init {
         viewModelScope.launch {
+            val loadRecept = repository.loadReceptIngredientItem()
             val ingredients =
                 repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
-            _state.value = currentState.copy(totalIngredients = ingredients)
+
+                _state.value = currentState.copy(totalIngredients = ingredients, ingredients = loadRecept)
+
+            Log.e("vm", currentState.totalIngredients.toString())
+            state.collect(object : FlowCollector<ReceptState>{
+                override suspend fun emit(value: ReceptState) {
+                    Log.e("state", value.toString())
+                }
+            })
         }
     }
 
@@ -94,13 +109,6 @@ class ReceptViewModel() : ViewModel() {
             repository.insertReceptIngredientItem(receptIngredientItem)
         }*/
     }
-
-    fun loadReceptIngredient() {
-        viewModelScope.launch {
-            _state.value = currentState.copy(ingredients = repository.loadReceptIngredientItem())
-            repository.loadReceptIngredientItem()
-        }
-    }
 }
 
     data class ReceptState(
@@ -114,32 +122,7 @@ class ReceptViewModel() : ViewModel() {
         val isCreateDialog: Boolean = false,
         val isConfirm: Boolean = false,
         val available: Int = 0
-    ) {
-        companion object Factory {
-
-            private var lastId: Int = -1
-
-            fun makeRecept(
-                title: String,
-                weight: Int,
-                time: Int,
-                listIngredients: List<IngredientItem>,
-                note: String
-
-            ): ReceptState {
-                lastId += 1
-
-                return ReceptState(
-                    id = lastId,
-                    title = title,
-                    weight = weight,
-                    time = time,
-                    totalIngredients = listIngredients,
-                    note = note
-                )
-            }
-        }
-    }
+    )
 
 
 

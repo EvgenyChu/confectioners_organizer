@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
 import ru.churkin.confectioners_organizer.recept.RecScreen
 import ru.churkin.confectioners_organizer.ui.drawer.DrawerScreens
@@ -14,6 +15,7 @@ import ru.churkin.confectioners_organizer.ui.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
+@InternalCoroutinesApi
 class RootActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

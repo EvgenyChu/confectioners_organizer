@@ -21,6 +21,7 @@ import ru.churkin.confectioners_organizer.listRecepts.RecsCard
 import ru.churkin.confectioners_organizer.view_models.order.data.Order
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import java.util.*
 
 @Composable
@@ -180,7 +181,7 @@ fun RealOrdScreen(order: Order) {
                     )
                 }
 
-                RecsCard()
+                RecsCard(recept = Recept())
 
                 IngsCard(ingredient = Ingredient(title = "Muka", availability = true))
 

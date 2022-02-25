@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.recept
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
@@ -27,6 +29,7 @@ import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
+@InternalCoroutinesApi
 @Composable
 fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
 
@@ -52,7 +55,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                     .fillMaxSize()
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -155,7 +158,6 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                         )
                     }
 
-                    vm.loadReceptIngredient()
                     if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
                         ReceptIngItem(receptIngredientItem = it)
                     }
@@ -227,6 +229,7 @@ fun CreateIngredientsDialog(
     onDismiss: () -> Unit,
     onCreate: (title: String, count: Int, availibility: Boolean) -> Unit
 ) {
+    Log.e("dialog", listIngredients.toString())
     var selectionItem: String? by remember { mutableStateOf(null) }
 
     var ingredientCount: Int by remember { mutableStateOf(0) }

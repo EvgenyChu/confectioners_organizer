@@ -6,18 +6,30 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
+import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
+import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
+import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
 
 @Composable
-fun RecsScreen(navController: NavController) {
+fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
+
+    val state by vm.state.collectAsState()
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -59,6 +71,17 @@ fun RecsScreen(navController: NavController) {
                         )
                     }
                 }
+                when (val listState = state.receptsState) {
+                    is ReceptsState.Empty -> {}
+                    is ReceptsState.Loading -> {}
+                    is ReceptsState.Value -> {
+                        listState.recepts
+                            .forEach {
+                                RecsCard(recept = it)
+                            }
+                    }
+                    is ReceptsState.ValueWithMessage -> {}
+                }
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 BottomAppBar(
@@ -75,7 +98,7 @@ fun RecsScreen(navController: NavController) {
                 }
             }
             FloatingActionButton(
-                onClick = { },
+                onClick = {navController.navigate(Screen.Recept.route) },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
@@ -94,8 +117,7 @@ fun RecsScreen(navController: NavController) {
     }
 
 @Composable
-fun RecsCard() {
-    AppTheme() {
+fun RecsCard(vm: RecsViewModel = viewModel(), recept: Recept) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
@@ -114,12 +136,12 @@ fun RecsCard() {
                     contentDescription = "Наличие"
                 )
                 Text(
-                    text = "Мука",
+                    text = recept.title,
                     style = MaterialTheme.typography.subtitle1
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = "300 г.",
+                    text = "${recept.weight} г.",
                     style = MaterialTheme.typography.subtitle1
                 )
             }
@@ -131,7 +153,6 @@ fun RecsCard() {
             )
         }
     }
-}
 
 
 /*
