@@ -14,7 +14,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 @Composable
 fun RealRecScreen(recept: Recept) {

@@ -1,6 +1,6 @@
 package ru.churkin.confectioners_organizer.listRecepts
 
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 sealed class RecsState {
     object Loading : RecsState()

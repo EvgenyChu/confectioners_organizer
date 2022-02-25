@@ -7,10 +7,10 @@ import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 
 @Dao
 interface IngredientDao {
-    @Query("SELECT * FROM ingredient")
+    @Query("SELECT * FROM ingredients")
     suspend fun loadAll() : List<Ingredient>
     @Insert
     suspend fun insert(ingredient: Ingredient)
-    @Query("DELETE FROM ingredient WHERE id = :ingredientId")
+    @Query("DELETE FROM ingredients WHERE id = :ingredientId")
     suspend fun delete(ingredientId: Int)
 }

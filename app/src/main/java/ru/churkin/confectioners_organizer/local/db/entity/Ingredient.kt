@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import ru.churkin.confectioners_organizer.view_models.ingredient.DateSerializer
 import java.util.*
 
-@Entity(tableName = "ingredient")
+@Entity(tableName = "ingredients")
 data class Ingredient(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

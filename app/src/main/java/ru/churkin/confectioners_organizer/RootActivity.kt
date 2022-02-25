@@ -7,7 +7,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
 import ru.churkin.confectioners_organizer.recept.RecScreen
+import ru.churkin.confectioners_organizer.ui.drawer.DrawerScreens
 import ru.churkin.confectioners_organizer.ui.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
@@ -22,6 +24,7 @@ class RootActivity : ComponentActivity() {
                     composable(Screen.ListIngs.route) { IngsScreen(navController = navController) }
                     composable(Screen.Ingredient.route) { IngScreen(navController = navController) }
                     composable(Screen.Recept.route) { RecScreen(navController = navController) }
+                    composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                 }
             }
 
@@ -33,6 +36,7 @@ sealed class Screen(val route: String, val title: String) {
     object Ingredient : Screen("ingredient", "ingredient")
     object ListIngs : Screen("listIngredients", "listIngs")
     object Recept : Screen("recept", "recept")
+    object Recepts : Screen("recepts", "recepts")
 }
 
 

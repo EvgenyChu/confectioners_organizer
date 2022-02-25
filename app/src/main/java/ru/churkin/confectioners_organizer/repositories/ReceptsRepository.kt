@@ -1,38 +1,39 @@
 package ru.churkin.confectioners_organizer.repositories
 
-import ru.churkin.confectioners_organizer.local.PrefManager
 import ru.churkin.confectioners_organizer.local.db.AppDb
 import ru.churkin.confectioners_organizer.local.db.dao.IngredientDao
+import ru.churkin.confectioners_organizer.local.db.dao.ReceptDao
+import ru.churkin.confectioners_organizer.local.db.dao.ReceptIngredientItemDao
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.view_models.recept.ReceptIngredientItem
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptFull
 
 class ReceptsRepository(
-    val ingredientDao: IngredientDao = AppDb.db.ingredientDao()
-    val receptDao: IngredientDao = AppDb.db.ingredientDao()
+    val ingredientDao: IngredientDao = AppDb.db.ingredientDao(),
+    val receptDao: ReceptDao = AppDb.db.receptDao(),
+    val receptIngredientItemDao: ReceptIngredientItemDao = AppDb.db.receptIngredientItemDao()
 ) {
 
-    private val prefs = PrefManager
+    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll()
 
-    fun insertRecept(recept: Recept) {
-        val newInd = prefs.loadRecepts().lastOrNull()?.let { it.id + 1 } ?: 0
-        prefs.insertRecept(recept.copy(id = newInd))
+    suspend fun loadRecept(id: Int): ReceptFull = receptDao.loadReceptFull(id)
+
+    suspend fun insertRecept(recept: Recept, ingredients: List<ReceptIngredientItem>) {
+        val id = receptDao.insert(recept = recept)
+        receptIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(receptId = id.toInt()) })
     }
 
-    fun removeRecept(id: Int) {
-        val recepts = prefs.loadRecepts()
-        val index = recepts.indexOfFirst { it.id == id }
-        if (index == -1) return
-        prefs.removeRecept(id)
+    suspend fun removeRecept(id: Int) {
+        receptDao.delete(receptId = id)
     }
 
-    fun isEmptyRecepts() = prefs.loadRecepts().isEmpty()
-
-    fun countRecepts() = prefs.loadRecepts().size
+    suspend fun isEmptyRecepts() = receptDao.loadAll().isEmpty()
 
     suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
 
-    fun loadReceptIngredientItem(): List<ReceptIngredientItem> = prefs.loadReceptIngredientItem()
+    suspend fun loadReceptIngredientItem(): List<ReceptIngredientItem> = receptIngredientItemDao.loadAll()
 
-    fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) = prefs.insertReceptIngredientItem(receptIngredientItem)
+    suspend fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) =
+        receptIngredientItemDao.insert(receptIngredientItem = receptIngredientItem)
 }

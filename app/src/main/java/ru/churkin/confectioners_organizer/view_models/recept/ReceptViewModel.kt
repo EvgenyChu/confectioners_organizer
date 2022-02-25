@@ -6,12 +6,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
 class ReceptViewModel() : ViewModel() {
     private val repository: ReceptsRepository = ReceptsRepository()
 
+    private val receptsIngredients: MutableList<ReceptIngredientItem> = mutableListOf()
 
     private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(initialState())
 
@@ -66,7 +68,6 @@ class ReceptViewModel() : ViewModel() {
         title: String,
         weight: Int,
         time: Int,
-        listIngredients: List<Ingredient>,
         note: String
 
     ) {
@@ -74,60 +75,71 @@ class ReceptViewModel() : ViewModel() {
             title = title,
             weight = weight,
             time = time,
-            listIngredients = listIngredients,
             note = note
         )
-        repository.insertRecept(recept)
+        viewModelScope.launch {
+            repository.insertRecept(recept, receptsIngredients)
+        }
     }
 
     fun createReceptIngredient(title: String, count: Int, availability: Boolean) {
-        val receptIngredientItem = ReceptIngredientItem(title, availability, count)
-        repository.insertReceptIngredientItem(receptIngredientItem)
-    }
-
-    fun loadReceptIngredient(){
-        _state.value = currentState.copy(ingredients = repository.loadReceptIngredientItem())
-        repository.loadReceptIngredientItem()
-    }
-
-}
-
-data class ReceptState(
-    val id: Int = 0,
-    val title: String = "",
-    val weight: Int = 0,
-    val time: Int = 0,
-    val totalIngredients: List<IngredientItem> = emptyList(),
-    val ingredients: List<ReceptIngredientItem> = emptyList(),
-    val note: String = "Примечание",
-    val isCreateDialog: Boolean = false,
-    val isConfirm: Boolean = false,
-    val available: Int = 0
-) {
-    companion object Factory {
-
-        private var lastId: Int = -1
-
-        fun makeRecept(
-            title: String,
-            weight: Int,
-            time: Int,
-            listIngredients: List<IngredientItem>,
-            note: String
-
-        ): ReceptState {
-            lastId += 1
-
-            return ReceptState(
-                id = lastId,
+        val receptIngredientItem =
+            ReceptIngredientItem(
                 title = title,
-                weight = weight,
-                time = time,
-                totalIngredients = listIngredients,
-                note = note
+                availability = availability,
+                count = count
             )
+        receptsIngredients.add(receptIngredientItem)
+        /*viewModelScope.launch {
+            repository.insertReceptIngredientItem(receptIngredientItem)
+        }*/
+    }
+
+    fun loadReceptIngredient() {
+        viewModelScope.launch {
+            _state.value = currentState.copy(ingredients = repository.loadReceptIngredientItem())
+            repository.loadReceptIngredientItem()
         }
     }
 }
+
+    data class ReceptState(
+        val id: Int = 0,
+        val title: String = "",
+        val weight: Int = 0,
+        val time: Int = 0,
+        val totalIngredients: List<IngredientItem> = emptyList(),
+        val ingredients: List<ReceptIngredientItem> = emptyList(),
+        val note: String = "",
+        val isCreateDialog: Boolean = false,
+        val isConfirm: Boolean = false,
+        val available: Int = 0
+    ) {
+        companion object Factory {
+
+            private var lastId: Int = -1
+
+            fun makeRecept(
+                title: String,
+                weight: Int,
+                time: Int,
+                listIngredients: List<IngredientItem>,
+                note: String
+
+            ): ReceptState {
+                lastId += 1
+
+                return ReceptState(
+                    id = lastId,
+                    title = title,
+                    weight = weight,
+                    time = time,
+                    totalIngredients = listIngredients,
+                    note = note
+                )
+            }
+        }
+    }
+
 
 

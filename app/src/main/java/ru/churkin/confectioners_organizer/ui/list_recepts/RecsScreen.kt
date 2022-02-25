@@ -12,12 +12,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
 @Composable
-fun RecsScreen() {
-    AppTheme() {
+fun RecsScreen(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,7 +92,6 @@ fun RecsScreen() {
             }
         }
     }
-}
 
 @Composable
 fun RecsCard() {
@@ -135,6 +134,7 @@ fun RecsCard() {
 }
 
 
+/*
 @Preview
 @Composable
 fun previewRecsCard() {
@@ -149,4 +149,4 @@ fun previewRecs() {
     AppTheme {
         RecsScreen()
     }
-}
+}*/

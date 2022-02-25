@@ -19,11 +19,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
-import ru.churkin.confectioners_organizer.view_models.recept.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
 @Composable
@@ -31,7 +32,6 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
 
-    AppTheme() {
         val colors = TextFieldDefaults.textFieldColors(
             textColor = MaterialTheme.colors.onPrimary,
             backgroundColor = MaterialTheme.colors.background,
@@ -73,7 +73,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                         )
                     }
                 }
-                Column( Modifier.verticalScroll(rememberScrollState())) {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
                     TextField(
                         value = state.title,
                         onValueChange = { vm.updateTitle(it) },
@@ -98,6 +98,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                             .height(56.dp)
                             .fillMaxWidth(),
                         textStyle = MaterialTheme.typography.subtitle1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         label = {
                             Text(
                                 "Выход, грамм",
@@ -114,6 +115,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                             .height(56.dp)
                             .fillMaxWidth(),
                         textStyle = MaterialTheme.typography.subtitle1,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         label = {
                             Text(
                                 "Время приготовления, мин.",
@@ -123,30 +125,24 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                         colors = colors
                     )
 
-
-                    TextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = MaterialTheme.typography.subtitle1,
-                        enabled = false,
-                        label = {
-                            Text(
-                                "Добавьте ингредиент, кол-во",
-                                style = MaterialTheme.typography.subtitle2,
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(onClick = { vm.showCreateDialog() }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                                    tint = MaterialTheme.colors.secondary,
-                                    contentDescription = "Наличие"
-                                )
-                            }
-                        },
-                        colors = colors
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .clickable { vm.showCreateDialog() }
+                            .padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text = "Добавьте ингредиент, кол-во",
+                            modifier = Modifier.fillMaxWidth(),
+                            style = MaterialTheme.typography.subtitle2
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
+                            tint = MaterialTheme.colors.secondary,
+                            contentDescription = "Наличие"
+                        )
+                    }
 
                     if (state.isCreateDialog) {
                         CreateIngredientsDialog(
@@ -171,7 +167,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                             .height(56.dp)
                             .fillMaxWidth(),
                         textStyle = MaterialTheme.typography.subtitle1,
-                        placeholder = {
+                        label = {
                             Text(
                                 "Примечание",
                                 style = MaterialTheme.typography.subtitle2
@@ -200,7 +196,15 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
                 }
             }
             FloatingActionButton(
-                onClick = { },
+                onClick = {
+                    vm.addRecept(
+                        state.title,
+                        state.weight,
+                        state.time,
+                        state.note
+                    )
+                    navController.navigate(Screen.Recepts.route)
+                },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
@@ -214,7 +218,7 @@ fun RecScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
             }
         }
     }
-}
+
 
 
 @Composable

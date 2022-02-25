@@ -2,7 +2,7 @@ package ru.churkin.confectioners_organizer.view_models.list_recepts
 
 import androidx.lifecycle.ViewModel
 import ru.churkin.confectioners_organizer.listRecepts.RecsState
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 class RecsViewModel(): ViewModel() {
     data class RecsScreenState(

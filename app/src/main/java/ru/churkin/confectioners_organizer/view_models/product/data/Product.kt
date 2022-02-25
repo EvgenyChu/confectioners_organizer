@@ -1,7 +1,7 @@
 package ru.churkin.confectioners_organizer.view_models.product.data
 
 import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
-import ru.churkin.confectioners_organizer.view_models.recept.data.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 data class Product(
     val id: Int,
