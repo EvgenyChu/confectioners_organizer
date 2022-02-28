@@ -27,9 +27,15 @@ class ReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
         viewModelScope.launch {
             val recept = repository.loadRecept(id)
+
+            _state.value = currentState.copy(
+                id = recept.id,
+                title = recept.title,
+                weight = recept.weight,
+                time = recept.time,
+                note = recept.note,
+                ingredients = recept.listIngredients ?: emptyList()
+            )
         }
-
-
     }
-
 }

@@ -42,7 +42,7 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
                     .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                    IconButton(onClick = {navController.navigate(Screen.Recept.route) }) {
+                    IconButton(onClick = {navController.navigate("recepts") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                             tint = MaterialTheme.colors.onPrimary,

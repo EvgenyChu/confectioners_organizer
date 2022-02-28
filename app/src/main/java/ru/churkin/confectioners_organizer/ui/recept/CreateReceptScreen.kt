@@ -32,7 +32,14 @@ import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewMod
 @Composable
 fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel = viewModel()) {
 
+    Log.e(
+        "nav",
+        "${navController.currentBackStackEntry?.destination?.route} ${navController.currentDestination?.route}"
+    )
     val state by vm.state.collectAsState()
+
+    val title by remember{ mutableStateOf(if (navController.currentDestination?.route == "recepts/create") "Новый рецепт"
+    else "Редактирование рецепта")}
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -62,7 +69,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
                     )
                 }
                 Text(
-                    "Новый рецепт",
+                    title,
                     style = MaterialTheme.typography.h6,
                 )
                 Spacer(Modifier.weight(1f, true))
@@ -302,7 +309,7 @@ fun CreateIngredientsDialog(
                     textStyle = MaterialTheme.typography.body2,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
-                        .height(44.dp)
+                        .height(56.dp)
                         .fillMaxWidth(),
                     label = {
                         Text(

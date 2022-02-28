@@ -16,7 +16,7 @@ interface ReceptDao {
     suspend fun insert(recept: Recept): Long
 
     @Query("DELETE FROM recepts WHERE id = :receptId")
-    suspend fun delete(receptId: Int)
+    suspend fun delete(receptId: Long)
 
     @Query(
         """

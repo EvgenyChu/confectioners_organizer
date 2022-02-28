@@ -1,6 +1,7 @@
 package ru.churkin.confectioners_organizer.view_models.recept
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -13,7 +14,8 @@ import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
 @InternalCoroutinesApi
-class CreateReceptViewModel() : ViewModel() {
+class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+    private var id: Long? = savedStateHandle.get<Long>("id")
     private val repository: ReceptsRepository = ReceptsRepository()
     private val receptsIngredients: MutableList<ReceptIngredientItem> = mutableListOf()
     private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(ReceptState())
@@ -26,9 +28,20 @@ class CreateReceptViewModel() : ViewModel() {
 
     init {
         viewModelScope.launch {
-
-            val id = repository.createRecept()
-            _state.value = currentState.copy(id = id)
+            if (id == null) {
+                val localId = repository.createRecept()
+                _state.value = currentState.copy(id = localId)
+                id = localId
+            } else {
+                val recept = repository.loadRecept(checkNotNull(id))
+                _state.value = currentState.copy(
+                    id = recept.id,
+                    title = recept.title,
+                    weight = recept.weight,
+                    time = recept.time,
+                    note = recept.note
+                )
+            }
 
             val ingredients = repository.loadReceptIngredients(currentState.id)
             val availableIngredients =

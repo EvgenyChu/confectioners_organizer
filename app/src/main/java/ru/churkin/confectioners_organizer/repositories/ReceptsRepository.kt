@@ -24,7 +24,7 @@ class ReceptsRepository(
         receptIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(receptId = id.toInt()) })
     }
 
-    suspend fun removeRecept(id: Int) {
+    suspend fun removeRecept(id: Long) {
         receptDao.delete(receptId = id)
     }
 

@@ -27,6 +27,12 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
 
+    /*val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd)
+        }
+    )*/
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,6 +87,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                     }
                     is ReceptsState.ValueWithMessage -> {}
                 }
+                Spacer(modifier = Modifier.height(56.dp))
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 BottomAppBar(
@@ -97,7 +104,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                 }
             }
             FloatingActionButton(
-                onClick = {navController.navigate(Screen.Recept.route) },
+                onClick = {navController.navigate("recepts/create") },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
@@ -117,6 +124,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
 
 @Composable
 fun ReceptItem(recept: Recept, onClick : (Long)-> Unit) {
+
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)

@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
+import ru.churkin.confectioners_organizer.recept.EditReceptScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
@@ -26,8 +27,11 @@ class RootActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = Screen.ListIngs.route) {
                     composable(Screen.ListIngs.route) { IngsScreen(navController = navController) }
                     composable(Screen.Ingredient.route) { IngScreen(navController = navController) }
-                    composable(Screen.Recept.route) { CreateReceptScreen(navController = navController) }
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
+                    composable("recepts/create") { CreateReceptScreen(navController = navController) }
+                    composable("recepts/edit/{id}",
+                        arguments = listOf(navArgument("id") { type = NavType.LongType })
+                    ) { CreateReceptScreen(navController = navController) }
                     composable(
                         "recepts/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
