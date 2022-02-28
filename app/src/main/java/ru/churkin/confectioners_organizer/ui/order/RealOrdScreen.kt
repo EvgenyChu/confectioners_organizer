@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
-import ru.churkin.confectioners_organizer.listRecepts.RecsCard
+import ru.churkin.confectioners_organizer.listRecepts.ReceptItem
 import ru.churkin.confectioners_organizer.view_models.order.data.Order
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
@@ -181,7 +181,7 @@ fun RealOrdScreen(order: Order) {
                     )
                 }
 
-                RecsCard(recept = Recept())
+                ReceptItem(recept = Recept(), {})
 
                 IngsCard(ingredient = Ingredient(title = "Muka", availability = true))
 

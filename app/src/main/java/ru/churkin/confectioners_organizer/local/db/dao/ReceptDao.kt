@@ -2,6 +2,7 @@ package ru.churkin.confectioners_organizer.local.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptFull
@@ -11,7 +12,7 @@ interface ReceptDao {
     @Query("SELECT * FROM recepts")
     suspend fun loadAll(): List<Recept>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recept: Recept): Long
 
     @Query("DELETE FROM recepts WHERE id = :receptId")
@@ -23,5 +24,5 @@ interface ReceptDao {
         WHERE id = :receptId
     """
     )
-    suspend fun loadReceptFull(receptId: Int):ReceptFull
+    suspend fun loadReceptFull(receptId: Long):ReceptFull
 }

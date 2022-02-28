@@ -17,7 +17,7 @@ class ReceptsRepository(
 
     suspend fun loadRecepts(): List<Recept> = receptDao.loadAll()
 
-    suspend fun loadRecept(id: Int): ReceptFull = receptDao.loadReceptFull(id)
+    suspend fun loadRecept(id: Long): ReceptFull = receptDao.loadReceptFull(id)
 
     suspend fun insertRecept(recept: Recept, ingredients: List<ReceptIngredientItem>) {
         val id = receptDao.insert(recept = recept)
@@ -32,8 +32,12 @@ class ReceptsRepository(
 
     suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
 
-    suspend fun loadReceptIngredientItem(): List<ReceptIngredientItem> = receptIngredientItemDao.loadAll()
+    suspend fun loadReceptIngredients(receptId: Long) =
+        receptIngredientItemDao.loadReceptIngredients(receptId)
 
     suspend fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) =
         receptIngredientItemDao.insert(receptIngredientItem = receptIngredientItem)
+
+    suspend fun createRecept() : Long  = receptDao.insert(Recept())
+
 }

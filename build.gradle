@@ -1,8 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        compose_version = '1.2.0-alpha01'
-        roomVersion = "2.4.1"
+        compose_version = '1.2.0-alpha04'
+        roomVersion = "2.4.2"
+        lifecycle_version = "2.5.0-alpha03"
     }
     repositories {
         google()
