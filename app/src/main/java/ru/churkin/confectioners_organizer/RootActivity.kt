@@ -3,6 +3,7 @@ package ru.churkin.confectioners_organizer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,13 +11,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
-import ru.churkin.confectioners_organizer.recept.EditReceptScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.IngScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
+@ExperimentalMaterialApi
 @InternalCoroutinesApi
 class RootActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

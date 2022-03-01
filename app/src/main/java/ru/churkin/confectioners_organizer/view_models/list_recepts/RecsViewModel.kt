@@ -5,13 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.churkin.confectioners_organizer.listRecepts.RecsState
-import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
-import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
-import ru.churkin.confectioners_organizer.view_models.list_ingredients.ListIngsViewModel
 
 class RecsViewModel(): ViewModel() {
 
@@ -41,6 +36,16 @@ class RecsViewModel(): ViewModel() {
                 else ReceptsState.Value(recepts),
                 recepts = recepts
             )
+        }
+    }
+
+    fun removeRecept(id: Long) {
+        viewModelScope.launch{
+            repository.removeRecept(id = id)
+            val recepts = repository.loadRecepts()
+            _state.value = currentState.copy(receptsState = if (recepts.isEmpty()) ReceptsState.Empty
+            else ReceptsState.Value(recepts),
+                recepts = recepts)
         }
     }
 
