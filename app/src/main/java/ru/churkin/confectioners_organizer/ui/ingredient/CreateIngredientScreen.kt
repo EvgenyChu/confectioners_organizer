@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -23,9 +24,18 @@ import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
 @Composable
-fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = viewModel()) {
+fun CreateIngredientScreen(
+    navController: NavController,
+    vm: CreateIngredientViewModel = viewModel()
+) {
 
     val state by vm.state.collectAsState()
+    val title by remember {
+        mutableStateOf(
+            if (navController.currentDestination?.route == "ingredients/create") "Новый ингредиент"
+            else "Редактирование"
+        )
+    }
     var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
@@ -53,7 +63,10 @@ fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = view
                 .verticalScroll(rememberScrollState())
         ) {
             TopAppBar() {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                    vm.removeIngredient(state.id)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                         tint = MaterialTheme.colors.onPrimary,
@@ -61,7 +74,7 @@ fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = view
                     )
                 }
                 Text(
-                    "Новый ингредиент",
+                    title,
                     style = MaterialTheme.typography.h6
                 )
                 Spacer(Modifier.weight(1f, true))
@@ -152,7 +165,9 @@ fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = view
 
                 Text(
                     state.unitsAvailable,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable { openDialogUnits = true },
                     style = if (state.unitsAvailable == "ед. изм.") MaterialTheme.typography.subtitle2
                     else MaterialTheme.typography.subtitle1
                 )
@@ -241,7 +256,9 @@ fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = view
 
                 Text(
                     state.unitsPrice,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable { openDialogUnitsPrice = true },
                     style = if (state.unitsPrice == "рубль за ______") MaterialTheme.typography.subtitle2
                     else MaterialTheme.typography.subtitle1
                 )
@@ -358,16 +375,8 @@ fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = view
         }
         FloatingActionButton(
             onClick = {
-                vm.addIngredient(
-                    state.title,
-                    state.availability,
-                    state.available,
-                    state.unitsAvailable,
-                    state.unitsPrice,
-                    state.costPrice,
-                    state.sellBy
-                )
-                navController.navigate(Screen.ListIngs.route)
+                vm.addIngredient()
+                navController.navigate(Screen.Ingredients.route)
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)

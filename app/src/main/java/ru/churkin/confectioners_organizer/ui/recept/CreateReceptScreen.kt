@@ -38,8 +38,12 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     )
     val state by vm.state.collectAsState()
 
-    val title by remember{ mutableStateOf(if (navController.currentDestination?.route == "recepts/create") "Новый рецепт"
-    else "Редактирование рецепта")}
+    val title by remember {
+        mutableStateOf(
+            if (navController.currentDestination?.route == "recepts/create") "Новый рецепт"
+            else "Редактирование рецепта"
+        )
+    }
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -61,7 +65,10 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
                 .fillMaxSize()
         ) {
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                    vm.removeRecept(state.id)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                         tint = MaterialTheme.colors.onPrimary,
@@ -70,11 +77,11 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
                 }
                 Text(
                     title,
-                    style = MaterialTheme.typography.h6,
+                    style = if (title == "Новый рецепт") MaterialTheme.typography.h6 else MaterialTheme.typography.h5,
                 )
                 Spacer(Modifier.weight(1f, true))
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = { vm.emptyState() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_delete_24),
                         tint = MaterialTheme.colors.onPrimary,
@@ -257,6 +264,7 @@ fun CreateIngredientsDialog(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth()
+
             ) {
                 Text(
                     text = "Выберете ингредиент из списка",
@@ -266,10 +274,7 @@ fun CreateIngredientsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                ) {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     listIngredients.forEach {
                         val backgroundColor =
                             if (selectionItem == it.title) Color.Red
@@ -300,8 +305,8 @@ fun CreateIngredientsDialog(
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(Modifier.weight(1f, true))
+                /*Spacer(modifier = Modifier.height(16.dp))*/
 
                 TextField(
                     value = "$ingredientCount",

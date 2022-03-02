@@ -16,12 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsCard
+
 import ru.churkin.confectioners_organizer.listRecepts.ReceptItem
 import ru.churkin.confectioners_organizer.view_models.order.data.Order
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.ui.list_ingredients.IngredientItem
 import java.util.*
 
 @Composable
@@ -183,7 +184,7 @@ fun RealOrdScreen(order: Order) {
 
                 ReceptItem(recept = Recept(), {})
 
-                IngsCard(ingredient = Ingredient(title = "Muka", availability = true))
+               /* IngredientItem(ingredient = Ingredient(title = "Muka", availability = true))*/
 
                 Row(
                     modifier = Modifier

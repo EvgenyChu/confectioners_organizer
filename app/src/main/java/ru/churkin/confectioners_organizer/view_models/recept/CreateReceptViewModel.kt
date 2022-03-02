@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
+import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
+import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 
 @InternalCoroutinesApi
 class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -85,6 +87,10 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         _state.value = currentState.copy(note = note)
     }
 
+    fun emptyState() {
+        _state.value = ReceptState()
+    }
+
 
     fun addRecept() {
         val recept = currentState.toRecept()
@@ -103,6 +109,12 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         receptsIngredients.add(receptIngredientItem)
         _state.value =
             currentState.copy(ingredients = receptsIngredients.toList(), isCreateDialog = false)
+    }
+    fun removeRecept(id: Long) {
+        viewModelScope.launch{
+            repository.removeRecept(id = id)
+            repository.loadRecepts()
+        }
     }
 }
 

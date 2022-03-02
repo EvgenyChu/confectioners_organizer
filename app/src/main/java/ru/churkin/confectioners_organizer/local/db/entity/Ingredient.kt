@@ -9,7 +9,7 @@ import java.util.*
 @Entity(tableName = "ingredients")
 data class Ingredient(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val title: String = "",
     val availability: Boolean = false,
     val available: Int = 0,

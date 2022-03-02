@@ -9,6 +9,7 @@ import ru.churkin.confectioners_organizer.local.db.entity.ReceptFull
 
 @Dao
 interface ReceptDao {
+
     @Query("SELECT * FROM recepts")
     suspend fun loadAll(): List<Recept>
 

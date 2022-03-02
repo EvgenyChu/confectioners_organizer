@@ -72,8 +72,9 @@ fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typogr
         fontSize = 34.sp
     ),
     h5 = TextStyle(
-        fontFamily = montserrataIternatesMedium,
-        fontSize = 24.sp
+        fontFamily = montserrataIternatesBold,
+        fontSize = 17.sp,
+        color = onPrimary
     ),
     h6 = TextStyle(
         fontFamily = montserrataIternatesBold,

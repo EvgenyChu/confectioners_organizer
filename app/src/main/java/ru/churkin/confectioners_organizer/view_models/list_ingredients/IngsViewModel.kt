@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
+import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 
-class ListIngsViewModel() : ViewModel() {
+class IngsViewModel() : ViewModel() {
 
     private val repository: IngredientsRepository = IngredientsRepository()
 
@@ -36,6 +37,16 @@ class ListIngsViewModel() : ViewModel() {
                 else IngredientsState.Value(ingredients),
                 ingredients = ingredients
             )
+        }
+    }
+
+    fun removeIngredient(id: Long) {
+        viewModelScope.launch{
+            repository.removeIngredient(id = id)
+            val ingredients = repository.loadIngredients()
+            _state.value = currentState.copy(ingredientsState = if (ingredients.isEmpty()) IngredientsState.Empty
+            else IngredientsState.Value(ingredients),
+                ingredients = ingredients)
         }
     }
 

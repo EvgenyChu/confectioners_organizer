@@ -1,31 +1,38 @@
 package ru.churkin.confectioners_organizer.ui.list_ingredients
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
-import ru.churkin.confectioners_organizer.view_models.list_ingredients.ListIngsViewModel
+import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngsViewModel
 
+@ExperimentalMaterialApi
 @Composable
-fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()) {
+fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
 
@@ -39,7 +46,6 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
             Column(
                 Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                     IconButton(onClick = {navController.navigate("recepts") }) {
@@ -75,14 +81,62 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
                     is IngredientsState.Empty -> {}
                     is IngredientsState.Loading -> {}
                     is IngredientsState.Value -> {
-                        listState.ingredients
-                            .forEach {
-                                IngsCard(ingredient = it)
+                        LazyColumn {
+                            items(listState.ingredients, { it.id }) { item ->
+
+                                val dismissState = rememberDismissState()
+                                if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                                    vm.removeIngredient(item.id)
+                                }
+                                SwipeToDismiss(
+                                    state = dismissState,
+                                    directions = setOf(
+                                        DismissDirection.StartToEnd,
+                                    ),
+                                    background = {
+
+                                        val color by animateColorAsState(
+                                            when (dismissState.targetValue) {
+                                                DismissValue.Default -> MaterialTheme.colors.surface
+                                                else -> MaterialTheme.colors.secondary
+                                            }
+                                        )
+
+                                        val icon = Icons.Default.Delete
+
+                                        val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                        val alignment = Alignment.CenterStart
+
+
+                                        Box(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .background(color)
+                                                .padding(start = 16.dp, end = 16.dp),
+                                            contentAlignment = alignment
+                                        ) {
+                                            Icon(
+                                                icon,
+                                                contentDescription = "icon",
+                                                modifier = Modifier.scale(scale)
+                                            )
+                                        }
+                                    },
+                                    dismissContent = {
+                                        IngredientItem(ingredient = item, onClick = { id ->
+                                            navController.navigate("ingredients/$id")
+                                        })
+                                    }
+                                )
                             }
+                        }
                     }
                     is IngredientsState.ValueWithMessage -> {}
                     }
             }
+            Spacer(modifier = Modifier.height(56.dp))
+
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 BottomAppBar(
                     backgroundColor = MaterialTheme.colors.primary,
@@ -117,7 +171,7 @@ fun IngsScreen(navController: NavController, vm: ListIngsViewModel = viewModel()
 }
 
 @Composable
-fun IngsCard(vm: ListIngsViewModel = viewModel(), ingredient: Ingredient) {
+fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
 
         Column(
             modifier = Modifier
@@ -125,9 +179,10 @@ fun IngsCard(vm: ListIngsViewModel = viewModel(), ingredient: Ingredient) {
         ) {
             Row(
                 modifier = Modifier
-                    .padding(end = 16.dp)
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .clickable { onClick(ingredient.id) }
+                    .padding(end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
