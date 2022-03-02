@@ -15,14 +15,14 @@ interface ReceptDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recept: Recept): Long
 
-    @Query("DELETE FROM recepts WHERE id = :receptId")
-    suspend fun delete(receptId: Long)
+    @Query("DELETE FROM recepts WHERE id = :id")
+    suspend fun delete(id: Long)
 
     @Query(
         """
         SELECT * FROM recepts
-        WHERE id = :receptId
+        WHERE id = :id
     """
     )
-    suspend fun loadReceptFull(receptId: Long):ReceptFull
+    suspend fun loadReceptFull(id: Long):ReceptFull
 }

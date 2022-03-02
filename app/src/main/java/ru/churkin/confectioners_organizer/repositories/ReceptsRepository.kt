@@ -25,7 +25,7 @@ class ReceptsRepository(
     }
 
     suspend fun removeRecept(id: Long) {
-        receptDao.delete(receptId = id)
+        receptDao.delete(id = id)
     }
 
     suspend fun isEmptyRecepts() = receptDao.loadAll().isEmpty()

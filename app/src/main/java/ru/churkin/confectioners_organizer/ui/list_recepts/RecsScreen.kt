@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -84,45 +85,50 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                 is ReceptsState.Value -> {
                     LazyColumn {
                         items(listState.recepts, { it.id }) { item ->
-                            ReceptItem(recept = item, onClick = { id ->
-                                navController.navigate("recepts/$id")
-                            })
+
                             val dismissState = rememberDismissState()
-                            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
                                 vm.removeRecept(item.id)
                             }
                             SwipeToDismiss(
                                 state = dismissState,
                                 directions = setOf(
                                     DismissDirection.StartToEnd,
-                                    DismissDirection.EndToStart
                                 ),
                                 background = {
 
-                                    val direction =
-                                        dismissState.dismissDirection ?: return@SwipeToDismiss
-
                                     val color by animateColorAsState(
                                         when (dismissState.targetValue) {
-                                            DismissValue.Default -> Color.White
-                                            else -> Color.Red
+                                            DismissValue.Default -> MaterialTheme.colors.surface
+                                            else -> MaterialTheme.colors.secondary
                                         }
                                     )
 
-                                    val icon = when (direction) {
-                                        DismissDirection.EndToStart -> Icons.Default.Delete
-                                        DismissDirection.StartToEnd -> Icons.Default.Done
+                                    val icon = Icons.Default.Delete
+
+                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                    val alignment = Alignment.CenterStart
+
+
+                                    Box(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(color)
+                                            .padding(start = 16.dp, end = 16.dp),
+                                        contentAlignment = alignment
+                                    ) {
+                                        Icon(
+                                            icon,
+                                            contentDescription = "icon",
+                                            modifier = Modifier.scale(scale)
+                                        )
                                     }
-                                    
-                                    val scfle by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
                                 },
                                 dismissContent = {
-                                    Card(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        elevation = animateDpAsState(targetValue = if (dismissState.dismissDirection != null) 4.dp else 0.dp).value
-                                    ) {
-                                        listState.recepts
-                                    }
+                                    ReceptItem(recept = item, onClick = { id ->
+                                        navController.navigate("recepts/$id")
+                                    })
                                 }
                             )
                         }

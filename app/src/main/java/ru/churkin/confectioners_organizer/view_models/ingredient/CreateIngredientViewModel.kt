@@ -18,7 +18,7 @@ import kotlinx.serialization.encoding.Encoder
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 
-class IngredientViewModel() : ViewModel() {
+class CreateIngredientViewModel() : ViewModel() {
     val repository: IngredientsRepository = IngredientsRepository()
 
     private val _state: MutableStateFlow<IngredientState> = MutableStateFlow(IngredientState())

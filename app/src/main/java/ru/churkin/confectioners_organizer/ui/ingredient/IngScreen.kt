@@ -11,24 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientViewModel
+import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
 @Composable
-fun IngScreen(navController: NavController, vm: IngredientViewModel = viewModel()) {
+fun IngScreen(navController: NavController, vm: CreateIngredientViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
     var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
