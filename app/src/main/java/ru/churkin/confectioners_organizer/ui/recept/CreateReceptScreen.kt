@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,7 +41,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     }
     val title by remember {
         mutableStateOf(
-            if (isCreate) "Новый рецепт" else "Редактирование рецепта"
+            if (isCreate) "Новый рецепт" else "Редактирование"
         )
     }
 
@@ -257,7 +259,7 @@ fun CreateIngredientsDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(4.dp),
+            shape = RoundedCornerShape(4.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -273,39 +275,41 @@ fun CreateIngredientsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                    listIngredients.forEach {
-                        val backgroundColor =
-                            if (selectionItem == it.title) Color.Red
-                            else Color.Transparent
+                Box(modifier = Modifier.width(300.dp).height(300.dp)) {
+                    LazyColumn() {
+                        listIngredients.forEach {
+                            val backgroundColor =
+                                if (selectionItem == it.title) Color.Red
+                                else Color.Transparent
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .background(color = backgroundColor)
-                                .clickable(onClick = {
-                                    selectionItem = it.title
-                                })
-                                .height(44.dp)
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth()
-                        ) {
-                            Icon(
-                                modifier = Modifier.padding(16.dp),
-                                painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                                tint = if (it.availability) Green else Red,
-                                contentDescription = "Наличие"
-                            )
+                            item {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .background(color = backgroundColor)
+                                        .clickable(onClick = {
+                                            selectionItem = it.title
+                                        })
+                                        .height(44.dp)
+                                        .padding(horizontal = 16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.padding(16.dp),
+                                        painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                                        tint = if (it.availability) Green else Red,
+                                        contentDescription = "Наличие"
+                                    )
 
-                            Text(
-                                text = it.title,
-                                style = MaterialTheme.typography.body2
-                            )
+                                    Text(
+                                        text = it.title,
+                                        style = MaterialTheme.typography.body2
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-                Spacer(Modifier.weight(1f, true))
-                /*Spacer(modifier = Modifier.height(16.dp))*/
 
                 TextField(
                     value = "$ingredientCount",
@@ -323,8 +327,6 @@ fun CreateIngredientsDialog(
                     },
                     colors = colors
                 )
-
-
 
                 Row(
                     modifier = Modifier

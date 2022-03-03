@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "recept_ingredient_items")
-data class ReceptIngredientItem(
+@Entity(tableName = "product_recept_items")
+data class ProductReceptItem(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "item_id")
     val id: Long = 0,
@@ -13,6 +13,6 @@ data class ReceptIngredientItem(
     val availability: Boolean,
     val count: Int = 0,
     // TODO: 25.02.2022 add forign key
-    @ColumnInfo(name = "recept_id")
-    val receptId: Long = 0
+    @ColumnInfo(name = "product_id")
+    val productId: Long = 0
 )

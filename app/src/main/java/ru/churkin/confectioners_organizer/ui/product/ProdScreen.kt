@@ -17,7 +17,6 @@ import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
 @Composable
 fun ProductScreen() {
-    AppTheme() {
         val colors = TextFieldDefaults.textFieldColors(
             textColor = MaterialTheme.colors.onPrimary,
             backgroundColor = MaterialTheme.colors.background,
@@ -247,11 +246,9 @@ fun ProductScreen() {
             }
         }
     }
-}
 
 @Composable
 fun ProdRecCard() {
-    AppTheme() {
         Column(modifier = Modifier
             .background(color = MaterialTheme.colors.background)) {
             Row(
@@ -286,11 +283,9 @@ fun ProdRecCard() {
             )
         }
     }
-}
 
 @Composable
 fun ProdIngCard() {
-    AppTheme() {
         Column(modifier = Modifier
             .background(color = MaterialTheme.colors.background)) {
             Row(
@@ -324,8 +319,8 @@ fun ProdIngCard() {
             )
         }
     }
-}
 
+/*
 @Preview
 @Composable
 fun previewProduct() {
@@ -348,4 +343,4 @@ fun previewProductIngredientCard() {
     AppTheme {
         ProdIngCard()
     }
-}
+}*/

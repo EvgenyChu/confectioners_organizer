@@ -36,8 +36,7 @@ fun CreateIngredientScreen(
     }
     val title by remember {
         mutableStateOf(
-            if (isCreate) "Новый ингредиент"
-            else "Редактирование"
+            if (isCreate) "Новый ингредиент" else "Редактирование"
         )
     }
     Log.e("title", "${navController.currentDestination?.route}")
@@ -80,7 +79,8 @@ fun CreateIngredientScreen(
                 }
                 Text(
                     title,
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(Modifier.weight(1f, true))
 

@@ -21,7 +21,7 @@ class ReceptsRepository(
 
     suspend fun insertRecept(recept: Recept, ingredients: List<ReceptIngredientItem>) {
         val id = receptDao.insert(recept = recept)
-        receptIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(receptId = id.toInt()) })
+        receptIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(receptId = id) })
     }
 
     suspend fun removeRecept(id: Long) {

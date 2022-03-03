@@ -48,7 +48,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                 .fillMaxSize()
         ) {
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = { navController.navigate("orders")}) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                         tint = MaterialTheme.colors.onPrimary,
@@ -83,7 +83,7 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                 is ReceptsState.Loading -> {}
 
                 is ReceptsState.Value -> {
-                    LazyColumn {
+                    LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                         items(listState.recepts, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
@@ -137,7 +137,6 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
 
                 is ReceptsState.ValueWithMessage -> {}
             }
-            Spacer(modifier = Modifier.height(56.dp))
         }
         Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
             BottomAppBar(

@@ -3,8 +3,7 @@ package ru.churkin.confectioners_organizer.repositories
 import ru.churkin.confectioners_organizer.local.db.AppDb
 import ru.churkin.confectioners_organizer.local.db.dao.IngredientDao
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptFull
+
 
 class IngredientsRepository(
     private val ingredientDao: IngredientDao = AppDb.db.ingredientDao()

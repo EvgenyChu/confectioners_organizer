@@ -6,20 +6,27 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.churkin.confectioners_organizer.App
 import ru.churkin.confectioners_organizer.local.db.converter.Converters
-import ru.churkin.confectioners_organizer.local.db.dao.IngredientDao
-import ru.churkin.confectioners_organizer.local.db.dao.ReceptDao
-import ru.churkin.confectioners_organizer.local.db.dao.ReceptIngredientItemDao
-import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.local.db.dao.*
+import ru.churkin.confectioners_organizer.local.db.entity.*
 
 
-@Database(entities = [Ingredient::class, Recept::class, ReceptIngredientItem::class], version = 1)
+@Database(entities = [
+    Ingredient::class,
+    Recept::class,
+    ReceptIngredientItem::class,
+    Order::class,
+    Product::class,
+    ProductReceptItem::class,
+    ProductIngredientItem::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun ingredientDao(): IngredientDao
     abstract fun receptDao(): ReceptDao
     abstract fun receptIngredientItemDao(): ReceptIngredientItemDao
+    abstract fun orderDao(): OrderDao
+    abstract fun productDao(): ProductDao
+    abstract fun productReceptItemDao(): ProductReceptItemDao
+    abstract fun productIngredientItemDao(): ProductIngredientItemDao
 }
 
 object AppDb{

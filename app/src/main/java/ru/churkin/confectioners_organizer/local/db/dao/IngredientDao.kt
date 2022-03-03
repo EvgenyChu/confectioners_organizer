@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptFull
 
 @Dao
 interface IngredientDao {

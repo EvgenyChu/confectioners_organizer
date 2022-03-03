@@ -1,26 +1,48 @@
 package ru.churkin.confectioners_organizer.listOrders
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.listRecepts.ReceptItem
+import ru.churkin.confectioners_organizer.local.db.entity.Order
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
+import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
+import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
+import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
+import java.lang.String.format
 
+@ExperimentalMaterialApi
 @Composable
-fun OrdersScreen() {
-    AppTheme() {
+fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()) {
+
+    val state by vm.state.collectAsState()
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -62,6 +84,66 @@ fun OrdersScreen() {
                         )
                     }
                 }
+                when (val listState = state.ordersState) {
+
+                    is OrdersState.Empty -> {}
+                    is OrdersState.Loading -> {}
+
+                    is OrdersState.Value -> {
+                        LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
+                            items(listState.orders, { it.id }) { item ->
+
+                                val dismissState = rememberDismissState()
+                                if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                                    vm.removeOrder(item.id)
+                                }
+                                SwipeToDismiss(
+                                    state = dismissState,
+                                    directions = setOf(
+                                        DismissDirection.StartToEnd,
+                                    ),
+                                    background = {
+
+                                        val color by animateColorAsState(
+                                            when (dismissState.targetValue) {
+                                                DismissValue.Default -> MaterialTheme.colors.surface
+                                                else -> MaterialTheme.colors.secondary
+                                            }
+                                        )
+
+                                        val icon = Icons.Default.Delete
+
+                                        val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                        val alignment = Alignment.CenterStart
+
+
+                                        Box(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .background(color)
+                                                .padding(start = 16.dp, end = 16.dp),
+                                            contentAlignment = alignment
+                                        ) {
+                                            Icon(
+                                                icon,
+                                                contentDescription = "icon",
+                                                modifier = Modifier.scale(scale)
+                                            )
+                                        }
+                                    },
+                                    dismissContent = {
+                                        OrderItem(order = item, onClick = { id ->
+                                            navController.navigate("orders/$id")
+                                        })
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    is OrdersState.ValueWithMessage -> {}
+                }
             }
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
 
@@ -100,12 +182,10 @@ fun OrdersScreen() {
                 )
             }
         }
-    }
 }
 
 @Composable
-fun OrdersCard() {
-    AppTheme() {
+fun OrderItem(order: Order, onClick: (Long) -> Unit) {
         Column(modifier = Modifier
             .background(color = MaterialTheme.colors.background)) {
             Row(
@@ -124,7 +204,7 @@ fun OrdersCard() {
                     Spacer(modifier = Modifier.padding(top = 8.dp))
                     Row(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
-                            text = "Лукьянов Владимир Александрович",
+                            text = order.customer,
                             style = MaterialTheme.typography.caption,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -145,13 +225,13 @@ fun OrdersCard() {
                     Spacer(modifier = Modifier.padding(top = 8.dp))
                     Row(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
-                            text = "+79287456351",
+                            text = "${order.phone}",
                             style = MaterialTheme.typography.caption,
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = " 6000 руб. ",
+                            text = " ${order.price} руб. ",
                             style = MaterialTheme.typography.caption,
                             modifier = Modifier
                                 .background(
@@ -164,14 +244,14 @@ fun OrdersCard() {
                     Spacer(modifier = Modifier.padding(top = 16.dp))
                     Row(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
-                            text = "Торт, эклеры",
+                            text = "${order.product ?: ""}",
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.caption,
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = "31.01.2022",
+                            text = order.deadline?.format() ?: "",
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.caption
                         )
@@ -187,9 +267,9 @@ fun OrdersCard() {
             )
         }
     }
-}
 
 
+/*
 @Preview
 @Composable
 fun previewOrdersCard() {
@@ -204,4 +284,4 @@ fun previewOrders() {
     AppTheme {
         OrdersScreen()
     }
-}
+}*/
