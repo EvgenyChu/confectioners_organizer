@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.ui.ingredient
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,12 +31,16 @@ fun CreateIngredientScreen(
 ) {
 
     val state by vm.state.collectAsState()
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "ingredients/create")
+    }
     val title by remember {
         mutableStateOf(
-            if (navController.currentDestination?.route == "ingredients/create") "Новый ингредиент"
+            if (isCreate) "Новый ингредиент"
             else "Редактирование"
         )
     }
+    Log.e("title", "${navController.currentDestination?.route}")
     var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
@@ -65,7 +70,7 @@ fun CreateIngredientScreen(
             TopAppBar() {
                 IconButton(onClick = {
                     navController.popBackStack()
-                    vm.removeIngredient(state.id)
+                    if (isCreate) vm.removeIngredient(state.id)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),

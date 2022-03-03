@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,16 +33,13 @@ import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewMod
 @Composable
 fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel = viewModel()) {
 
-    Log.e(
-        "nav",
-        "${navController.currentBackStackEntry?.destination?.route} ${navController.currentDestination?.route}"
-    )
     val state by vm.state.collectAsState()
-
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "recepts/create")
+    }
     val title by remember {
         mutableStateOf(
-            if (navController.currentDestination?.route == "recepts/create") "Новый рецепт"
-            else "Редактирование рецепта"
+            if (isCreate) "Новый рецепт" else "Редактирование рецепта"
         )
     }
 
@@ -67,7 +65,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                 IconButton(onClick = {
                     navController.popBackStack()
-                    vm.removeRecept(state.id)
+                    if (isCreate) vm.removeRecept(state.id)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
@@ -77,7 +75,8 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
                 }
                 Text(
                     title,
-                    style = if (title == "Новый рецепт") MaterialTheme.typography.h6 else MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.h6,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(Modifier.weight(1f, true))
 

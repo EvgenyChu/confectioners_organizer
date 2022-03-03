@@ -81,7 +81,7 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                     is IngredientsState.Empty -> {}
                     is IngredientsState.Loading -> {}
                     is IngredientsState.Value -> {
-                        LazyColumn {
+                        LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                             items(listState.ingredients, { it.id }) { item ->
 
                                 val dismissState = rememberDismissState()
@@ -130,12 +130,12 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                                     }
                                 )
                             }
+                            /*item { Spacer(modifier = Modifier.height(56.dp)) }*/
                         }
                     }
                     is IngredientsState.ValueWithMessage -> {}
                     }
             }
-            Spacer(modifier = Modifier.height(56.dp))
 
             Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
                 BottomAppBar(
@@ -152,7 +152,7 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                 }
             }
             FloatingActionButton(
-                onClick = {navController.navigate(Screen.Ingredient.route) },
+                onClick = {navController.navigate("ingredients/create") },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),

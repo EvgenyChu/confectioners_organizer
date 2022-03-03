@@ -28,7 +28,6 @@ class RootActivity : ComponentActivity() {
             AppTheme() {
                 NavHost(navController = navController, startDestination = Screen.Ingredients.route) {
                     composable(Screen.Ingredients.route) { IngsScreen(navController = navController) }
-                    composable(Screen.Ingredient.route) { CreateIngredientScreen(navController = navController) }
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                     composable("recepts/create") { CreateReceptScreen(navController = navController) }
                     composable("recepts/edit/{id}",
