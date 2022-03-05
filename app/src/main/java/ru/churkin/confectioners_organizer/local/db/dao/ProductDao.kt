@@ -14,16 +14,10 @@ interface ProductDao {
         @Query("SELECT * FROM products")
         suspend fun loadAll() : List<Product>
 
-        @Query("""
-        SELECT * FROM products
-        WHERE order_id = :id
-    """)
-        suspend fun loadProducts(id: Long) : List<Product>
-
         @Insert
         suspend fun insert(product: Product) : Long
 
-        @Query("DELETE FROM products WHERE item_id = :id")
+        @Query("DELETE FROM products WHERE id = :id")
         suspend fun delete(id: Long)
 
         @Insert
@@ -32,7 +26,7 @@ interface ProductDao {
         @Query(
                 """
         SELECT * FROM products
-        WHERE order_id = :id
+        WHERE id = :id
     """
         )
         suspend fun loadProductFull(id: Long): ProductFull

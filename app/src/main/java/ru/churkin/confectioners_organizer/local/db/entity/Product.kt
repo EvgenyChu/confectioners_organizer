@@ -11,15 +11,12 @@ import java.util.*
 @Entity(tableName = "products")
 data class Product(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "item_id")
     val id: Long = 0,
     val title: String = "",
     val weight: Int = 0,
     val units: String = "",
     val costPrice: Int = 0,
     val price: Int = 0,
-    @ColumnInfo(name = "order_id")
-    val orderId: Long = 0
 )
 
 data class ProductFull(
@@ -39,6 +36,4 @@ data class ProductFull(
     val listIngredients: List<ProductIngredientItem>? = listOf(),
     val costPrice: Int = 0,
     val price: Int = 0,
-    @ColumnInfo(name = "order_id")
-    val orderId: Long = 0
 )

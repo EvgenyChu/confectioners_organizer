@@ -244,7 +244,7 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                     Spacer(modifier = Modifier.padding(top = 16.dp))
                     Row(modifier = Modifier.padding(end = 16.dp)) {
                         Text(
-                            text = "${order.product ?: ""}",
+                            text = "",
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.caption,
                             overflow = TextOverflow.Ellipsis

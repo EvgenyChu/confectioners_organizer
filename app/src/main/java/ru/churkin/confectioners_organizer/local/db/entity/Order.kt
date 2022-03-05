@@ -12,29 +12,20 @@ data class Order(
     val customer: String = "",
     val phone: String? = null,
     val deadline: Date? = null,
-    val delivery: Boolean = false,
-    val addresss: String? = null,
+    val needDelivery: Boolean = false,
+    val address: String? = null,
     val price: Int = 0,
-    val paid: Boolean = false,
+    val isPaid: Boolean = false,
     val note: String? = "",
-    var implementation: Boolean = false
+    var isCooked: Boolean = false
 )
 
-data class OrderFull(
+data class OrderItem(
     val id: Long = 0,
     val customer: String = "",
     val phone: String? = null,
     val deadline: Date? = null,
-    val delivery: Boolean = false,
-    val addresss: String? = null,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "order_id"
-    )
-    val product: List<Product>? = emptyList(),
+    val needDelivery: Boolean = false,
     val price: Int = 0,
-    val paid: Boolean = false,
-    val note: String? = "",
-    var implementation: Boolean = false
-
+    val isPaid: Boolean = false
 )

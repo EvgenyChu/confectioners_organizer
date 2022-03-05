@@ -10,14 +10,17 @@ import ru.churkin.confectioners_organizer.local.db.dao.*
 import ru.churkin.confectioners_organizer.local.db.entity.*
 
 
-@Database(entities = [
-    Ingredient::class,
-    Recept::class,
-    ReceptIngredientItem::class,
-    Order::class,
-    Product::class,
-    ProductReceptItem::class,
-    ProductIngredientItem::class], version = 1)
+@Database(
+    entities = [
+        Ingredient::class,
+        Recept::class,
+        ReceptIngredientItem::class,
+        Order::class,
+        Product::class,
+        ProductReceptItem::class,
+        ProductIngredientItem::class,
+        OrderProductItem::class], version = 1
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun ingredientDao(): IngredientDao
@@ -27,9 +30,10 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun productReceptItemDao(): ProductReceptItemDao
     abstract fun productIngredientItemDao(): ProductIngredientItemDao
+    abstract fun orderProductItemDao(): OrderProductItemDao
 }
 
-object AppDb{
+object AppDb {
     val db = Room
         .databaseBuilder(App.applicationContext(), AppDatabase::class.java, "Organizer")
         .build()
