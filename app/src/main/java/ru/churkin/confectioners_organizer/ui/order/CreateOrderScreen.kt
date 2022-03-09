@@ -18,7 +18,11 @@ import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
+import ru.churkin.confectioners_organizer.ui.theme.Green
+import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
 @Composable
@@ -37,10 +41,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
     }
 
     var isShowDatePicker by remember { mutableStateOf(false) }
-
-    var needDelivery by remember { mutableStateOf("Отсутствует") }
-    val paidOrder = remember { mutableStateOf("Заказ не оплачен") }
-    val checkedState = remember { mutableStateOf(false) }
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -168,7 +168,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = needDelivery,
+                    if (state.needDelivery) "Доставка" else "Без доставки",
                     style = MaterialTheme.typography.subtitle1
                 )
 
@@ -178,8 +178,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                     checked = state.needDelivery,
                     onCheckedChange = {
                         vm.updateNeedDelivery(it)
-                        if (state.needDelivery) needDelivery = "Без доставки"
-                        else needDelivery = "Доставка"
                     },
                     colors = SwitchDefaults.colors(
                         uncheckedThumbColor = Color(0xFFE61610),
@@ -199,7 +197,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 onValueChange = { vm.updateAddress(it) },
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = MaterialTheme.typography.subtitle1,
-                enabled = !state.needDelivery,
+                enabled = state.needDelivery,
                 placeholder = {
                     Text(
                         "Адрес доставки",
@@ -267,7 +265,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = paidOrder.value,
+                    if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
                     style = MaterialTheme.typography.subtitle1,
                 )
 
@@ -277,8 +275,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                     checked = state.isPaid,
                     onCheckedChange = {
                         vm.updateIsPaid(it)
-                        if (checkedState.value) paidOrder.value = "Заказ оплачен"
-                        else paidOrder.value = "Заказ не оплачен"
                     },
                     colors = SwitchDefaults.colors(
                         uncheckedThumbColor = Color(0xFFE61610),
@@ -311,6 +307,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 },
                 colors = colors
             )
+            Spacer(modifier = Modifier.height(56.dp))
         }
 
 
@@ -345,5 +342,40 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 contentDescription = "Добавить"
             )
         }
+    }
+}
+
+@Composable
+fun OrderProductItem(orderProductItem: OrderProductItem) {
+    Column(
+        modifier = Modifier
+
+            .background(color = MaterialTheme.colors.background)
+    ) {
+        Row(
+            modifier = Modifier
+                .height(44.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = orderProductItem.title,
+                style = MaterialTheme.typography.subtitle1
+            )
+            Spacer(Modifier.weight(1f))
+            Column() {
+                Text(
+                    text = "${orderProductItem.weight} ${orderProductItem.units}",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = "${orderProductItem.price} руб.",
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
+        }
+        Divider(color = MaterialTheme.colors.secondary)
     }
 }

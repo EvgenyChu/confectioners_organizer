@@ -13,9 +13,11 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.ingredient.IngredientScreen
 import ru.churkin.confectioners_organizer.listOrders.OrdersScreen
 import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
+import ru.churkin.confectioners_organizer.order.OrderScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.CreateIngredientScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
+import ru.churkin.confectioners_organizer.ui.order.CreateOrderScreen
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
@@ -31,18 +33,26 @@ class RootActivity : ComponentActivity() {
                     composable(Screen.Ingredients.route) { IngsScreen(navController = navController) }
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                     composable(Screen.Orders.route) { OrdersScreen(navController = navController) }
+                    composable("orders/create") { CreateOrderScreen(navController = navController) }
                     composable("recepts/create") { CreateReceptScreen(navController = navController) }
+                    composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
+                    composable("orders/edit/{id}",
+                        arguments = listOf(navArgument("id") { type = NavType.LongType })
+                    ) { CreateOrderScreen(navController = navController) }
                     composable("recepts/edit/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
                     ) { CreateReceptScreen(navController = navController) }
+                    composable("ingredients/edit/{id}",
+                        arguments = listOf(navArgument("id") { type = NavType.LongType })
+                    ) { CreateIngredientScreen(navController = navController) }
+                    composable(
+                        "orders/{id}",
+                        arguments = listOf(navArgument("id") { type = NavType.LongType })
+                    ) { OrderScreen(navController = navController) }
                     composable(
                         "recepts/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
                     ) { ReceptScreen(navController = navController) }
-                    composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
-                    composable("ingredients/edit/{id}",
-                        arguments = listOf(navArgument("id") { type = NavType.LongType })
-                    ) { CreateIngredientScreen(navController = navController) }
                     composable(
                         "ingredients/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })

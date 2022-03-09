@@ -12,29 +12,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
+import ru.churkin.confectioners_organizer.ui.order.OrderProductItem
+import ru.churkin.confectioners_organizer.ui.recept.ReceptIngItem
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
-import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
-import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
+import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
 @Composable
-fun OrderScreen() {
+fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) {
 
-    val paidOrder = remember { mutableStateOf("Заказ не оплачен")}
-    val checkedState = remember { mutableStateOf(false) }
+    val state by vm.state.collectAsState()
 
-        val colors = TextFieldDefaults.textFieldColors(
-            textColor = MaterialTheme.colors.onPrimary,
-            backgroundColor = MaterialTheme.colors.background,
-            disabledTextColor = MaterialTheme.colors.background,
-            placeholderColor = MaterialTheme.colors.background,
-            disabledPlaceholderColor = MaterialTheme.colors.background,
-            focusedIndicatorColor = MaterialTheme.colors.secondary,
-            cursorColor = MaterialTheme.colors.onPrimary
-        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -47,7 +40,7 @@ fun OrderScreen() {
                     .verticalScroll(rememberScrollState())
             ) {
                 TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {navController.popBackStack() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -55,221 +48,185 @@ fun OrderScreen() {
                         )
                     }
                     Text(
-                        "Новый заказ",
+                        "Заказ",
                         style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.navigate("orders/edit/${state.id}") }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                            painter = painterResource(id = R.drawable.ic_baseline_edit_24),
                             tint = MaterialTheme.colors.onPrimary,
                             contentDescription = "Очистить"
                         )
                     }
                 }
 
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "ФИО заказчика",
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                                tint = MaterialTheme.colors.secondary,
-                                contentDescription = "Поиск контактов"
-                            )
-                        }
-                    },
-                    colors = colors
-                )
-
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier
+                Row(
+                    Modifier
                         .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Телефон заказчика",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
-                )
-
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "дд/мм/гггг",
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                                tint = MaterialTheme.colors.secondary,
-                                contentDescription = "Календарь"
-                            )
-                        }
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onPrimary,
-                        backgroundColor = MaterialTheme.colors.background
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        state.customer,
+                        style = MaterialTheme.typography.subtitle1
                     )
-                )
+                }
 
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Доставка",
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-                    },
-                    leadingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_check_circle),
-                                tint = MaterialTheme.colors.secondaryVariant,
-                                contentDescription = "Доставка"
-                            )
-                        }
-                    },
-                    colors = colors
-                )
+                Divider(color = MaterialTheme.colors.secondary)
 
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Адрес доставки",
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_location_on_24),
-                                tint = MaterialTheme.colors.secondary,
-                                contentDescription = "Геолокация"
-                            )
-                        }
-                    },
-                    colors = colors
-                )
-
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Добавьте изделие",
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                                tint = MaterialTheme.colors.secondary,
-                                contentDescription = "Добавить изделие"
-                            )
-                        }
-                    },
-                    colors = colors
-                )
-
-
-                TextField(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier
+                Row(
+                    Modifier
                         .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "0 руб.",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
-                )
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        state.phone ?: "",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+
+                Divider(color = MaterialTheme.colors.secondary)
 
                 Row(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
                         .fillMaxWidth()
                         .height(56.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = paidOrder.value,
+                        text = "Годен до: ${state.deadLine?.format("dd.MM.yyyy")}",
+                        modifier = Modifier
+                            .padding(start = 16.dp),
                         style = MaterialTheme.typography.subtitle1,
                     )
-
-                    Spacer(Modifier.weight(1f, true))
-
-                    Switch(
-                        checked = checkedState.value,
-                        onCheckedChange = { checkedState.value = it
-                            if (checkedState.value) paidOrder.value = "Заказ оплачен"
-                            else  paidOrder.value = "Заказ не оплачен"},
-                        colors = SwitchDefaults.colors(
-                            uncheckedThumbColor = Color(0xFFE61610),
-                            uncheckedTrackColor = Color(0xFF840705),
-                            checkedThumbColor = Color(0xFF72BB53),
-                            checkedTrackColor = Color(0xFF4C7A34)
-                        )
-                    )
                 }
-
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp),
-                    color = MaterialTheme.colors.surface
+                    color = MaterialTheme.colors.secondary
                 )
 
-                TextField(
-                    value = "",
-                    onValueChange = { },
+                Row(
                     modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Примечание",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(start = 16.dp),
+                        painter = painterResource(id = R.drawable.ic_baseline_check_circle),
+                        tint = if (!state.needDelivery) MaterialTheme.colors.surface else MaterialTheme.colors.secondary,
+                        contentDescription = "Доставка"
+                    )
+                    Text(
+                        text = if (state.needDelivery) "Доставка" else "Без доставки",
+                        modifier = Modifier
+                            .padding(start = 16.dp),
+                        style = MaterialTheme.typography.subtitle1,
+                    )
+                }
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
                 )
+
+                Row(
+                    Modifier
+                        .height(56.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        state.address ?: "Адрес доставки не указан",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+
+                Divider(color = MaterialTheme.colors.secondary)
+
+                Row(
+                    Modifier
+                        .height(56.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Список изделий для заказа:",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Divider(color = MaterialTheme.colors.secondary)
+
+                if (state.products.isNotEmpty()) state.products.forEach {
+                    OrderProductItem(orderProductItem = it)
+                }
+
+
+                Row(
+                    Modifier
+                        .height(56.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "${state.price} руб.",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+
+                Divider(color = MaterialTheme.colors.secondary)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(start = 16.dp),
+                        painter = painterResource(id = R.drawable.ic_baseline_check_circle),
+                        tint = if (state.isPaid) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
+                        contentDescription = "Доставка"
+                    )
+                    Text(
+                        text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
+                        modifier = Modifier
+                            .padding(start = 16.dp),
+                        style = MaterialTheme.typography.subtitle1,
+                    )
+                }
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = MaterialTheme.colors.secondary
+                )
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Примечание: \n${state.note}",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Divider(color = MaterialTheme.colors.secondary)
+
+                Spacer(modifier = Modifier.height(56.dp))
             }
 
 
@@ -281,7 +238,7 @@ fun OrderScreen() {
                 ) {
 
                     Text(
-                        "Рецептов много не бывает)",
+                        "Пора начать готовить)",
                         modifier = Modifier.padding(start = 12.dp),
                         style = MaterialTheme.typography.body1
                     )
@@ -289,7 +246,9 @@ fun OrderScreen() {
                 }
             }
             FloatingActionButton(
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.Orders.route)
+                },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
@@ -297,20 +256,18 @@ fun OrderScreen() {
                 contentColor = MaterialTheme.colors.secondary
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_check_circle_outline_24),
-                    modifier = Modifier
-                        .size(64.dp),
-                    contentDescription = "Добавить",
-                    tint = MaterialTheme.colors.secondary
+                    painter = painterResource(id = R.drawable.ic_baseline_done_24),
+                    contentDescription = "Добавить"
                 )
             }
         }
     }
 
+/*
 @Preview
 @Composable
 fun previewOrder() {
     AppTheme {
         OrderScreen()
     }
-}
+}*/
