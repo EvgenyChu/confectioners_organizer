@@ -6,13 +6,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.date.parseDate
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
-import ru.churkin.confectioners_organizer.local.db.entity.Product
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
-import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
-import ru.churkin.confectioners_organizer.view_models.recept.toRecept
 import java.util.*
 
 class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -39,7 +36,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     id = order.id,
                     customer = order.customer,
                     phone = order.phone,
-                    deadline = order.deadline,
+                    deadLine = order.deadline,
                     needDelivery = order.needDelivery,
                     address = order.address,
                     price = order.price,
@@ -58,6 +55,44 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             )
         }
     }
+
+    fun updateCustomer(customer: String) {
+        _state.value = currentState.copy(customer = customer)
+    }
+
+    fun updatePhone(phone: String?) {
+        _state.value = currentState.copy(phone = phone)
+    }
+
+    fun updateDeadLine(deadLine: String) {
+        if (deadLine.isEmpty()) return
+        _state.value = currentState.copy(deadLine = deadLine.parseDate())
+    }
+
+    fun updateNeedDelivery(needDelivery: Boolean) {
+        _state.value = currentState.copy(needDelivery = needDelivery)
+    }
+
+    fun updateAddress(address: String?) {
+        _state.value = currentState.copy(address = address)
+    }
+
+    fun updatePrice(price: Int) {
+        _state.value = currentState.copy(price = price)
+    }
+
+    fun updateIsPaid(isPaid: Boolean) {
+        _state.value = currentState.copy(isPaid = isPaid)
+    }
+
+    fun updateNote(note: String?) {
+        _state.value = currentState.copy(note = note)
+    }
+
+    fun emptyState() {
+        _state.value = OrderState()
+    }
+
     fun addOrder() {
         val order = currentState.toOrder()
         viewModelScope.launch {
@@ -89,7 +124,7 @@ data class OrderState(
     val id: Long = 0,
     val customer: String = "",
     val phone: String? = null,
-    val deadline: Date? = null,
+    val deadLine: Date? = null,
     val needDelivery: Boolean = false,
     val address: String? = null,
     val availableProducts: List<ProductItem> = listOf(),
@@ -104,7 +139,7 @@ fun OrderState.toOrder() = Order(
     id,
     customer,
     phone,
-    deadline,
+    deadLine,
     needDelivery,
     address,
     price,
