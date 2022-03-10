@@ -26,4 +26,7 @@ interface ReceptDao {
     """
     )
     suspend fun loadReceptFull(id: Long):ReceptFull
+
+    @Query("SELECT * FROM recepts WHERE title LIKE '%' || :search || '%'")
+    suspend fun searchRecept(search: String): List<Recept>
 }

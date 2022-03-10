@@ -1,41 +1,45 @@
-package ru.churkin.confectioners_organizer.listRecepts
+package ru.churkin.confectioners_organizer.ui.list_recepts
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
+    val searchText by vm.searchText.collectAsState()
     val listRecepts = remember { mutableStateListOf<Recept>() }
+    var isShowSearch by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -48,39 +52,55 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                 .fillMaxSize()
         ) {
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = { navController.navigate("orders")}) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Меню навигации"
-                    )
-                }
-                Text(
-                    "Список рецептов",
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(Modifier.weight(1f, true))
+                if (isShowSearch) {
+                    SearchBar(
+                        searchText = searchText,
+                        onSearch = { vm.searchRecepts(it) },
+                        onSubmit = {
+                            vm.searchRecepts(it)
+                            isShowSearch = false
+                        },
+                        onDismiss = { isShowSearch = false })
+                } else {
 
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Сортировка"
+                    IconButton(onClick = { navController.navigate("orders") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Меню навигации"
+                        )
+                    }
+                    Text(
+                        "Список рецептов",
+                        style = MaterialTheme.typography.h6,
                     )
-                }
+                    Spacer(Modifier.weight(1f, true))
 
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Найти"
-                    )
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Сортировка"
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        isShowSearch = true
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Найти"
+                        )
+                    }
                 }
             }
             when (val listState = state.receptsState) {
 
-                is ReceptsState.Empty -> {}
-                is ReceptsState.Loading -> {}
+                is ReceptsState.Empty -> {
+                }
+                is ReceptsState.Loading -> {
+                }
 
                 is ReceptsState.Value -> {
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
@@ -135,7 +155,8 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                     }
                 }
 
-                is ReceptsState.ValueWithMessage -> {}
+                is ReceptsState.ValueWithMessage -> {
+                }
             }
         }
         Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
@@ -211,16 +232,69 @@ fun ReceptItem(recept: Recept, onClick: (Long) -> Unit) {
     }
 }
 
-
-/*
-@Preview
+@ExperimentalComposeUiApi
 @Composable
-fun previewRecsCard() {
-    AppTheme {
-        RecsCard()
+fun SearchBar(
+    searchText: String,
+    onSearch: (String) -> Unit,
+    onSubmit: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = { onDismiss() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        TextField(
+            value = searchText,
+            onValueChange = { onSearch(it) },
+            modifier = Modifier.weight(1f),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colors.onPrimary,
+                backgroundColor = MaterialTheme.colors.primary
+            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = {
+                onSubmit(searchText)
+                keyboardController?.hide()
+            }),
+            textStyle = MaterialTheme.typography.h5,
+            placeholder = {
+                Text(
+                    "Поиск",
+                    style = MaterialTheme.typography.overline,
+                    color = androidx.compose.ui.graphics.Color.Gray
+                )
+            }
+        )
+        IconButton(onClick = {
+            if (searchText.isEmpty()) onDismiss() else onSearch("")
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_close_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
     }
 }
 
+
+/*@Preview
+@Composable
+fun PreviwSearch() {
+    AppTheme {
+        SearchBar(searchText = "", onSearch = {}, onSubmit = {}) {
+
+        }
+    }
+}*/
+
+/*
 @Preview
 @Composable
 fun previewRecs() {

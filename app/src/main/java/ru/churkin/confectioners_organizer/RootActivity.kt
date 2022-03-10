@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,8 +13,9 @@ import androidx.navigation.navArgument
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.ingredient.IngredientScreen
 import ru.churkin.confectioners_organizer.listOrders.OrdersScreen
-import ru.churkin.confectioners_organizer.listRecepts.RecsScreen
+import ru.churkin.confectioners_organizer.ui.list_recepts.RecsScreen
 import ru.churkin.confectioners_organizer.order.OrderScreen
+import ru.churkin.confectioners_organizer.product.CreateProductScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.CreateIngredientScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
@@ -21,6 +23,7 @@ import ru.churkin.confectioners_organizer.ui.order.CreateOrderScreen
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @InternalCoroutinesApi
 class RootActivity : ComponentActivity() {
@@ -34,6 +37,7 @@ class RootActivity : ComponentActivity() {
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                     composable(Screen.Orders.route) { OrdersScreen(navController = navController) }
                     composable("orders/create") { CreateOrderScreen(navController = navController) }
+                    composable("products/create") { CreateProductScreen(navController = navController) }
                     composable("recepts/create") { CreateReceptScreen(navController = navController) }
                     composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
                     composable("orders/edit/{id}",
@@ -72,6 +76,7 @@ sealed class Screen(val route: String, val title: String) {
     object Recepts : Screen("recepts", "recepts")
     object Order : Screen("order", "order")
     object Orders : Screen("orders", "orders")
+    object Product : Screen("product", "product")
 }
 
 

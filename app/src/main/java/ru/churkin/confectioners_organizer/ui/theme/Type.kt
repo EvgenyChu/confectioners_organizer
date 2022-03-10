@@ -111,7 +111,7 @@ fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typogr
         color = onBackground
     ),
     overline = TextStyle(
-        fontFamily = montserrataIternatesRegular,
-        fontSize = 10.sp
+        fontFamily = montserrataIternatesMedium,
+        fontSize = 17.sp
     )
 )

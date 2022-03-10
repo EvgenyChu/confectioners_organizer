@@ -53,13 +53,6 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 availableIngredients = availableIngredients,
                 ingredients = ingredients
             )
-
-            //fixme remove after debug
-            state.collect(object : FlowCollector<ReceptState> {
-                override suspend fun emit(value: ReceptState) {
-                    Log.e("state", value.toString())
-                }
-            })
         }
     }
 

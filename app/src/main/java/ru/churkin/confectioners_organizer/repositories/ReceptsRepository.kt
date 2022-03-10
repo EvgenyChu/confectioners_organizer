@@ -40,4 +40,6 @@ class ReceptsRepository(
 
     suspend fun createRecept() : Long  = receptDao.insert(Recept())
 
+    suspend fun searchRecept(query: String) = receptDao.searchRecept(query)
+
 }

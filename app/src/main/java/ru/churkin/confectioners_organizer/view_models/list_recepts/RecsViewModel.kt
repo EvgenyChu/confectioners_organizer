@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.list_recepts
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,11 +9,13 @@ import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
 
-class RecsViewModel(): ViewModel() {
+class RecsViewModel() : ViewModel() {
 
     private val repository: ReceptsRepository = ReceptsRepository()
 
     private val _state = MutableStateFlow(initialState())
+
+    private val _searchText = MutableStateFlow("")
 
     val state: StateFlow<RecsViewModel.ListRecsState>
         get() = _state
@@ -28,6 +31,9 @@ class RecsViewModel(): ViewModel() {
         )
     }
 
+    val searchText
+        get() = _searchText
+
     init {
         viewModelScope.launch {
             val recepts = repository.loadRecepts()
@@ -39,13 +45,24 @@ class RecsViewModel(): ViewModel() {
         }
     }
 
+    fun searchRecepts(query: String) {
+        _searchText.value = query
+        viewModelScope.launch {
+            val recepts = repository.searchRecept(query)
+            Log.e("search", recepts.toString())
+            _state.value = currentState.copy(recepts = recepts)
+        }
+    }
+
     fun removeRecept(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             repository.removeRecept(id = id)
             val recepts = repository.loadRecepts()
-            _state.value = currentState.copy(receptsState = if (recepts.isEmpty()) ReceptsState.Empty
-            else ReceptsState.Value(recepts),
-                recepts = recepts)
+            _state.value = currentState.copy(
+                receptsState = if (recepts.isEmpty()) ReceptsState.Empty
+                else ReceptsState.Value(recepts),
+                recepts = recepts
+            )
         }
     }
 

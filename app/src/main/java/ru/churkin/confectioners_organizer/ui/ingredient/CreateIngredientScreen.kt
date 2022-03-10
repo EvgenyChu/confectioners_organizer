@@ -39,7 +39,7 @@ fun CreateIngredientScreen(
             if (isCreate) "Новый ингредиент" else "Редактирование"
         )
     }
-    Log.e("title", "${navController.currentDestination?.route}")
+
     var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }

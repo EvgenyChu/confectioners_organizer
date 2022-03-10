@@ -1,12 +1,12 @@
 package ru.churkin.confectioners_organizer.repositories
 
 import ru.churkin.confectioners_organizer.local.db.AppDb
-import ru.churkin.confectioners_organizer.local.db.dao.ProductDao
-import ru.churkin.confectioners_organizer.local.db.dao.ProductIngredientItemDao
-import ru.churkin.confectioners_organizer.local.db.dao.ProductReceptItemDao
+import ru.churkin.confectioners_organizer.local.db.dao.*
 import ru.churkin.confectioners_organizer.local.db.entity.*
 
 class ProductsRepository(
+    val ingredientDao: IngredientDao = AppDb.db.ingredientDao(),
+    val receptDao: ReceptDao = AppDb.db.receptDao(),
     val productDao: ProductDao = AppDb.db.productDao(),
     val productReceptItemDao: ProductReceptItemDao = AppDb.db.productReceptItemDao(),
     val productIngredientItemDao: ProductIngredientItemDao = AppDb.db.productIngredientItemDao()
@@ -30,4 +30,14 @@ class ProductsRepository(
     suspend fun isEmptyProducts() = productDao.loadAll().isEmpty()
 
     suspend fun createProduct(): Long = productDao.insert(Product())
+
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
+
+    suspend fun loadProductIngredients(productId: Long) =
+        productIngredientItemDao.loadProductIngredients(productId)
+
+    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll()
+
+    suspend fun loadProductRecepts(productId: Long) =
+        productReceptItemDao.loadProductRecepts(productId)
 }

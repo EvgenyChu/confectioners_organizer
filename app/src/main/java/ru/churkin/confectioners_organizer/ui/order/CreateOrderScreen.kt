@@ -228,7 +228,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {navController.navigate("products/create") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
                             tint = MaterialTheme.colors.secondary,

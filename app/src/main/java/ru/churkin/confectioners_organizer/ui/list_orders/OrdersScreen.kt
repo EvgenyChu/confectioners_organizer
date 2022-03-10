@@ -7,9 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -24,20 +22,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.listRecepts.ReceptItem
 import ru.churkin.confectioners_organizer.local.db.entity.Order
-import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
-import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
-import java.lang.String.format
 
 @ExperimentalMaterialApi
 @Composable
