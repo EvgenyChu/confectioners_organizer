@@ -219,7 +219,7 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Row(modifier = Modifier.padding(end = 16.dp)) {
                     Text(
-                        text = order.customer,
+                        text = if (order.customer == "") "ФИО" else order.customer,
                         style = MaterialTheme.typography.caption,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -242,7 +242,7 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Row(modifier = Modifier.padding(end = 16.dp)) {
                     Text(
-                        text = "${order.phone}",
+                        text = if (order.phone == null) "+7xxxxxxxxxx" else "${order.phone}",
                         style = MaterialTheme.typography.caption,
                         overflow = TextOverflow.Ellipsis
                     )

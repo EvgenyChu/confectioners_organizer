@@ -85,7 +85,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "тел. ${state.phone}" ?: "+7хххххххххх",
+                        if (state.phone == null) "тел. +7хххххххххх" else "тел. ${state.phone}" ,
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -99,7 +99,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Годен до: ${state.deadLine?.format("dd.MM.yyyy")}",
+                        text = if (state.deadLine == null) "DeadLine: _._._ г." else "DeadLine: ${state.deadLine?.format("dd.MM.yyyy")}",
                         modifier = Modifier
                             .padding(start = 16.dp),
                         style = MaterialTheme.typography.subtitle1,
@@ -146,7 +146,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Адрес: ${state.address}" ?: "Адрес доставки не указан",
+                        if (state.address==null) "Адрес доставки не указан" else "Адрес: ${state.address}" ,
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
