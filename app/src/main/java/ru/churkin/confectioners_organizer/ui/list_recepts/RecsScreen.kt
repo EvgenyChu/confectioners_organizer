@@ -182,15 +182,12 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_circle_24),
-                modifier = Modifier
-                    .size(64.dp),
-                contentDescription = "Добавить",
-                tint = MaterialTheme.colors.secondary
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = "Добавить"
             )
         }
     }
@@ -246,7 +243,9 @@ fun SearchBar(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onDismiss() }) {
+        IconButton(onClick = {
+            onSearch("")
+            onDismiss() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                 tint = MaterialTheme.colors.onPrimary,

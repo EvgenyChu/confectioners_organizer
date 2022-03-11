@@ -40,7 +40,6 @@ fun CreateIngredientScreen(
         )
     }
 
-    var availabilityIngredient by remember { mutableStateOf("Отсутствует") }
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
     var isShowDatePicker by remember { mutableStateOf(false) }
@@ -86,7 +85,6 @@ fun CreateIngredientScreen(
 
                 IconButton(onClick = {
                     vm.emptyState()
-                    availabilityIngredient = "Отсутствует"
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_delete_24),
@@ -119,7 +117,7 @@ fun CreateIngredientScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = availabilityIngredient,
+                    if (state.availability) "В наличии" else "Отсутствует",
                     style = MaterialTheme.typography.subtitle1
                 )
 
@@ -129,8 +127,6 @@ fun CreateIngredientScreen(
                     checked = state.availability,
                     onCheckedChange = {
                         vm.updateAvailability(it)
-                        if (state.availability) availabilityIngredient = "Отсутствует"
-                        else availabilityIngredient = "В наличии"
                     },
                     colors = SwitchDefaults.colors(
                         uncheckedThumbColor = Color(0xFFE61610),

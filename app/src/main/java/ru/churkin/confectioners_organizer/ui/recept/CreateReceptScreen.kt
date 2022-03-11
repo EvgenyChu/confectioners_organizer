@@ -211,8 +211,8 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_done_24),
@@ -275,7 +275,9 @@ fun CreateIngredientsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box(modifier = Modifier.width(300.dp).height(300.dp)) {
+                Box(modifier = Modifier
+                    .width(300.dp)
+                    .height(300.dp)) {
                     LazyColumn() {
                         listIngredients.forEach {
                             val backgroundColor =
@@ -312,8 +314,14 @@ fun CreateIngredientsDialog(
                 }
 
                 TextField(
-                    value = "$ingredientCount",
-                    onValueChange = { ingredientCount = if (it.isBlank()) 0 else it.toInt() },
+                    value = "${if (ingredientCount == 0) "" else ingredientCount}",
+                    onValueChange = {
+                        try {
+                            ingredientCount = if (it.isBlank()) 0 else it.toInt()
+                        } catch (e: NumberFormatException) {
+                            ingredientCount = 0
+                        }
+                    },
                     textStyle = MaterialTheme.typography.body2,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier

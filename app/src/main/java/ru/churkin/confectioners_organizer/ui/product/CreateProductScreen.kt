@@ -10,10 +10,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,13 +53,13 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     var openDialogUnits by remember { mutableStateOf(false) }
 
     val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
+        textColor = colors.onPrimary,
+        backgroundColor = colors.background,
+        disabledTextColor = colors.background,
+        placeholderColor = colors.background,
+        disabledPlaceholderColor = colors.background,
+        focusedIndicatorColor = colors.secondary,
+        cursorColor = colors.onPrimary
     )
     Box(
         modifier = Modifier
@@ -146,9 +148,10 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                         .weight(1f)
                 ) {
                     Text(
-                        "ед. изм.",
+                        state.units,
                         modifier = Modifier.padding(top = 16.dp),
-                        style = MaterialTheme.typography.subtitle2
+                        style = if (state.units == "ед. изм.") MaterialTheme.typography.subtitle2
+                        else MaterialTheme.typography.subtitle1
                     )
                 }
                 IconButton(onClick = { openDialogUnits = true }) {
@@ -285,7 +288,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 
             TextField(
                 value = "${if (state.price == 0) "" else state.price}",
-                onValueChange = {vm.updatePrice(if (it.isEmpty()) 0 else it.toInt())},
+                onValueChange = { vm.updatePrice(if (it.isEmpty()) 0 else it.toInt()) },
                 modifier = Modifier
                     .height(56.dp)
                     .fillMaxWidth(),
@@ -366,13 +369,13 @@ fun CreateReceptsDialog(
     var receptCount: Int by remember { mutableStateOf(0) }
 
     val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
+        textColor = colors.onPrimary,
+        backgroundColor = colors.background,
+        disabledTextColor = colors.background,
+        placeholderColor = colors.background,
+        disabledPlaceholderColor = colors.background,
+        focusedIndicatorColor = colors.secondary,
+        cursorColor = colors.onPrimary
     )
 
     Dialog(onDismissRequest = onDismiss) {
@@ -393,26 +396,28 @@ fun CreateReceptsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box(modifier = Modifier
-                    .width(300.dp)
-                    .height(300.dp)) {
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(300.dp)
+                ) {
                     LazyColumn() {
                         listRecepts.forEach {
                             val backgroundColor =
-                                if (selectionItem == it.title) Color.Red
+                                if (selectionItem == it.title) Color.Green
                                 else Color.Transparent
 
                             item {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
+                                        .fillMaxWidth()
                                         .background(color = backgroundColor)
                                         .clickable(onClick = {
                                             selectionItem = it.title
                                         })
                                         .height(44.dp)
-                                        .padding(horizontal = 16.dp)
-                                        .fillMaxWidth()
+                                        .padding(start = 16.dp)
                                 ) {
                                     Text(
                                         text = it.title,
@@ -425,8 +430,14 @@ fun CreateReceptsDialog(
                 }
 
                 TextField(
-                    value = "$receptCount",
-                    onValueChange = { receptCount = if (it.isBlank()) 0 else it.toInt() },
+                    value = "${if (receptCount == 0) "" else receptCount}",
+                    onValueChange = {
+                        try {
+                            receptCount = if (it.isBlank()) 0 else it.toInt()
+                        } catch (e: NumberFormatException) {
+                            receptCount = 0
+                        }
+                    },
                     textStyle = MaterialTheme.typography.body2,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier
@@ -470,14 +481,14 @@ fun CreateReceptsDialog(
 fun ProductReceptItem(productReceptItem: ProductReceptItem) {
     Column(
         modifier = Modifier
-            .background(color = MaterialTheme.colors.background)
+            .background(color = colors.background)
     ) {
         Row(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(color = MaterialTheme.colors.background),
+                .background(color = colors.background),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -494,7 +505,7 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp),
-            color = MaterialTheme.colors.secondary
+            color = colors.secondary
         )
     }
 }
@@ -503,7 +514,7 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
 fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
     Column(
         modifier = Modifier
-            .background(color = MaterialTheme.colors.background)
+            .background(color = colors.background)
     ) {
         Row(
             modifier = Modifier
@@ -532,7 +543,7 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp),
-            color = MaterialTheme.colors.secondary
+            color = colors.secondary
         )
     }
 }

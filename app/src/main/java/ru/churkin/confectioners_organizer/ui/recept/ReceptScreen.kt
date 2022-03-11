@@ -87,7 +87,7 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "${state.weight} грамм",
+                        "Выход: ${state.weight} грамм",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -102,7 +102,7 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "${state.time} мин.",
+                        "Время приготовления: ${state.time} мин.",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -131,7 +131,7 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -168,8 +168,8 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_done_24),

@@ -185,15 +185,12 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_circle_24),
-                modifier = Modifier
-                    .size(64.dp),
-                contentDescription = "Добавить",
-                tint = MaterialTheme.colors.secondary
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = "Добавить"
             )
         }
     }

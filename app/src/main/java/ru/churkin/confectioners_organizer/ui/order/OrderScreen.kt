@@ -70,7 +70,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        state.customer,
+                        "ФИО ${state.customer}",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -85,7 +85,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        state.phone ?: "",
+                        "тел. ${state.phone}" ?: "+7хххххххххх",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -146,7 +146,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        state.address ?: "Адрес доставки не указан",
+                        "Адрес: ${state.address}" ?: "Адрес доставки не указан",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -216,7 +216,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -252,8 +252,8 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
-                backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.secondary
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_done_24),

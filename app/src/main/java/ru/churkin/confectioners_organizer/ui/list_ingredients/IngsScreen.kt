@@ -187,15 +187,12 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.secondary
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_circle_24),
-                modifier = Modifier
-                    .size(64.dp),
-                contentDescription = "Добавить",
-                tint = MaterialTheme.colors.secondary
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = "Добавить"
             )
         }
     }
@@ -230,7 +227,8 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
             )
             Spacer(Modifier.weight(1f))
             Text(
-                text = "${ingredient.available} ${ingredient.unitsAvailable}",
+                text = "${ingredient.available}" +
+                        if (ingredient.unitsAvailable=="ед. изм.") "" else " ${ingredient.unitsAvailable}",
                 style = MaterialTheme.typography.subtitle1
             )
         }

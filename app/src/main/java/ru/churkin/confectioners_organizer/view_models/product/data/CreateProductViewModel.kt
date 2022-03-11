@@ -132,7 +132,7 @@ data class ProductState(
     val id: Long = 0,
     val title: String = "",
     val weight: Int = 0,
-    val units: String = "",
+    val units: String = "ед. изм.",
     val availableRecepts: List<ReceptItem> = emptyList(),
     val recepts: List<ProductReceptItem> = emptyList(),
     val availableIngredients: List<IngredientItem> = emptyList(),
