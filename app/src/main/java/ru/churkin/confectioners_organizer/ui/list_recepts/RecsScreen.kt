@@ -38,7 +38,6 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
-    val listRecepts = remember { mutableStateListOf<Recept>() }
     var isShowSearch by remember { mutableStateOf(false) }
 
     Box(
@@ -95,11 +94,17 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                     }
                 }
             }
-            when (val listState = state.receptsState) {
+            when (val listState = state) {
 
                 is ReceptsState.Empty -> {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f)) {
+                        Text("Не найдено")
+                    }
                 }
                 is ReceptsState.Loading -> {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f)) {
+                       CircularProgressIndicator()
+                    }
                 }
 
                 is ReceptsState.Value -> {
@@ -153,9 +158,6 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                             )
                         }
                     }
-                }
-
-                is ReceptsState.ValueWithMessage -> {
                 }
             }
         }

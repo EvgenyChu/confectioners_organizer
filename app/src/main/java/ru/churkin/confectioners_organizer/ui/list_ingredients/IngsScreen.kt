@@ -56,7 +56,7 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                         )
                     }
                     Text(
-                        "Список ингредиентов",
+                        "Ингредиенты",
                         style = MaterialTheme.typography.h6,
                     )
                     Spacer(Modifier.weight(1f, true))
@@ -69,7 +69,9 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                         )
                     }
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_search_24),
                             tint = MaterialTheme.colors.onPrimary,
