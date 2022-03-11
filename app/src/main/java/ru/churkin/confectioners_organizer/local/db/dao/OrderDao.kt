@@ -7,6 +7,7 @@ import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.local.db.entity.OrderItem
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 @Dao
 interface OrderDao {
@@ -31,4 +32,6 @@ interface OrderDao {
     )
     suspend fun loadOrder(id: Long): Order
 
+    @Query("SELECT * FROM orders WHERE customer LIKE '%' || :search || '%'")
+    suspend fun searchOrder(search: String): List<Order>
 }

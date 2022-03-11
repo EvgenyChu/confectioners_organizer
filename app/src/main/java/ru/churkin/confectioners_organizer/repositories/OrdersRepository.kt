@@ -34,4 +34,6 @@ class OrdersRepository(
         orderProductItemDao.insert(orderProductItem = orderProductItem)
 
     suspend fun createOrder() : Long  = orderDao.insert(Order())
+
+    suspend fun searchOrder(query: String) = orderDao.searchOrder(query)
 }

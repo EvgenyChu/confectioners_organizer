@@ -11,10 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -28,14 +27,18 @@ import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Order
+import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
+    val searchText by vm.searchText.collectAsState()
+    var isShowSearch by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -48,40 +51,59 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
                 .fillMaxSize()
         ) {
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Меню навигации"
+                if (isShowSearch) {
+                    SearchBar(
+                        searchText = searchText,
+                        onSearch = { vm.searchOrders(it) },
+                        onSubmit = {
+                            vm.searchOrders(it)
+                            isShowSearch = false
+                        },
+                        onDismiss = { isShowSearch = false })
+                } else {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Меню навигации"
+                        )
+                    }
+                    Text(
+                        "Список заказов",
+                        style = MaterialTheme.typography.h6,
                     )
-                }
-                Text(
-                    "Список заказов",
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(Modifier.weight(1f, true))
+                    Spacer(Modifier.weight(1f, true))
 
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Календарь"
-                    )
-                }
+                    IconButton(onClick = { }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Календарь"
+                        )
+                    }
 
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Найти"
-                    )
+                    IconButton(onClick = { isShowSearch = true}) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                            tint = MaterialTheme.colors.onPrimary,
+                            contentDescription = "Найти"
+                        )
+                    }
                 }
             }
-            when (val listState = state.ordersState) {
+            when (val listState = state) {
 
                 is OrdersState.Empty -> {
+                    Box(contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)) {
+                        Text("Не найдено")
+                    }
                 }
                 is OrdersState.Loading -> {
+                    Box(contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)) {
+                        CircularProgressIndicator()
+                    }
                 }
 
                 is OrdersState.Value -> {
@@ -135,9 +157,6 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
                             )
                         }
                     }
-                }
-
-                is OrdersState.ValueWithMessage -> {
                 }
             }
         }

@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.list_ingredients
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,45 +16,51 @@ class IngsViewModel() : ViewModel() {
 
     private val _state = MutableStateFlow(initialState())
 
-    val state: StateFlow<ListIngsState>
+    private val _searchText = MutableStateFlow("")
+
+    val state: StateFlow<IngredientsState>
         get() = _state
 
-    private val currentState: ListIngsState
+    private val currentState: IngredientsState
         get() = _state.value
 
-    private fun initialState(): ListIngsState {
+    private fun initialState(): IngredientsState {
 
-        return ListIngsState(
-            ingredientsState = IngredientsState.Loading,
-            ingredients = emptyList()
-        )
+        return IngredientsState.Empty
     }
+
+    val searchText
+        get() = _searchText
 
     init {
         viewModelScope.launch {
             val ingredients = repository.loadIngredients()
-            _state.value = currentState.copy(
-                ingredientsState = if (ingredients.isEmpty()) IngredientsState.Empty
-                else IngredientsState.Value(ingredients),
-                ingredients = ingredients
-            )
+            _state.value = if (ingredients.isEmpty()) IngredientsState.Empty
+                else IngredientsState.Value(ingredients)
+        }
+    }
+
+    fun searchIngredients(query: String) {
+        _searchText.value = query
+        _state.value = IngredientsState.Loading
+        viewModelScope.launch {
+            val ingredients =
+                if (query.isEmpty()) repository.loadIngredients() else repository.searchIngredient(query)
+            Log.e("search", ingredients.toString())
+            _state.value = if (ingredients.isEmpty()) IngredientsState.Empty
+            else IngredientsState.Value(ingredients)
         }
     }
 
     fun removeIngredient(id: Long) {
+        _state.value = IngredientsState.Loading
         viewModelScope.launch{
             repository.removeIngredient(id = id)
             val ingredients = repository.loadIngredients()
-            _state.value = currentState.copy(ingredientsState = if (ingredients.isEmpty()) IngredientsState.Empty
-            else IngredientsState.Value(ingredients),
-                ingredients = ingredients)
+            _state.value = if (ingredients.isEmpty()) IngredientsState.Empty
+            else IngredientsState.Value(ingredients)
         }
     }
-
-    data class ListIngsState(
-        val ingredients: List<Ingredient>,
-        val ingredientsState: IngredientsState = IngredientsState.Empty
-    )
 }
 
 sealed class IngredientsState {

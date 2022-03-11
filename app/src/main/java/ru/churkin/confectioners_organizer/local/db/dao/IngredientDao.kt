@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
+import ru.churkin.confectioners_organizer.local.db.entity.Recept
 
 @Dao
 interface IngredientDao {
@@ -25,4 +26,7 @@ interface IngredientDao {
     """
     )
     suspend fun loadIngredient(id: Long): Ingredient
+
+    @Query("SELECT * FROM ingredients WHERE title LIKE '%' || :search || '%'")
+    suspend fun searchIngredient(search: String): List<Ingredient>
 }

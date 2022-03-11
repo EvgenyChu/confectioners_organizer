@@ -22,4 +22,6 @@ class IngredientsRepository(
     suspend fun isEmptyIngredients() = ingredientDao.loadAll().isEmpty()
 
     suspend fun createIngredient() : Long  = ingredientDao.insert(Ingredient())
+
+    suspend fun searchIngredient(query: String) = ingredientDao.searchIngredient(query)
 }

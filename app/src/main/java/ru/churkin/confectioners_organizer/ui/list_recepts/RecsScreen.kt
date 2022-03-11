@@ -97,12 +97,14 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
             when (val listState = state) {
 
                 is ReceptsState.Empty -> {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f)) {
+                    Box(contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)) {
                         Text("Не найдено")
                     }
                 }
                 is ReceptsState.Loading -> {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f)) {
+                    Box(contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)) {
                        CircularProgressIndicator()
                     }
                 }
