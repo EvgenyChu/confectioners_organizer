@@ -1,6 +1,8 @@
 package ru.churkin.confectioners_organizer.ui.order
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +22,7 @@ import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.product.ProductIngredientItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -51,6 +54,10 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
         focusedIndicatorColor = MaterialTheme.colors.secondary,
         cursorColor = MaterialTheme.colors.onPrimary
     )
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+        Log.e("CreateOrderScreen", "ScreenLauched")
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -216,33 +223,35 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 colors = colors
             )
 
-            TextField(
-                value = "",
-                onValueChange = { },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Добавьте изделие",
-                        style = MaterialTheme.typography.subtitle2,
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = {navController.navigate("products/create") }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Добавить изделие"
-                        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .clickable {
+                        navController.navigate("orders/${state.id}/products/create")
                     }
-                },
-                colors = colors
-            )
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Добавьте изделие, кол-во",
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.subtitle2
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
+                    tint = MaterialTheme.colors.secondary,
+                    contentDescription = "Наличие"
+                )
+            }
 
+            if (state.products.isNotEmpty()) state.products.forEach {
+                OrderProductItem(orderProductItem = it)
+            }
 
             TextField(
                 value = "${if (state.price == 0) "" else state.price}",
-                onValueChange = { vm.updatePrice(it.toInt()) },
+                onValueChange = { vm.updatePrice(it) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .height(56.dp)

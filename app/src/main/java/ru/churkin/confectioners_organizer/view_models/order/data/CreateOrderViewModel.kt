@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,12 +26,16 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         get() = state.value
 
     init {
-        viewModelScope.launch {
-            if (id == null) {
+          Log.e("CreateOrderViewModel", "initViewModel${this.hashCode()}")
+    }
+
+    suspend fun initState(){
+            if (id == null && currentState.id == 0L) {
                 val localId = repository.createOrder()
                 _state.value = currentState.copy(id = localId)
                 id = localId
-            } else {
+            } else if (currentState == OrderState()) {
+
                 val order = repository.loadOrder(checkNotNull(id))
                 _state.value = currentState.copy(
                     id = order.id,
@@ -53,7 +58,6 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 availableProducts = availableProducts,
                 products = products
             )
-        }
     }
 
     fun updateCustomer(customer: String) {
@@ -77,8 +81,10 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         _state.value = currentState.copy(address = address)
     }
 
-    fun updatePrice(price: Int) {
-        _state.value = currentState.copy(price = price)
+    fun updatePrice(price: String) {
+        try{
+            _state.value = currentState.copy(price = price.toInt())
+        } catch (e:Exception){}
     }
 
     fun updateIsPaid(isPaid: Boolean) {
@@ -112,6 +118,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         _state.value =
             currentState.copy(products = ordersProducts.toList())
     }
+
     fun removeOrder(id: Long) {
         viewModelScope.launch{
             repository.removeOrder(id = id)

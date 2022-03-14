@@ -2,6 +2,7 @@ package ru.churkin.confectioners_organizer.local.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.local.db.entity.ProductFull
@@ -14,7 +15,7 @@ interface ProductDao {
         @Query("SELECT * FROM products")
         suspend fun loadAll() : List<Product>
 
-        @Insert
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
         suspend fun insert(product: Product) : Long
 
         @Query("DELETE FROM products WHERE id = :id")

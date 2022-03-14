@@ -37,7 +37,9 @@ class RootActivity : ComponentActivity() {
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                     composable(Screen.Orders.route) { OrdersScreen(navController = navController) }
                     composable("orders/create") { CreateOrderScreen(navController = navController) }
-                    composable("products/create") { CreateProductScreen(navController = navController) }
+                    composable("orders/{order_id}/products/create",
+                        arguments = listOf(navArgument("order_id")
+                        { type = NavType.LongType })) { CreateProductScreen(navController = navController) }
                     composable("recepts/create") { CreateReceptScreen(navController = navController) }
                     composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
                     composable("orders/edit/{id}",

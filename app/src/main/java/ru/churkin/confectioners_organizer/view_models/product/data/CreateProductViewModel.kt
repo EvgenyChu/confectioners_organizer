@@ -12,6 +12,7 @@ import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
 class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private var id: Long? = savedStateHandle.get<Long>("id")
+    private var orderId: Long? = savedStateHandle.get<Long>("order_id")
     private val repository: ProductsRepository = ProductsRepository()
     private val productsIngredients: MutableList<ProductIngredientItem> = mutableListOf()
     private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
@@ -26,7 +27,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     init {
         viewModelScope.launch {
             if (id == null) {
-                val localId = repository.createProduct()
+                val localId = repository.createProduct(orderId = checkNotNull(orderId))
                 _state.value = currentState.copy(id = localId)
                 id = localId
             } else {
@@ -37,23 +38,21 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     weight = product.weight,
                     units = product.units,
                     costPrice = product.costPrice,
-                    price = product.price
+                    price = product.price,
+                    orderId = checkNotNull(orderId)
                 )
             }
             val ingredients = repository.loadProductIngredients(currentState.id)
             val availableIngredients =
                 repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
 
-            _state.value = currentState.copy(
-                availableIngredients = availableIngredients,
-                ingredients = ingredients
-            )
-
             val recepts = repository.loadProductRecepts(currentState.id)
             val availableRecepts =
                 repository.loadRecepts().map { ReceptItem(it.title, it.weight) }
 
             _state.value = currentState.copy(
+                availableIngredients = availableIngredients,
+                ingredients = ingredients,
                 availableRecepts = availableRecepts,
                 recepts = recepts
             )
@@ -141,7 +140,8 @@ data class ProductState(
     val price: Int = 0,
     val isCreateIngredientDialog: Boolean = false,
     val isCreateReceptDialog: Boolean = false,
-    val isConfirm: Boolean = false
+    val isConfirm: Boolean = false,
+    val orderId: Long? = null
 )
 
-fun ProductState.toProduct() = Product(id, title, weight, units, costPrice, price)
+fun ProductState.toProduct() = Product(id, title, weight, units, costPrice, price, orderId)

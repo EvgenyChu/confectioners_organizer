@@ -29,7 +29,7 @@ class ProductsRepository(
 
     suspend fun isEmptyProducts() = productDao.loadAll().isEmpty()
 
-    suspend fun createProduct(): Long = productDao.insert(Product())
+    suspend fun createProduct(orderId: Long): Long = productDao.insert(Product(orderId = orderId))
 
     suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
 
