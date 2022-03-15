@@ -18,8 +18,7 @@ import ru.churkin.confectioners_organizer.local.db.entity.*
         Order::class,
         Product::class,
         ProductReceptItem::class,
-        ProductIngredientItem::class,
-        OrderProductItem::class], version = 1
+        ProductIngredientItem::class], version = 1
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -30,7 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun productReceptItemDao(): ProductReceptItemDao
     abstract fun productIngredientItemDao(): ProductIngredientItemDao
-    abstract fun orderProductItemDao(): OrderProductItemDao
 }
 
 object AppDb {

@@ -1,6 +1,7 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
 import android.util.Log
+import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.date.parseDate
 import ru.churkin.confectioners_organizer.local.db.entity.Order
-import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import java.util.*
@@ -27,38 +27,39 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         get() = state.value
 
     init {
-          Log.e("CreateOrderViewModel", "initViewModel${this.hashCode()}")
+        Log.e("CreateOrderViewModel", "initViewModel${this.hashCode()}")
     }
 
-    suspend fun initState(){
-            if (id == null && currentState.id == 0L) {
-                val localId = repository.createOrder()
-                _state.value = currentState.copy(id = localId)
-                id = localId
-            } else if (currentState == OrderState()) {
+    suspend fun initState() {
+        if (id == null && currentState.id == 0L) {
+            val localId = repository.createOrder()
+            _state.value = currentState.copy(id = localId)
+            id = localId
+        } else if (currentState == OrderState()) {
 
-                val order = repository.loadOrder(checkNotNull(id))
-                _state.value = currentState.copy(
-                    id = order.id,
-                    customer = order.customer,
-                    phone = order.phone,
-                    deadLine = order.deadline,
-                    needDelivery = order.needDelivery,
-                    address = order.address,
-                    price = order.price,
-                    isPaid = order.isPaid,
-                    note = order.note,
-                    isCooked = order.isCooked
-                )
-            }
-            val products = repository.loadOrderProducts(currentState.id)
-            val availableProducts =
-                repository.loadProducts().map { ProductItem(it.title, it.weight, it.units, it.price) }
-
+            val order = repository.loadOrder(checkNotNull(id))
             _state.value = currentState.copy(
-                availableProducts = availableProducts,
-                products = products
+                id = order.id,
+                customer = order.customer,
+                phone = order.phone,
+                deadLine = order.deadline,
+                needDelivery = order.needDelivery,
+                address = order.address,
+                price = order.price,
+                isPaid = order.isPaid,
+                note = order.note,
+                isCooked = order.isCooked
             )
+        }
+        val products = repository.loadOrderProducts(currentState.id)
+        val availableProducts =
+            repository.loadOrderProducts(currentState.id).map { it.title }.toString().drop(1)
+                .dropLast(1).lowercase()
+
+        _state.value = currentState.copy(
+            availableProducts = availableProducts,
+            products = products
+        )
     }
 
     fun updateCustomer(customer: String) {
@@ -83,9 +84,10 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun updatePrice(price: String) {
-        try{
+        try {
             _state.value = currentState.copy(price = price.toInt())
-        } catch (e:Exception){}
+        } catch (e: Exception) {
+        }
     }
 
     fun updateIsPaid(isPaid: Boolean) {
@@ -97,7 +99,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun emptyState() {
-        _state.value = OrderState()
+        _state.value = OrderState(id = currentState.id)
     }
 
     fun addOrder() {
@@ -108,7 +110,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun removeOrder(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             repository.removeOrder(id = id)
             repository.loadOrders()
         }
@@ -122,7 +124,7 @@ data class OrderState(
     val deadLine: Date? = null,
     val needDelivery: Boolean = false,
     val address: String? = null,
-    val availableProducts: List<ProductItem> = listOf(),
+    val availableProducts: String = "",
     val products: List<Product>? = listOf(),
     val price: Int = 0,
     val isPaid: Boolean = false,
@@ -140,5 +142,7 @@ fun OrderState.toOrder() = Order(
     price,
     isPaid,
     note,
-    isCooked
+    isCooked,
+    availableProducts
 )
+

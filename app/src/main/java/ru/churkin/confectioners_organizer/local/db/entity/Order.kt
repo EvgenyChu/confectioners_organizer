@@ -17,7 +17,8 @@ data class Order(
     val price: Int = 0,
     val isPaid: Boolean = false,
     val note: String? = "",
-    var isCooked: Boolean = false
+    var isCooked: Boolean = false,
+    val availableProducts: String = ""
 )
 
 data class OrderFull(

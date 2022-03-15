@@ -20,13 +20,8 @@ import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
 import ru.churkin.confectioners_organizer.local.db.entity.Product
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
-import ru.churkin.confectioners_organizer.product.ProductIngredientItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.ui.theme.Green
-import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
 @Composable

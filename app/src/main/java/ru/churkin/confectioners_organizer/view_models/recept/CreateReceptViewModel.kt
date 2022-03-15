@@ -81,7 +81,7 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun emptyState() {
-        _state.value = ReceptState()
+        _state.value = ReceptState(id = currentState.id)
     }
 
 

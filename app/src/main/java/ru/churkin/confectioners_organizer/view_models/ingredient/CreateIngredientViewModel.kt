@@ -101,7 +101,7 @@ class CreateIngredientViewModel(savedStateHandle: SavedStateHandle) : ViewModel(
     }
 
     fun emptyState() {
-        _state.value = IngredientState()
+        _state.value = IngredientState(id = currentState.id)
     }
 
     fun addIngredient() {
