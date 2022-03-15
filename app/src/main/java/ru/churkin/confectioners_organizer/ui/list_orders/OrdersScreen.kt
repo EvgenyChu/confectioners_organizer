@@ -101,8 +101,11 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
                 }
                 is OrdersState.Loading -> {
                     Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)) {
-                        CircularProgressIndicator()
+                        modifier = Modifier
+                            .fillMaxSize(1f)
+                            .background(color = MaterialTheme.colors.background)
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
                     }
                 }
 

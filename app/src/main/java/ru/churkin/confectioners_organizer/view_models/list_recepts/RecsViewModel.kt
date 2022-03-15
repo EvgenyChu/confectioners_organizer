@@ -41,12 +41,6 @@ class RecsViewModel() : ViewModel() {
             val recepts = repository.loadRecepts()
             _state.value = if (recepts.isEmpty()) ReceptsState.Empty
             else ReceptsState.Value(recepts)
-
-            state.collect(object : FlowCollector<ReceptsState> {
-                override suspend fun emit(value: ReceptsState) {
-                    Log.e("state", value.toString())
-                }
-            })
         }
     }
 

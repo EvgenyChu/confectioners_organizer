@@ -167,8 +167,8 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                 }
                 Divider(color = MaterialTheme.colors.secondary)
 
-                if (state.products.isNotEmpty()) state.products.forEach {
-                    OrderProductItem(orderProductItem = it)
+                if (state.products?.isNotEmpty() == true) state.products?.forEach {
+                    OrderProductItem(product = it)
                 }
 
 

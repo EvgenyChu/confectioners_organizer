@@ -17,6 +17,7 @@ data class Product(
     val units: String = "",
     val costPrice: Int = 0,
     val price: Int = 0,
+    @ColumnInfo(name = "order_id")
     val orderId: Long?
 )
 
@@ -37,4 +38,5 @@ data class ProductFull(
     val listIngredients: List<ProductIngredientItem>? = listOf(),
     val costPrice: Int = 0,
     val price: Int = 0,
+    val orderId: Long?
 )

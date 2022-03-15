@@ -4,16 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.local.db.entity.Order
-import ru.churkin.confectioners_organizer.local.db.entity.OrderItem
-import ru.churkin.confectioners_organizer.local.db.entity.Recept
+import ru.churkin.confectioners_organizer.local.db.entity.OrderFull
+import ru.churkin.confectioners_organizer.local.db.entity.ProductFull
 
 @Dao
 interface OrderDao {
-
-    @Query("SELECT * FROM orders")
-    suspend fun loadOrderItems() : List<OrderItem>
 
     @Query("SELECT * FROM orders")
     suspend fun loadAll() : List<Order>
@@ -34,4 +30,12 @@ interface OrderDao {
 
     @Query("SELECT * FROM orders WHERE customer LIKE '%' || :search || '%'")
     suspend fun searchOrder(search: String): List<Order>
+
+    @Query(
+        """
+        SELECT * FROM orders
+        WHERE id = :id
+    """
+    )
+    suspend fun loadOrderFull(id: Long): OrderFull
 }

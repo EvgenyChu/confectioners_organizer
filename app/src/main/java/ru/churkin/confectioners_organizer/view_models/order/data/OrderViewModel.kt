@@ -26,7 +26,7 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         checkNotNull(id)
 
         viewModelScope.launch {
-            val order = repository.loadOrder(id)
+            val order = repository.loadOrderFull(id)
 
             _state.value = currentState.copy(
                 id = order.id,
@@ -35,7 +35,7 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 deadLine = order.deadline,
                 needDelivery = order.needDelivery,
                 address = order.address,
-                products = emptyList(),
+                products = order.listProducts,
                 price = order.price,
                 isPaid = order.isPaid,
                 note = order.note

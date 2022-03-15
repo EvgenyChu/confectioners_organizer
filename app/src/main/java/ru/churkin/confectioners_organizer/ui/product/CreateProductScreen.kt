@@ -398,8 +398,7 @@ fun CreateReceptsDialog(
 
                 Box(
                     modifier = Modifier
-                        .width(300.dp)
-                        .height(300.dp)
+                        .heightIn(0.dp, 300.dp)
                 ) {
                     LazyColumn() {
                         listRecepts.forEach {

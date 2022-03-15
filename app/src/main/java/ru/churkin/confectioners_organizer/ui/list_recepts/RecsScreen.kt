@@ -97,15 +97,22 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
             when (val listState = state) {
 
                 is ReceptsState.Empty -> {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)) {
-                        Text("Не найдено")
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)
+                    ) {
+                        Text("Нет рецептов")
                     }
                 }
                 is ReceptsState.Loading -> {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)) {
-                       CircularProgressIndicator()
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize(1f)
+                            .background(color = MaterialTheme.colors.background)
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colors.secondary)
                     }
                 }
 
@@ -245,7 +252,8 @@ fun SearchBar(
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = {
             onSearch("")
-            onDismiss() }) {
+            onDismiss()
+        }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                 tint = MaterialTheme.colors.onPrimary,

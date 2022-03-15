@@ -28,7 +28,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createProduct(orderId = checkNotNull(orderId))
-                _state.value = currentState.copy(id = localId)
+                _state.value = currentState.copy(id = localId, orderId = orderId)
                 id = localId
             } else {
                 val product = repository.loadProduct(checkNotNull(id))

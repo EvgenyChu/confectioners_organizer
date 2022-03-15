@@ -103,9 +103,13 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                     }
                 }
                 is IngredientsState.Loading -> {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)) {
-                        CircularProgressIndicator()
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize(1f)
+                            .background(color = MaterialTheme.colors.background)
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
                     }
                 }
                 is IngredientsState.Value -> {
@@ -228,7 +232,7 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
             Spacer(Modifier.weight(1f))
             Text(
                 text = "${ingredient.available}" +
-                        if (ingredient.unitsAvailable=="ед. изм.") "" else " ${ingredient.unitsAvailable}",
+                        if (ingredient.unitsAvailable == "ед. изм.") "" else " ${ingredient.unitsAvailable}",
                 style = MaterialTheme.typography.subtitle1
             )
         }

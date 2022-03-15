@@ -21,6 +21,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
+import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.product.ProductIngredientItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
@@ -245,8 +246,8 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 )
             }
 
-            if (state.products.isNotEmpty()) state.products.forEach {
-                OrderProductItem(orderProductItem = it)
+            if (state.products?.isNotEmpty() == true) state.products?.forEach {
+                OrderProductItem(product = it)
             }
 
             TextField(
@@ -355,7 +356,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
 }
 
 @Composable
-fun OrderProductItem(orderProductItem: OrderProductItem) {
+fun OrderProductItem(product: Product) {
     Column(
         modifier = Modifier
 
@@ -369,18 +370,18 @@ fun OrderProductItem(orderProductItem: OrderProductItem) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = orderProductItem.title,
+                text = product.title,
                 style = MaterialTheme.typography.subtitle1
             )
             Spacer(Modifier.weight(1f))
             Column() {
                 Text(
-                    text = "${orderProductItem.weight} ${orderProductItem.units}",
+                    text = "${product.weight} ${product.units}",
                     style = MaterialTheme.typography.subtitle1
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = "${orderProductItem.price} руб.",
+                    text = "${product.price} руб.",
                     style = MaterialTheme.typography.subtitle1
                 )
             }

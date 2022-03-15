@@ -2,21 +2,19 @@ package ru.churkin.confectioners_organizer.repositories
 
 import ru.churkin.confectioners_organizer.local.db.AppDb
 import ru.churkin.confectioners_organizer.local.db.dao.OrderDao
-import ru.churkin.confectioners_organizer.local.db.dao.OrderProductItemDao
 import ru.churkin.confectioners_organizer.local.db.dao.ProductDao
-import ru.churkin.confectioners_organizer.local.db.dao.ReceptIngredientItemDao
 import ru.churkin.confectioners_organizer.local.db.entity.*
 
 class OrdersRepository(
     val orderDao: OrderDao = AppDb.db.orderDao(),
-    val productDao: ProductDao = AppDb.db.productDao(),
-    val orderProductItemDao: OrderProductItemDao = AppDb.db.orderProductItemDao()
+    val productDao: ProductDao = AppDb.db.productDao()
 ) {
     suspend fun loadOrders(): List<Order> = orderDao.loadAll()
+    suspend fun loadOrderFull(id: Long): OrderFull = orderDao.loadOrderFull(id)
     suspend fun loadOrder(id: Long): Order = orderDao.loadOrder(id)
-    suspend fun insertOrder(order: Order, products: List<OrderProductItem>) {
+    suspend fun insertOrder(order: Order, products: List<Product>) {
         val id = orderDao.insert(order = order)
-        orderProductItemDao.insertList(products = products.map { it.copy(orderId = id) })
+        productDao.insertList(products = products.map { it.copy(orderId = id) })
     }
 
     suspend fun removeOrder(id: Long) {
@@ -28,10 +26,7 @@ class OrdersRepository(
     suspend fun loadProducts(): List<Product> = productDao.loadAll()
 
     suspend fun loadOrderProducts(orderId: Long) =
-        orderProductItemDao.loadOrderProducts(orderId)
-
-    suspend fun insertOrderProductItem(orderProductItem: OrderProductItem) =
-        orderProductItemDao.insert(orderProductItem = orderProductItem)
+        productDao.loadOrderProducts(orderId)
 
     suspend fun createOrder() : Long  = orderDao.insert(Order())
 

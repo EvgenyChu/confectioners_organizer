@@ -10,13 +10,14 @@ import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.date.parseDate
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.local.db.entity.OrderProductItem
+import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import java.util.*
 
 class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private var id: Long? = savedStateHandle.get<Long>("id")
     private val repository: OrdersRepository = OrdersRepository()
-    private val ordersProducts: MutableList<OrderProductItem> = mutableListOf()
+    private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
 
     val state: StateFlow<OrderState>
@@ -106,19 +107,6 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun createOrderProduct(title: String, weight: Int, units: String, price: Int) {
-        val orderProductItem =
-            OrderProductItem(
-                title = title,
-                weight = weight,
-                units = units,
-                price = price
-            )
-        ordersProducts.add(orderProductItem)
-        _state.value =
-            currentState.copy(products = ordersProducts.toList())
-    }
-
     fun removeOrder(id: Long) {
         viewModelScope.launch{
             repository.removeOrder(id = id)
@@ -135,7 +123,7 @@ data class OrderState(
     val needDelivery: Boolean = false,
     val address: String? = null,
     val availableProducts: List<ProductItem> = listOf(),
-    val products: List<OrderProductItem> = listOf(),
+    val products: List<Product>? = listOf(),
     val price: Int = 0,
     val isPaid: Boolean = false,
     val note: String? = "",
