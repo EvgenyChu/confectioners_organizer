@@ -21,7 +21,7 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: OrderState
         get() = state.value
 
-    init {
+    suspend fun initState() {
 
         checkNotNull(id)
 

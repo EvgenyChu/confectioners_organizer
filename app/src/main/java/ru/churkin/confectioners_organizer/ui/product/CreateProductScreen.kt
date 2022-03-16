@@ -42,11 +42,11 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 
     val state by vm.state.collectAsState()
     val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "products/create")
+        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}")
     }
     val title by remember {
         mutableStateOf(
-            if (isCreate) "Новое изделие" else "Редактирование"
+            if (!isCreate) "Новое изделие" else "Редактирование"
         )
     }
 
@@ -75,7 +75,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
                 IconButton(onClick = {
                     navController.popBackStack()
-                    if (isCreate) vm.removeProduct(state.id)
+                    if (!isCreate) vm.removeProduct(state.id)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),

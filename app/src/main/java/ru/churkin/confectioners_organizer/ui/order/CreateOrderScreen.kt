@@ -241,8 +241,10 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 )
             }
 
-            if (state.products?.isNotEmpty() == true) state.products?.forEach {
-                OrderProductItem(product = it)
+            if (state.products?.isNotEmpty() == true) state.products?.forEach {product ->
+                OrderProductItem(product = product) {
+                    navController.navigate("orders/${product.orderId}/products/${product.id}")
+                }
             }
 
             TextField(
@@ -351,7 +353,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
 }
 
 @Composable
-fun OrderProductItem(product: Product) {
+fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
     Column(
         modifier = Modifier
 
@@ -359,7 +361,7 @@ fun OrderProductItem(product: Product) {
     ) {
         Row(
             modifier = Modifier
-                .height(44.dp)
+                .height(56.dp)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -378,6 +380,14 @@ fun OrderProductItem(product: Product) {
                 Text(
                     text = "${product.price} руб.",
                     style = MaterialTheme.typography.subtitle1
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = { onClick(product.id) }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                    tint = MaterialTheme.colors.secondary,
+                    contentDescription = "Очистить"
                 )
             }
         }

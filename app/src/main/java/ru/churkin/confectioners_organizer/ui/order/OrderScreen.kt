@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,6 +25,10 @@ import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
 
         Box(
             modifier = Modifier
@@ -164,8 +169,10 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                 }
                 Divider(color = MaterialTheme.colors.secondary)
 
-                if (state.products?.isNotEmpty() == true) state.products?.forEach {
-                    OrderProductItem(product = it)
+                if (state.products?.isNotEmpty() == true) state.products?.forEach {product ->
+                    OrderProductItem(product = product) {
+                        navController.navigate("orders/${product.orderId}/products/${product.id}")
+                    }
                 }
 
 
@@ -259,6 +266,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
             }
         }
     }
+
 
 /*
 @Preview

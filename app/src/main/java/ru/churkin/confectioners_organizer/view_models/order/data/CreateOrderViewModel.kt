@@ -26,10 +26,6 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: OrderState
         get() = state.value
 
-    init {
-        Log.e("CreateOrderViewModel", "initViewModel${this.hashCode()}")
-    }
-
     suspend fun initState() {
         if (id == null && currentState.id == 0L) {
             val localId = repository.createOrder()
@@ -53,8 +49,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
         val products = repository.loadOrderProducts(currentState.id)
         val availableProducts =
-            repository.loadOrderProducts(currentState.id).map { it.title }.toString().drop(1)
-                .dropLast(1).lowercase()
+            repository.loadOrderProducts(currentState.id).joinToString(",") { it.title }
 
         _state.value = currentState.copy(
             availableProducts = availableProducts,

@@ -32,23 +32,39 @@ class RootActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             AppTheme() {
-                NavHost(navController = navController, startDestination = Screen.Ingredients.route) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Ingredients.route
+                ) {
                     composable(Screen.Ingredients.route) { IngsScreen(navController = navController) }
                     composable(Screen.Recepts.route) { RecsScreen(navController = navController) }
                     composable(Screen.Orders.route) { OrdersScreen(navController = navController) }
                     composable("orders/create") { CreateOrderScreen(navController = navController) }
-                    composable("orders/{order_id}/products/create",
+                    composable("products/create") { CreateProductScreen(navController = navController) }
+                    composable(
+                        "orders/{order_id}/products/create",
                         arguments = listOf(navArgument("order_id")
-                        { type = NavType.LongType })) { CreateProductScreen(navController = navController) }
+                        { type = NavType.LongType })
+                    ) { CreateProductScreen(navController = navController) }
                     composable("recepts/create") { CreateReceptScreen(navController = navController) }
                     composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
-                    composable("orders/edit/{id}",
+                    composable(
+                        "orders/{order_id}/products/{id}",
+                        arguments = listOf(
+                            navArgument("id") { type = NavType.LongType },
+                            navArgument("order_id") { type = NavType.LongType }
+                        )
+                    ) { CreateProductScreen(navController = navController) }
+                    composable(
+                        "orders/edit/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
                     ) { CreateOrderScreen(navController = navController) }
-                    composable("recepts/edit/{id}",
+                    composable(
+                        "recepts/edit/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
                     ) { CreateReceptScreen(navController = navController) }
-                    composable("ingredients/edit/{id}",
+                    composable(
+                        "ingredients/edit/{id}",
                         arguments = listOf(navArgument("id") { type = NavType.LongType })
                     ) { CreateIngredientScreen(navController = navController) }
                     composable(
