@@ -15,7 +15,6 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private var id: Long? = savedStateHandle.get<Long>("id")
     private var orderId: Long? = savedStateHandle.get<Long>("order_id")
     private val repository: ProductsRepository = ProductsRepository()
-    private val productsIngredients: MutableList<ProductIngredientItem> = mutableListOf()
     private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
     private val _state: MutableStateFlow<ProductState> = MutableStateFlow(ProductState())
 
@@ -79,24 +78,30 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun updateTitle(title: String) {
         _state.value = currentState.copy(title = title)
     }
+
     fun updateWeight(weight: Int) {
         _state.value = currentState.copy(weight = weight)
     }
+
     fun updateUnits(units: String) {
         _state.value = currentState.copy(units = units)
     }
+
     fun updatePrice(price: Int) {
         _state.value = currentState.copy(price = price)
     }
+
     fun emptyState() {
         _state.value = ProductState()
     }
+
     fun addProduct() {
         val product = currentState.toProduct()
         viewModelScope.launch {
             repository.insertProduct(product, productsRecepts)
         }
     }
+
     fun createProductIngredient(title: String, count: Int, availability: Boolean) {
         viewModelScope.launch {
             val productIngredientItem =
@@ -117,29 +122,43 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun createProductRecept(title: String, count: Int) {
-        val productReceptItem =
-            ProductReceptItem(
-                title = title,
-                count = count
-            )
-        productsRecepts.add(productReceptItem)
-        _state.value =
-            currentState.copy(recepts = productsRecepts.toList(), isCreateReceptDialog = false)
+        viewModelScope.launch {
+            val productReceptItem =
+                ProductReceptItem(
+                    title = title,
+                    count = count
+                )
+            repository.insertProductReceptItem(productReceptItem)
+            val recepts = repository.loadProductRecepts(currentState.id)
+            _state.value =
+                currentState.copy(
+                    recepts = recepts,
+                    isCreateReceptDialog = false
+                )
+        }
     }
 
     fun removeProduct(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             repository.removeProduct(id = id)
             repository.loadProducts()
         }
     }
 
-    fun removeProductIngredient(id: Long){
+    fun removeProductIngredient(id: Long) {
         Log.e("CreateProductViewModel", "$id")
-        viewModelScope.launch{
+        viewModelScope.launch {
             repository.removeProductIngredient(id = id)
             val ingredients = repository.loadProductIngredients(currentState.id)
             _state.value = currentState.copy(ingredients = ingredients)
+        }
+    }
+
+    fun removeProductRecept(id: Long) {
+        viewModelScope.launch {
+            repository.removeProductRecept(id = id)
+            val recepts = repository.loadProductRecepts(currentState.id)
+            _state.value = currentState.copy(recepts = recepts)
         }
     }
 }

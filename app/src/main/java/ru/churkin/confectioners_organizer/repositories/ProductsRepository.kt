@@ -19,6 +19,10 @@ class ProductsRepository(
         productIngredientItemDao.insert(ingredients)
     }
 
+    suspend fun insertProductReceptItem(recepts: ProductReceptItem){
+        productReceptItemDao.insert(recepts)
+    }
+
     suspend fun insertProduct(
         product: Product,
         recepts: List<ProductReceptItem>,
@@ -33,6 +37,10 @@ class ProductsRepository(
 
     suspend fun removeProductIngredient(id: Long) {
         productIngredientItemDao.delete(id = id)
+    }
+
+    suspend fun removeProductRecept(id: Long) {
+        productReceptItemDao.delete(id = id)
     }
 
     suspend fun isEmptyProducts() = productDao.loadAll().isEmpty()

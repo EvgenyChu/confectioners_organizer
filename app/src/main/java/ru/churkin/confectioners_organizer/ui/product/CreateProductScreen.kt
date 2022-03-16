@@ -246,7 +246,57 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             }
 
             if (state.recepts.isNotEmpty()) state.recepts.forEach {
-                ProductReceptItem(productReceptItem = it)
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                    LazyColumn() {
+                        items(state.recepts, { it.id }) { item ->
+
+                            val dismissState = rememberDismissState()
+
+                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                                vm.removeProductRecept(item.id)
+                            }
+                            SwipeToDismiss(
+                                state = dismissState,
+                                directions = setOf(
+                                    DismissDirection.StartToEnd
+                                ),
+                                background = {
+
+                                    val color by animateColorAsState(
+                                        when (dismissState.targetValue) {
+                                            DismissValue.Default -> MaterialTheme.colors.surface
+                                            else -> MaterialTheme.colors.secondary
+                                        }
+                                    )
+
+                                    val icon = Icons.Default.Delete
+
+                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                    val alignment = Alignment.CenterStart
+
+
+                                    Box(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(color)
+                                            .padding(start = 16.dp, end = 16.dp),
+                                        contentAlignment = alignment
+                                    ) {
+                                        Icon(
+                                            icon,
+                                            contentDescription = "icon",
+                                            modifier = Modifier.scale(scale)
+                                        )
+                                    }
+                                },
+                                dismissContent = {
+                                    ProductReceptItem(productReceptItem = item)
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             Row(
@@ -271,7 +321,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 
 
             if (state.ingredients.isNotEmpty()) {
-                Box(modifier = Modifier.heightIn(0.dp, 300.dp)){
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
                     LazyColumn() {
                         items(state.ingredients, { it.id }) { item ->
 
