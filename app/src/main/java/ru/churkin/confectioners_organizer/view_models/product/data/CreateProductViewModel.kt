@@ -15,7 +15,6 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private var id: Long? = savedStateHandle.get<Long>("id")
     private var orderId: Long? = savedStateHandle.get<Long>("order_id")
     private val repository: ProductsRepository = ProductsRepository()
-    private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
     private val _state: MutableStateFlow<ProductState> = MutableStateFlow(ProductState())
 
     val state: StateFlow<ProductState>
@@ -98,7 +97,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun addProduct() {
         val product = currentState.toProduct()
         viewModelScope.launch {
-            repository.insertProduct(product, productsRecepts)
+            repository.insertProduct(product)
         }
     }
 

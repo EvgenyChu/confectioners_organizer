@@ -28,6 +28,10 @@ class ReceptsRepository(
         receptDao.delete(id = id)
     }
 
+    suspend fun removeReceptIngredient(id: Long) {
+        receptIngredientItemDao.delete(id = id)
+    }
+
     suspend fun isEmptyRecepts() = receptDao.loadAll().isEmpty()
 
     suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
@@ -35,8 +39,8 @@ class ReceptsRepository(
     suspend fun loadReceptIngredients(receptId: Long) =
         receptIngredientItemDao.loadReceptIngredients(receptId)
 
-    suspend fun insertReceptIngredientItem(receptIngredientItem: ReceptIngredientItem) =
-        receptIngredientItemDao.insert(receptIngredientItem = receptIngredientItem)
+    suspend fun insertReceptIngredientItem(ingredient: ReceptIngredientItem) =
+        receptIngredientItemDao.insert(receptIngredientItem = ingredient)
 
     suspend fun createRecept() : Long  = receptDao.insert(Recept())
 

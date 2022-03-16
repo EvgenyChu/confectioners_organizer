@@ -93,20 +93,35 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun createReceptIngredient(title: String, count: Int, availability: Boolean) {
-        val receptIngredientItem =
-            ReceptIngredientItem(
-                title = title,
-                availability = availability,
-                count = count
-            )
-        receptsIngredients.add(receptIngredientItem)
-        _state.value =
-            currentState.copy(ingredients = receptsIngredients.toList(), isCreateDialog = false)
+        viewModelScope.launch {
+            val receptIngredientItem =
+                ReceptIngredientItem(
+                    title = title,
+                    availability = availability,
+                    count = count,
+                    receptId = currentState.id
+                )
+            repository.insertReceptIngredientItem(receptIngredientItem)
+            val ingredients = repository.loadReceptIngredients(currentState.id)
+            _state.value =
+                currentState.copy(
+                    ingredients = ingredients,
+                    isCreateDialog = false
+                )
+        }
     }
     fun removeRecept(id: Long) {
         viewModelScope.launch{
             repository.removeRecept(id = id)
             repository.loadRecepts()
+        }
+    }
+
+    fun removeReceptIngredient(id: Long) {
+        viewModelScope.launch {
+            repository.removeReceptIngredient(id = id)
+            val ingredients = repository.loadReceptIngredients(currentState.id)
+            _state.value = currentState.copy(ingredients = ingredients)
         }
     }
 }
