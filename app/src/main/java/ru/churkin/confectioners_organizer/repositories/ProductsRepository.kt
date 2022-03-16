@@ -12,19 +12,27 @@ class ProductsRepository(
     val productIngredientItemDao: ProductIngredientItemDao = AppDb.db.productIngredientItemDao()
 ) {
     suspend fun loadProducts(): List<Product> = productDao.loadAll()
+
     suspend fun loadProduct(id: Long): ProductFull = productDao.loadProductFull(id)
+
+    suspend fun insertProductIngredientItem(ingredients: ProductIngredientItem){
+        productIngredientItemDao.insert(ingredients)
+    }
+
     suspend fun insertProduct(
         product: Product,
         recepts: List<ProductReceptItem>,
-        ingredients: List<ProductIngredientItem>
     ) {
         val id = productDao.insert(product = product)
-        productIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(productId = id) })
         productReceptItemDao.insertList(recepts = recepts.map { it.copy(productId = id) })
     }
 
     suspend fun removeProduct(id: Long) {
         productDao.delete(id = id)
+    }
+
+    suspend fun removeProductIngredient(id: Long) {
+        productIngredientItemDao.delete(id = id)
     }
 
     suspend fun isEmptyProducts() = productDao.loadAll().isEmpty()

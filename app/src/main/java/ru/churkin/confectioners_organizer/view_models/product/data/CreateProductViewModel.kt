@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.product.data
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,19 +94,26 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun addProduct() {
         val product = currentState.toProduct()
         viewModelScope.launch {
-            repository.insertProduct(product, productsRecepts, productsIngredients)
+            repository.insertProduct(product, productsRecepts)
         }
     }
     fun createProductIngredient(title: String, count: Int, availability: Boolean) {
-        val productIngredientItem =
-            ProductIngredientItem(
-                title = title,
-                availability = availability,
-                count = count
-            )
-        productsIngredients.add(productIngredientItem)
-        _state.value =
-            currentState.copy(ingredients = productsIngredients.toList(), isCreateIngredientDialog = false)
+        viewModelScope.launch {
+            val productIngredientItem =
+                ProductIngredientItem(
+                    title = title,
+                    availability = availability,
+                    count = count,
+                    productId = currentState.id
+                )
+            repository.insertProductIngredientItem(productIngredientItem)
+            val ingredients = repository.loadProductIngredients(currentState.id)
+            _state.value =
+                currentState.copy(
+                    ingredients = ingredients,
+                    isCreateIngredientDialog = false
+                )
+        }
     }
 
     fun createProductRecept(title: String, count: Int) {
@@ -123,6 +131,15 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch{
             repository.removeProduct(id = id)
             repository.loadProducts()
+        }
+    }
+
+    fun removeProductIngredient(id: Long){
+        Log.e("CreateProductViewModel", "$id")
+        viewModelScope.launch{
+            repository.removeProductIngredient(id = id)
+            val ingredients = repository.loadProductIngredients(currentState.id)
+            _state.value = currentState.copy(ingredients = ingredients)
         }
     }
 }

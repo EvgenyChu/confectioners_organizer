@@ -276,7 +276,7 @@ fun CreateIngredientsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Box(modifier = Modifier
-                    .heightIn(0.dp, 300.dp)) {
+                    .heightIn(0.dp, 10000.dp)) {
                     LazyColumn() {
                         listIngredients.forEach {
                             val backgroundColor =

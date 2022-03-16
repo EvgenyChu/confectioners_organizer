@@ -1,19 +1,27 @@
 package ru.churkin.confectioners_organizer.product
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.colorResource
@@ -26,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.listOrders.OrderItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
@@ -37,6 +46,7 @@ import ru.churkin.confectioners_organizer.view_models.product.data.CreateProduct
 import ru.churkin.confectioners_organizer.view_models.product.data.ReceptItem
 import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel = viewModel()) {
 
@@ -259,8 +269,59 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                 )
             }
 
-            if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
-                ProductIngredientItem(productIngredientItem = it)
+
+            if (state.ingredients.isNotEmpty()) {
+                Box(modifier = Modifier.heightIn(0.dp, 300.dp)){
+                    LazyColumn() {
+                        items(state.ingredients, { it.id }) { item ->
+
+                            val dismissState = rememberDismissState()
+
+                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                                vm.removeProductIngredient(item.id)
+                            }
+                            SwipeToDismiss(
+                                state = dismissState,
+                                directions = setOf(
+                                    DismissDirection.StartToEnd
+                                ),
+                                background = {
+
+                                    val color by animateColorAsState(
+                                        when (dismissState.targetValue) {
+                                            DismissValue.Default -> MaterialTheme.colors.surface
+                                            else -> MaterialTheme.colors.secondary
+                                        }
+                                    )
+
+                                    val icon = Icons.Default.Delete
+
+                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                    val alignment = Alignment.CenterStart
+
+
+                                    Box(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(color)
+                                            .padding(start = 16.dp, end = 16.dp),
+                                        contentAlignment = alignment
+                                    ) {
+                                        Icon(
+                                            icon,
+                                            contentDescription = "icon",
+                                            modifier = Modifier.scale(scale)
+                                        )
+                                    }
+                                },
+                                dismissContent = {
+                                    ProductIngredientItem(productIngredientItem = item)
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             TextField(
@@ -336,6 +397,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             )
         }
     }
+
     if (state.isCreateIngredientDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateIngredientDialog() },
