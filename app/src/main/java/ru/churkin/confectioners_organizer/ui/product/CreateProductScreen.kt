@@ -245,7 +245,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                 )
             }
 
-            if (state.recepts.isNotEmpty()) state.recepts.forEach {
+            if (state.recepts.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
                     LazyColumn() {
                         items(state.recepts, { it.id }) { item ->

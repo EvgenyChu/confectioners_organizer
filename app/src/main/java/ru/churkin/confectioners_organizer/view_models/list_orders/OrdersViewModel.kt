@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
-import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 
 class OrdersViewModel() : ViewModel() {
     private val repository: OrdersRepository = OrdersRepository()
@@ -34,7 +33,7 @@ class OrdersViewModel() : ViewModel() {
         viewModelScope.launch {
             val orders = repository.loadOrders()
             _state.value = if (orders.isEmpty()) OrdersState.Empty
-                else OrdersState.Value(orders)
+            else OrdersState.Value(orders)
         }
     }
 
@@ -52,9 +51,14 @@ class OrdersViewModel() : ViewModel() {
 
     fun removeOrder(id: Long) {
         _state.value = OrdersState.Loading
-        viewModelScope.launch{
-            repository.removeOrder(id = id)
+        viewModelScope.launch {
+            val products = repository.loadOrderProducts(id)
+            products.forEach {
+                repository.removeOrderProductIngredient(it.id)
+                repository.removeOrderProductRecept(it.id)
+            }
             repository.removeOrderProduct(id = id)
+            repository.removeOrder(id = id)
             val orders = repository.loadOrders()
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)

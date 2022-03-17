@@ -3,11 +3,15 @@ package ru.churkin.confectioners_organizer.repositories
 import ru.churkin.confectioners_organizer.local.db.AppDb
 import ru.churkin.confectioners_organizer.local.db.dao.OrderDao
 import ru.churkin.confectioners_organizer.local.db.dao.ProductDao
+import ru.churkin.confectioners_organizer.local.db.dao.ProductIngredientItemDao
+import ru.churkin.confectioners_organizer.local.db.dao.ProductReceptItemDao
 import ru.churkin.confectioners_organizer.local.db.entity.*
 
 class OrdersRepository(
     val orderDao: OrderDao = AppDb.db.orderDao(),
-    val productDao: ProductDao = AppDb.db.productDao()
+    val productDao: ProductDao = AppDb.db.productDao(),
+    val productIngredientItemDao: ProductIngredientItemDao = AppDb.db.productIngredientItemDao(),
+    val productReceptItemDao: ProductReceptItemDao = AppDb.db.productReceptItemDao()
 ) {
     suspend fun loadOrders(): List<Order> = orderDao.loadAll()
     suspend fun loadOrderFull(id: Long): OrderFull = orderDao.loadOrderFull(id)
@@ -23,6 +27,14 @@ class OrdersRepository(
 
     suspend fun removeOrderProduct(id: Long) {
         productDao.deleteOrderProduct(id = id)
+    }
+
+    suspend fun removeOrderProductIngredient(id: Long) {
+        productIngredientItemDao.deleteOrderProductIngredient(id = id)
+    }
+
+    suspend fun removeOrderProductRecept(id: Long) {
+        productReceptItemDao.deleteOrderProductRecept(id = id)
     }
 
     suspend fun isEmptyOrders() = orderDao.loadAll().isEmpty()

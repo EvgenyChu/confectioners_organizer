@@ -125,7 +125,8 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             val productReceptItem =
                 ProductReceptItem(
                     title = title,
-                    count = count
+                    count = count,
+                    productId = currentState.id
                 )
             repository.insertProductReceptItem(productReceptItem)
             val recepts = repository.loadProductRecepts(currentState.id)

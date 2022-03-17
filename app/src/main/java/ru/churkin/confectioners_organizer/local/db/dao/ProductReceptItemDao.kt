@@ -23,6 +23,9 @@ interface ProductReceptItemDao {
     @Query("DELETE FROM product_recept_items WHERE item_id = :id")
     suspend fun delete(id: Long)
 
+    @Query("DELETE FROM product_recept_items WHERE product_id = :id")
+    suspend fun deleteOrderProductRecept(id: Long)
+
     @Insert
     suspend fun insertList(recepts: List<ProductReceptItem>)
 }
