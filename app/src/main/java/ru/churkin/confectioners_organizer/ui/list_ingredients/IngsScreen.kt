@@ -238,8 +238,7 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
         }
         Divider(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp),
+                .fillMaxWidth(),
             color = MaterialTheme.colors.secondary
         )
     }

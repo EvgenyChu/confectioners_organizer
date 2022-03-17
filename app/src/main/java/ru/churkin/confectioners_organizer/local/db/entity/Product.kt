@@ -1,14 +1,19 @@
 package ru.churkin.confectioners_organizer.local.db.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import androidx.room.*
 import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import java.util.*
 
-@Entity(tableName = "products")
+@Entity(
+    tableName = "products",
+   /* foreignKeys = [ForeignKey(
+        entity = Order::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("order_id"),
+        onDelete = ForeignKey.CASCADE
+    )]*/
+)
 data class Product(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

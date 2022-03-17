@@ -54,6 +54,7 @@ class OrdersViewModel() : ViewModel() {
         _state.value = OrdersState.Loading
         viewModelScope.launch{
             repository.removeOrder(id = id)
+            repository.removeOrderProduct(id = id)
             val orders = repository.loadOrders()
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)

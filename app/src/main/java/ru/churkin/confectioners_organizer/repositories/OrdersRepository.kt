@@ -21,9 +21,11 @@ class OrdersRepository(
         orderDao.delete(orderId = id)
     }
 
-    suspend fun isEmptyOrders() = orderDao.loadAll().isEmpty()
+    suspend fun removeOrderProduct(id: Long) {
+        productDao.deleteOrderProduct(id = id)
+    }
 
-    suspend fun loadProducts(): List<Product> = productDao.loadAll()
+    suspend fun isEmptyOrders() = orderDao.loadAll().isEmpty()
 
     suspend fun loadOrderProducts(orderId: Long) =
         productDao.loadOrderProducts(orderId)
