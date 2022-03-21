@@ -47,7 +47,7 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
             val ingredients = repository.loadReceptIngredients(currentState.id)
             val availableIngredients =
-                repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
+                repository.loadIngredients().map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
 
             _state.value = currentState.copy(
                 availableIngredients = availableIngredients,
@@ -92,20 +92,24 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun createReceptIngredient(title: String, count: Int, availability: Boolean) {
+    fun createReceptIngredient(title: String, count: Int, availability: Boolean, unitsAvailable: String) {
         viewModelScope.launch {
             val receptIngredientItem =
                 ReceptIngredientItem(
                     title = title,
                     availability = availability,
                     count = count,
+                    unitsAvailable = unitsAvailable,
                     receptId = currentState.id
                 )
             repository.insertReceptIngredientItem(receptIngredientItem)
             val ingredients = repository.loadReceptIngredients(currentState.id)
+            var availabilityIngredients: Boolean = true
+                ingredients.forEach { if (!it.availability)  availabilityIngredients = false}
             _state.value =
                 currentState.copy(
                     ingredients = ingredients,
+                    availabilityIngredients = availabilityIngredients,
                     isCreateDialog = false
                 )
         }
@@ -136,10 +140,11 @@ data class ReceptState(
     val note: String = "",
     val isCreateDialog: Boolean = false,
     val isConfirm: Boolean = false,
-    val available: Int = 0
+    val available: Int = 0,
+    val availabilityIngredients: Boolean = true
 )
 
-fun ReceptState.toRecept()  = Recept(id, title, weight, time, note)
+fun ReceptState.toRecept()  = Recept(id, title, weight, time, note, availabilityIngredients)
 
 
 

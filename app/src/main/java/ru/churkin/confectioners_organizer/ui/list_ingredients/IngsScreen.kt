@@ -21,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.Green
@@ -33,7 +35,12 @@ import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngsViewM
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterialApi
 @Composable
-fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
+fun IngsScreen(
+    navController: NavController,
+    vm: IngsViewModel = viewModel(),
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
 
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
@@ -61,7 +68,9 @@ fun IngsScreen(navController: NavController, vm: IngsViewModel = viewModel()) {
                         },
                         onDismiss = { isShowSearch = false })
                 } else {
-                    IconButton(onClick = { navController.navigate("recepts") }) {
+                    IconButton(onClick = { scope.launch {
+                        scaffoldState.drawerState.open()
+                    } }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                             tint = MaterialTheme.colors.onPrimary,

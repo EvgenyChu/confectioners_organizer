@@ -72,7 +72,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "ФИО ${state.customer}",
+                        "Заказчик: ${state.customer}",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
@@ -167,7 +167,6 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
-                Divider(color = MaterialTheme.colors.secondary)
 
                 if (state.products?.isNotEmpty() == true) state.products?.forEach {product ->
                     OrderProductItem(product = product) {
@@ -184,7 +183,7 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "${state.price} руб.",
+                        "Цена заказа: ${state.price} руб.",
                         style = MaterialTheme.typography.subtitle1
                     )
                 }

@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
@@ -34,7 +36,12 @@ import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
-fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
+fun RecsScreen(
+    navController: NavController,
+    vm: RecsViewModel = viewModel(),
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
 
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
@@ -62,7 +69,11 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                         onDismiss = { isShowSearch = false })
                 } else {
 
-                    IconButton(onClick = { navController.navigate("orders") }) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -112,7 +123,8 @@ fun RecsScreen(navController: NavController, vm: RecsViewModel = viewModel()) {
                             .background(color = MaterialTheme.colors.background)
                     ) {
                         CircularProgressIndicator(
-                            color = MaterialTheme.colors.secondary)
+                            color = MaterialTheme.colors.secondary
+                        )
                     }
                 }
 
@@ -218,7 +230,8 @@ fun ReceptItem(recept: Recept, onClick: (Long) -> Unit) {
             Icon(
                 modifier = Modifier.padding(16.dp),
                 painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                tint = colorResource(id = R.color.green),
+                tint = if (recept.availabilityIngredients) colorResource(id = R.color.green)
+                else colorResource(id = R.color.red),
                 contentDescription = "Наличие"
             )
             Text(

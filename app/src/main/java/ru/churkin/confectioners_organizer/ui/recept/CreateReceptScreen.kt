@@ -282,8 +282,8 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     if (state.isCreateDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateDialog() },
-            onCreate = { title, count, availability ->
-                vm.createReceptIngredient(title, count, availability)
+            onCreate = { title, count, availability, unitsAvailable ->
+                vm.createReceptIngredient(title, count, availability, unitsAvailable)
             },
             listIngredients = state.availableIngredients
         )
@@ -297,10 +297,14 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
 fun CreateIngredientsDialog(
     listIngredients: List<IngredientItem>,
     onDismiss: () -> Unit,
-    onCreate: (title: String, count: Int, availibility: Boolean) -> Unit
+    onCreate: (title: String, count: Int, availibility: Boolean, unitsAvailable: String) -> Unit
 ) {
     Log.e("dialog", listIngredients.toString())
     var selectionItem: String? by remember { mutableStateOf(null) }
+
+    var selectionAvailability: Boolean? by remember { mutableStateOf(null)}
+
+    var selectionUnitsAvailable: String? by remember { mutableStateOf(null)}
 
     var ingredientCount: Int by remember { mutableStateOf(0) }
 
@@ -347,6 +351,8 @@ fun CreateIngredientsDialog(
                                         .background(color = backgroundColor)
                                         .clickable(onClick = {
                                             selectionItem = it.title
+                                            selectionAvailability = it.availability
+                                            selectionUnitsAvailable = it.unitsAvailable
                                         })
                                         .height(44.dp)
                                         .padding(horizontal = 16.dp)
@@ -361,6 +367,13 @@ fun CreateIngredientsDialog(
 
                                     Text(
                                         text = it.title,
+                                        style = MaterialTheme.typography.body2
+                                    )
+
+                                    Spacer(Modifier.weight(1f, true))
+
+                                    Text(
+                                        text = it.unitsAvailable,
                                         style = MaterialTheme.typography.body2
                                     )
                                 }
@@ -404,7 +417,7 @@ fun CreateIngredientsDialog(
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(
                         onClick = {
-                            selectionItem?.let { onCreate(it, ingredientCount, true) }
+                            selectionItem?.let { onCreate(it, ingredientCount, selectionAvailability?: true, selectionUnitsAvailable?: "г.") }
                         },
                         enabled = selectionItem != null && ingredientCount > 0
                     )
@@ -444,6 +457,11 @@ fun ReceptIngItem(receptIngredientItem: ReceptIngredientItem) {
             Spacer(Modifier.weight(1f))
             Text(
                 text = "${receptIngredientItem.count}",
+                style = MaterialTheme.typography.subtitle1
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = receptIngredientItem.unitsAvailable,
                 style = MaterialTheme.typography.subtitle1
             )
         }

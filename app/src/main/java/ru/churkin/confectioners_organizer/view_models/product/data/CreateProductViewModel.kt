@@ -43,7 +43,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             }
             val ingredients = repository.loadProductIngredients(currentState.id)
             val availableIngredients =
-                repository.loadIngredients().map { IngredientItem(it.title, it.availability) }
+                repository.loadIngredients().map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
 
             val recepts = repository.loadProductRecepts(currentState.id)
             val availableRecepts =
@@ -101,13 +101,14 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun createProductIngredient(title: String, count: Int, availability: Boolean) {
+    fun createProductIngredient(title: String, count: Int, availability: Boolean, unitsAvailable: String) {
         viewModelScope.launch {
             val productIngredientItem =
                 ProductIngredientItem(
                     title = title,
                     availability = availability,
                     count = count,
+                    unitsAvailable = unitsAvailable,
                     productId = currentState.id
                 )
             repository.insertProductIngredientItem(productIngredientItem)

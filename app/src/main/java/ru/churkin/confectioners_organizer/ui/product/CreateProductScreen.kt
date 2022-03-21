@@ -451,8 +451,8 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     if (state.isCreateIngredientDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateIngredientDialog() },
-            onCreate = { title, count, availability ->
-                vm.createProductIngredient(title, count, availability)
+            onCreate = { title, count, availability, unitsAvailable ->
+                vm.createProductIngredient(title, count, availability, unitsAvailable)
             },
             listIngredients = state.availableIngredients
         )
@@ -534,6 +534,12 @@ fun CreateReceptsDialog(
                                         text = it.title,
                                         style = MaterialTheme.typography.body2
                                     )
+                                    Spacer(Modifier.weight(1f, true))
+
+                                    Text(
+                                        text = "г.",
+                                        style = MaterialTheme.typography.body2
+                                    )
                                 }
                             }
                         }
@@ -608,7 +614,7 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
             )
             Spacer(Modifier.weight(1f))
             Text(
-                text = "${productReceptItem.count}",
+                text = "${productReceptItem.count} г.",
                 style = MaterialTheme.typography.subtitle1
             )
         }
@@ -647,6 +653,11 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
             Spacer(Modifier.weight(1f))
             Text(
                 text = "${productIngredientItem.count}",
+                style = MaterialTheme.typography.subtitle1
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = productIngredientItem.unitsAvailable,
                 style = MaterialTheme.typography.subtitle1
             )
         }

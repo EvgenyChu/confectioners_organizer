@@ -24,9 +24,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Order
+import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
@@ -34,11 +37,18 @@ import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewMode
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
-fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()) {
+fun OrdersScreen(
+    navController: NavController,
+    vm: OrdersViewModel = viewModel(),
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
 
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
+    var isShowDatePicker by remember { mutableStateOf(false) }
+    var isShowDate by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -61,7 +71,11 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
                         },
                         onDismiss = { isShowSearch = false })
                 } else {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -74,15 +88,24 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
                     )
                     Spacer(Modifier.weight(1f, true))
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { isShowDatePicker = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
                             tint = MaterialTheme.colors.onPrimary,
                             contentDescription = "Календарь"
                         )
+                        if (isShowDatePicker) DatePicker(
+                            onSelect = {
+                                vm.searchDeadLine(it)
+                                isShowDatePicker = false
+                                isShowDate = true
+                            },
+                            onDismiss = {
+                                isShowDatePicker = false
+                            })
                     }
 
-                    IconButton(onClick = { isShowSearch = true}) {
+                    IconButton(onClick = { isShowSearch = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_search_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -94,13 +117,16 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
             when (val listState = state) {
 
                 is OrdersState.Empty -> {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)
+                    ) {
                         Text("Не найдено")
                     }
                 }
                 is OrdersState.Loading -> {
-                    Box(contentAlignment = Alignment.Center,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize(1f)
                             .background(color = MaterialTheme.colors.background)
@@ -184,7 +210,13 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
             }
         }
         FloatingActionButton(
-            onClick = { navController.navigate("orders/create") },
+            onClick = {
+                if (!isShowDate) navController.navigate("orders/create")
+                else {
+                    vm.currentOrdersState()
+                    isShowDate = false
+                }
+            },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .padding(bottom = 28.dp, end = 16.dp),
@@ -192,7 +224,8 @@ fun OrdersScreen(navController: NavController, vm: OrdersViewModel = viewModel()
             contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                painter = if (isShowDate) painterResource(id = R.drawable.ic_baseline_arrow_back_24)
+                else painterResource(id = R.drawable.ic_baseline_add_24),
                 contentDescription = "Добавить"
             )
         }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.date.parseDate
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 
@@ -30,6 +31,15 @@ class OrdersViewModel() : ViewModel() {
         get() = _searchText
 
     init {
+        viewModelScope.launch {
+            _state.value = OrdersState.Loading
+            val orders = repository.loadOrders()
+            _state.value = if (orders.isEmpty()) OrdersState.Empty
+            else OrdersState.Value(orders)
+        }
+    }
+
+    fun currentOrdersState(){
         viewModelScope.launch {
             val orders = repository.loadOrders()
             _state.value = if (orders.isEmpty()) OrdersState.Empty
@@ -62,6 +72,19 @@ class OrdersViewModel() : ViewModel() {
             val orders = repository.loadOrders()
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)
+        }
+    }
+
+    fun searchDeadLine(date: String) {
+        _state.value = OrdersState.Loading
+        viewModelScope.launch {
+            val orders = repository.loadOrders()
+            val searchOrders: MutableList<Order> = mutableListOf()
+                orders.forEach{
+                if (it.deadline ==  date.parseDate()) searchOrders += it
+            }
+            if (searchOrders.size == 0) _state.value = OrdersState.Empty
+            else _state.value = OrdersState.Value(searchOrders.toList())
         }
     }
 }

@@ -120,9 +120,6 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
                         style = MaterialTheme.typography.subtitle1
                     )
                 }
-                Divider(color = MaterialTheme.colors.secondary)
-
-
 
                 if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
                     ReceptIngItem(receptIngredientItem = it)

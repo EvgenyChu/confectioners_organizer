@@ -11,7 +11,8 @@ data class Recept(
     val title: String = "",
     val weight: Int = 0,
     val time: Int = 0,
-    val note: String = ""
+    val note: String = "",
+    val availabilityIngredients: Boolean = true
 )
 
 data class ReceptFull(
@@ -24,5 +25,6 @@ data class ReceptFull(
         entityColumn = "recept_id"
     )
     val listIngredients: List<ReceptIngredientItem>? = emptyList(),
-    val note: String = "Примечание"
+    val note: String = "Примечание",
+    val availabilityIngredients: Boolean = true
 )

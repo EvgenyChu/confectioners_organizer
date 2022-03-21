@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.repositories.ReceptsRepository
+import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
 @OptIn(InternalCoroutinesApi::class)
@@ -38,6 +39,7 @@ class RecsViewModel() : ViewModel() {
 
     init {
         viewModelScope.launch {
+            _state.value = ReceptsState.Loading
             val recepts = repository.loadRecepts()
             _state.value = if (recepts.isEmpty()) ReceptsState.Empty
             else ReceptsState.Value(recepts)
