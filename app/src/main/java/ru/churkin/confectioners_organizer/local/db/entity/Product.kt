@@ -25,7 +25,8 @@ data class Product(
     @ColumnInfo(name = "order_id")
     val orderId: Long?,
     val availabilityIngredients: Boolean = true,
-    val availabilityRecepts: Boolean = true
+    val availabilityRecepts: Boolean = true,
+    val missingIngredients: String = ""
 )
 
 data class ProductFull(
@@ -47,5 +48,6 @@ data class ProductFull(
     val price: Int = 0,
     val orderId: Long?,
     val availabilityIngredients: Boolean = true,
-    val availabilityRecepts: Boolean = true
+    val availabilityRecepts: Boolean = true,
+    val missingIngredients: String = ""
 )

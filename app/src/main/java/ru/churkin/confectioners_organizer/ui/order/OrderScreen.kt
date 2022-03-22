@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -215,6 +216,19 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
                         .height(1.dp),
                     color = MaterialTheme.colors.secondary
                 )
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Отсутствуют продукты: \n${state.missingIngredients.lowercase().capitalize()}",
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Divider(color = MaterialTheme.colors.secondary)
 
                 Row(
                     Modifier

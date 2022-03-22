@@ -52,6 +52,11 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         val availableProducts =
             repository.loadOrderProducts(currentState.id).joinToString(",") { it.title }
 
+        val missingIngredients: MutableSet<String> = mutableSetOf()
+            repository.loadOrderProducts(currentState.id).forEach {
+                missingIngredients += it.missingIngredients.split(",").toSet()
+            }
+
         var availabilityProduct = true
             repository.loadOrderProducts(currentState.id).forEach {
                 availabilityProduct = !(!it.availabilityIngredients || !it.availabilityRecepts)
@@ -59,6 +64,8 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
         _state.value = currentState.copy(
             availableProducts = availableProducts,
+            missingIngredients = missingIngredients
+                .joinToString(", ") { it },
             availabilityProduct = availabilityProduct,
             products = products
         )
@@ -132,7 +139,8 @@ data class OrderState(
     val isPaid: Boolean = false,
     val note: String? = "",
     var isCooked: Boolean = false,
-    val availabilityProduct: Boolean = true
+    val availabilityProduct: Boolean = true,
+    val missingIngredients: String =""
 )
 
 fun OrderState.toOrder() = Order(
@@ -147,6 +155,7 @@ fun OrderState.toOrder() = Order(
     note,
     isCooked,
     availableProducts,
-    availabilityProduct
+    availabilityProduct,
+    missingIngredients
 )
 

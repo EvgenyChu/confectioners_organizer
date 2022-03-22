@@ -47,7 +47,8 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
             val ingredients = repository.loadReceptIngredients(currentState.id)
             val availableIngredients =
-                repository.loadIngredients().map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
+                repository.loadIngredients()
+                    .map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
 
             _state.value = currentState.copy(
                 availableIngredients = availableIngredients,
@@ -92,7 +93,12 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun createReceptIngredient(title: String, count: Int, availability: Boolean, unitsAvailable: String) {
+    fun createReceptIngredient(
+        title: String,
+        count: Int,
+        availability: Boolean,
+        unitsAvailable: String
+    ) {
         viewModelScope.launch {
             val receptIngredientItem =
                 ReceptIngredientItem(
@@ -104,18 +110,27 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 )
             repository.insertReceptIngredientItem(receptIngredientItem)
             val ingredients = repository.loadReceptIngredients(currentState.id)
+            val missingReceptIngredients = mutableListOf<String>()
             var availabilityIngredients: Boolean = true
-                ingredients.forEach { if (!it.availability)  availabilityIngredients = false}
+            ingredients.forEach {
+                if (!it.availability) {
+                    availabilityIngredients = false
+                    missingReceptIngredients += it.title
+                }
+            }
             _state.value =
                 currentState.copy(
                     ingredients = ingredients,
                     availabilityIngredients = availabilityIngredients,
+                    missingReceptIngredients = missingReceptIngredients.toSet()
+                        .joinToString(",") { it },
                     isCreateDialog = false
                 )
         }
     }
+
     fun removeRecept(id: Long) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             repository.removeRecept(id = id)
             repository.loadRecepts()
         }
@@ -141,10 +156,20 @@ data class ReceptState(
     val isCreateDialog: Boolean = false,
     val isConfirm: Boolean = false,
     val available: Int = 0,
-    val availabilityIngredients: Boolean = true
+    val availabilityIngredients: Boolean = true,
+    val missingReceptIngredients: String = ""
 )
 
-fun ReceptState.toRecept()  = Recept(id, title, weight, time, note, availabilityIngredients)
+fun ReceptState.toRecept() =
+    Recept(
+        id,
+        title,
+        weight,
+        time,
+        note,
+        availabilityIngredients,
+        missingReceptIngredients
+    )
 
 
 

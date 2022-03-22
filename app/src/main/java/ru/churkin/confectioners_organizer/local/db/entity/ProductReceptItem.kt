@@ -12,6 +12,7 @@ data class ProductReceptItem(
     val title: String,
     val count: Int = 0,
     val availability: Boolean,
+    val missingReceptIngredients: String,
     // TODO: 25.02.2022 add forign key
     @ColumnInfo(name = "product_id")
     val productId: Long = 0

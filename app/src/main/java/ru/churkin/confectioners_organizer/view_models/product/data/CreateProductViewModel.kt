@@ -49,7 +49,12 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
             val recepts = repository.loadProductRecepts(currentState.id)
             val availableRecepts =
-                repository.loadRecepts().map { ReceptItem(it.title, it.availabilityIngredients, it.weight) }
+                repository.loadRecepts().map { ReceptItem(
+                    it.title,
+                    it.availabilityIngredients,
+                    it.weight,
+                    it.missingReceptIngredients
+                ) }
 
             _state.value = currentState.copy(
                 availableIngredients = availableIngredients,
@@ -97,7 +102,8 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun addProduct() {
-        val product = currentState.toProduct()
+        val missingIngredients = _state.value.missingProductReceptIngredients.joinToString(",") { it } + _state.value.missingProductIngredients.joinToString(",") { it }
+        val product = currentState.copy(missingIngredients = missingIngredients).toProduct()
         viewModelScope.launch {
             repository.insertProduct(product, productsIngredients, productsRecepts)
         }
@@ -116,33 +122,46 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             repository.insertProductIngredientItem(productIngredientItem)
             val ingredients = repository.loadProductIngredients(currentState.id)
             var availabilityIngredients: Boolean = true
-            ingredients.forEach { if (!it.availability)  availabilityIngredients = false}
+            val missingProductIngredients = mutableSetOf<String>()
+            ingredients.forEach {
+                if (!it.availability)  {
+                    availabilityIngredients = false
+                    missingProductIngredients += it.title
+                }}
             _state.value =
                 currentState.copy(
                     ingredients = ingredients,
+                    missingProductIngredients = missingProductIngredients.toSet(),
                     availabilityIngredients = availabilityIngredients,
                     isCreateIngredientDialog = false
                 )
         }
     }
 
-    fun createProductRecept(title: String, count: Int, availability: Boolean) {
+    fun createProductRecept(title: String, count: Int, availability: Boolean, missingReceptIngredients: String) {
         viewModelScope.launch {
             val productReceptItem =
                 ProductReceptItem(
                     title = title,
                     count = count,
                     availability = availability,
-                    productId = currentState.id
+                    productId = currentState.id,
+                    missingReceptIngredients = missingReceptIngredients
                 )
             repository.insertProductReceptItem(productReceptItem)
             val recepts = repository.loadProductRecepts(currentState.id)
             var availabilityRecepts: Boolean = true
-            recepts.forEach { if (!it.availability)  availabilityRecepts = false}
+            val missingProductReceptIngredients = mutableSetOf<String>()
+            recepts.forEach {
+                if (!it.availability)  {
+                    availabilityRecepts = false
+                    missingProductReceptIngredients += it.missingReceptIngredients
+                }}
             _state.value =
                 currentState.copy(
                     recepts = recepts,
                     availabilityRecepts = availabilityRecepts,
+                    missingProductReceptIngredients = missingProductReceptIngredients.toSet(),
                     isCreateReceptDialog = false
                 )
         }
@@ -189,7 +208,21 @@ data class ProductState(
     val isConfirm: Boolean = false,
     val orderId: Long? = null,
     val availabilityIngredients: Boolean = true,
-    val availabilityRecepts: Boolean = true
+    val availabilityRecepts: Boolean = true,
+    val missingProductReceptIngredients: Set<String> = setOf(),
+    val missingProductIngredients: Set<String> = setOf(),
+    val missingIngredients: String = ""
 )
 
-fun ProductState.toProduct() = Product(id, title, weight, units, costPrice, price, orderId, availabilityIngredients, availabilityRecepts)
+fun ProductState.toProduct() = Product(
+    id,
+    title,
+    weight,
+    units,
+    costPrice,
+    price,
+    orderId,
+    availabilityIngredients,
+    availabilityRecepts,
+    missingIngredients
+)

@@ -19,7 +19,8 @@ data class Order(
     val note: String? = "",
     var isCooked: Boolean = false,
     val availableProducts: String = "",
-    val availabilityProduct: Boolean = true
+    val availabilityProduct: Boolean = true,
+    val missingIngredients: String = ""
 )
 
 data class OrderFull(
@@ -38,5 +39,6 @@ data class OrderFull(
     val listProducts: List<Product>? = listOf(),
     val note: String? = "",
     var isCooked: Boolean = false,
-    val availabilityProduct: Boolean = true
+    val availabilityProduct: Boolean = true,
+    val missingIngredients: String = ""
 )

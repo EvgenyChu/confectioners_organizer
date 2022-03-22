@@ -38,7 +38,8 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 products = order.listProducts,
                 price = order.price,
                 isPaid = order.isPaid,
-                note = order.note
+                note = order.note,
+                missingIngredients = order.missingIngredients
             )
         }
     }

@@ -167,10 +167,12 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                     Modifier
                         .height(56.dp)
                         .weight(1f)
+                        .clickable { openDialogUnits = true }
                 ) {
                     Text(
                         state.units,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier
+                            .padding(top = 16.dp),
                         style = if (state.units == "ед. изм.") MaterialTheme.typography.subtitle2
                         else MaterialTheme.typography.subtitle1
                     )
@@ -429,6 +431,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                 },
                 colors = colors
             )
+            Spacer(modifier = Modifier.height(56.dp))
         }
 
 
@@ -478,8 +481,12 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     if (state.isCreateReceptDialog) {
         CreateReceptsDialog(
             onDismiss = { vm.hideCreateReceptDialog() },
-            onCreate = { title, count, availability ->
-                vm.createProductRecept(title, count, availability)
+            onCreate = { title, count, availability, missingReceptIngredients ->
+                vm.createProductRecept(
+                    title = title,
+                    count = count,
+                    availability = availability,
+                    missingReceptIngredients = missingReceptIngredients)
             },
             listRecepts = state.availableRecepts
         )
@@ -490,12 +497,18 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 fun CreateReceptsDialog(
     listRecepts: List<ReceptItem>,
     onDismiss: () -> Unit,
-    onCreate: (title: String, count: Int, availibility: Boolean) -> Unit
+    onCreate: (
+        title: String,
+        count: Int,
+        availibility: Boolean,
+        missingReceptIngredients: String) -> Unit
 ) {
 
     var selectionItem: String? by remember { mutableStateOf(null) }
 
     var selectionAvailability: Boolean? by remember { mutableStateOf(null) }
+
+    var selectionmissingIgredient: String? by remember { mutableStateOf(null)}
 
     var receptCount: Int by remember { mutableStateOf(0) }
 
@@ -521,7 +534,8 @@ fun CreateReceptsDialog(
             ) {
                 Text(
                     text = "Выберете рецепт из списка",
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.subtitle1,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -545,11 +559,13 @@ fun CreateReceptsDialog(
                                         .clickable(onClick = {
                                             selectionItem = it.title
                                             selectionAvailability = it.availability
+                                            selectionmissingIgredient = it.missingReceptIngredients
                                         })
                                         .height(44.dp)
                                         .padding(end = 16.dp)
                                 ) {
                                     Icon(
+                                        modifier = Modifier.padding(16.dp),
                                         painter = painterResource(id = R.drawable.ic_baseline_circle_24),
                                         tint = if (it.availability) Green else Red,
                                         contentDescription = "Наличие"
@@ -610,7 +626,8 @@ fun CreateReceptsDialog(
                                 onCreate(
                                     it,
                                     receptCount,
-                                    selectionAvailability ?: true
+                                    selectionAvailability ?: true,
+                                    selectionmissingIgredient ?: ""
                                 )
                             }
                         },

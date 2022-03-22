@@ -133,8 +133,11 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
             TextField(
                 value = state.deadLine?.format() ?: "",
                 onValueChange = { vm.updateDeadLine(it) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isShowDatePicker = true },
                 textStyle = MaterialTheme.typography.subtitle1,
+                enabled = false,
                 placeholder = {
                     Text(
                         "дд/мм/гггг",
