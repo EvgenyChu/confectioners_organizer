@@ -15,6 +15,8 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private var id: Long? = savedStateHandle.get<Long>("id")
     private var orderId: Long? = savedStateHandle.get<Long>("order_id")
     private val repository: ProductsRepository = ProductsRepository()
+    private val productsIngredients: MutableList<ProductIngredientItem> = mutableListOf()
+    private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
     private val _state: MutableStateFlow<ProductState> = MutableStateFlow(ProductState())
 
     val state: StateFlow<ProductState>
@@ -23,7 +25,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: ProductState
         get() = state.value
 
-    init {
+    suspend fun initState() {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createProduct(orderId = checkNotNull(orderId))
@@ -47,7 +49,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
             val recepts = repository.loadProductRecepts(currentState.id)
             val availableRecepts =
-                repository.loadRecepts().map { ReceptItem(it.title, it.weight) }
+                repository.loadRecepts().map { ReceptItem(it.title, it.availabilityIngredients, it.weight) }
 
             _state.value = currentState.copy(
                 availableIngredients = availableIngredients,
@@ -97,7 +99,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun addProduct() {
         val product = currentState.toProduct()
         viewModelScope.launch {
-            repository.insertProduct(product)
+            repository.insertProduct(product, productsIngredients, productsRecepts)
         }
     }
 
@@ -113,27 +115,34 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 )
             repository.insertProductIngredientItem(productIngredientItem)
             val ingredients = repository.loadProductIngredients(currentState.id)
+            var availabilityIngredients: Boolean = true
+            ingredients.forEach { if (!it.availability)  availabilityIngredients = false}
             _state.value =
                 currentState.copy(
                     ingredients = ingredients,
+                    availabilityIngredients = availabilityIngredients,
                     isCreateIngredientDialog = false
                 )
         }
     }
 
-    fun createProductRecept(title: String, count: Int) {
+    fun createProductRecept(title: String, count: Int, availability: Boolean) {
         viewModelScope.launch {
             val productReceptItem =
                 ProductReceptItem(
                     title = title,
                     count = count,
+                    availability = availability,
                     productId = currentState.id
                 )
             repository.insertProductReceptItem(productReceptItem)
             val recepts = repository.loadProductRecepts(currentState.id)
+            var availabilityRecepts: Boolean = true
+            recepts.forEach { if (!it.availability)  availabilityRecepts = false}
             _state.value =
                 currentState.copy(
                     recepts = recepts,
+                    availabilityRecepts = availabilityRecepts,
                     isCreateReceptDialog = false
                 )
         }
@@ -178,7 +187,9 @@ data class ProductState(
     val isCreateIngredientDialog: Boolean = false,
     val isCreateReceptDialog: Boolean = false,
     val isConfirm: Boolean = false,
-    val orderId: Long? = null
+    val orderId: Long? = null,
+    val availabilityIngredients: Boolean = true,
+    val availabilityRecepts: Boolean = true
 )
 
-fun ProductState.toProduct() = Product(id, title, weight, units, costPrice, price, orderId)
+fun ProductState.toProduct() = Product(id, title, weight, units, costPrice, price, orderId, availabilityIngredients, availabilityRecepts)

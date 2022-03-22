@@ -28,7 +28,7 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: ReceptState
         get() = state.value
 
-    init {
+    suspend fun initState() {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createRecept()

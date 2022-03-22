@@ -47,6 +47,10 @@ fun RecsScreen(
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
 
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

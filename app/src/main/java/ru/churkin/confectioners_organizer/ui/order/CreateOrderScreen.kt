@@ -52,7 +52,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
     )
     LaunchedEffect(key1 = Unit) {
         vm.initState()
-        Log.e("CreateOrderScreen", "ScreenLauched")
     }
     Box(
         modifier = Modifier

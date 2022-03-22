@@ -4,5 +4,6 @@ import androidx.compose.ui.text.font.FontWeight
 
 data class ReceptItem (
     val title: String,
+    val availability: Boolean,
     val weight: Int
         )

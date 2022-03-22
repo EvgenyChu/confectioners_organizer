@@ -24,9 +24,13 @@ class ProductsRepository(
     }
 
     suspend fun insertProduct(
-        product: Product
+        product: Product,
+        ingredients: List<ProductIngredientItem>,
+        recepts: List<ProductReceptItem>
     ) {
         val id = productDao.insert(product = product)
+        productIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(productId = id) })
+        productReceptItemDao.insertList(recepts = recepts.map { it.copy(productId = id) })
     }
 
     suspend fun removeProduct(id: Long) {

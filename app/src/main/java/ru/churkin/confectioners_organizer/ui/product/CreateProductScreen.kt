@@ -71,6 +71,11 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
         focusedIndicatorColor = colors.secondary,
         cursorColor = colors.onPrimary
     )
+
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -137,7 +142,13 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             ) {
                 TextField(
                     value = "${if (state.weight == 0) "" else state.weight}",
-                    onValueChange = { vm.updateWeight(if (it.isEmpty()) 0 else it.toInt()) },
+                    onValueChange = {
+                        try {
+                            vm.updateWeight(if (it.isEmpty()) 0 else it.toInt())
+                        } catch (e: Exception) {
+                            ""
+                        }
+                    },
                     modifier = Modifier
                         .height(56.dp)
                         .weight(3f),
@@ -246,7 +257,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             }
 
             if (state.recepts.isNotEmpty()) {
-                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
                         items(state.recepts, { it.id }) { item ->
 
@@ -321,7 +332,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 
 
             if (state.ingredients.isNotEmpty()) {
-                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
                         items(state.ingredients, { it.id }) { item ->
 
@@ -399,7 +410,13 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 
             TextField(
                 value = "${if (state.price == 0) "" else state.price}",
-                onValueChange = { vm.updatePrice(if (it.isEmpty()) 0 else it.toInt()) },
+                onValueChange = {
+                    try {
+                        vm.updatePrice(if (it.isEmpty()) 0 else it.toInt())
+                    } catch (e: Exception) {
+                        ""
+                    }
+                },
                 modifier = Modifier
                     .height(56.dp)
                     .fillMaxWidth(),
@@ -461,8 +478,8 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     if (state.isCreateReceptDialog) {
         CreateReceptsDialog(
             onDismiss = { vm.hideCreateReceptDialog() },
-            onCreate = { title, count ->
-                vm.createProductRecept(title, count)
+            onCreate = { title, count, availability ->
+                vm.createProductRecept(title, count, availability)
             },
             listRecepts = state.availableRecepts
         )
@@ -473,10 +490,12 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
 fun CreateReceptsDialog(
     listRecepts: List<ReceptItem>,
     onDismiss: () -> Unit,
-    onCreate: (title: String, count: Int) -> Unit
+    onCreate: (title: String, count: Int, availibility: Boolean) -> Unit
 ) {
 
     var selectionItem: String? by remember { mutableStateOf(null) }
+
+    var selectionAvailability: Boolean? by remember { mutableStateOf(null) }
 
     var receptCount: Int by remember { mutableStateOf(0) }
 
@@ -502,8 +521,7 @@ fun CreateReceptsDialog(
             ) {
                 Text(
                     text = "Выберете рецепт из списка",
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    style = MaterialTheme.typography.subtitle1
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -526,10 +544,17 @@ fun CreateReceptsDialog(
                                         .background(color = backgroundColor)
                                         .clickable(onClick = {
                                             selectionItem = it.title
+                                            selectionAvailability = it.availability
                                         })
                                         .height(44.dp)
-                                        .padding(start = 16.dp)
+                                        .padding(end = 16.dp)
                                 ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                                        tint = if (it.availability) Green else Red,
+                                        contentDescription = "Наличие"
+                                    )
+
                                     Text(
                                         text = it.title,
                                         style = MaterialTheme.typography.body2
@@ -581,7 +606,13 @@ fun CreateReceptsDialog(
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(
                         onClick = {
-                            selectionItem?.let { onCreate(it, receptCount) }
+                            selectionItem?.let {
+                                onCreate(
+                                    it,
+                                    receptCount,
+                                    selectionAvailability ?: true
+                                )
+                            }
                         },
                         enabled = selectionItem != null && receptCount > 0
                     )
@@ -602,12 +633,19 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
     ) {
         Row(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth()
                 .height(56.dp)
+                .padding(end = 16.dp)
                 .background(color = colors.background),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                modifier = Modifier.padding(16.dp),
+                painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                tint = if (productReceptItem.availability) colorResource(id = R.color.green)
+                else colorResource(id = R.color.red),
+                contentDescription = "Наличие"
+            )
             Text(
                 text = productReceptItem.title,
                 style = MaterialTheme.typography.subtitle1
@@ -643,7 +681,8 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
             Icon(
                 modifier = Modifier.padding(16.dp),
                 painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                tint = colorResource(id = R.color.green),
+                tint = if (productIngredientItem.availability) colorResource(id = R.color.green)
+                else colorResource(id = R.color.red),
                 contentDescription = "Наличие"
             )
             Text(

@@ -50,6 +50,10 @@ fun OrdersScreen(
     var isShowDatePicker by remember { mutableStateOf(false) }
     var isShowDate by remember { mutableStateOf(false) }
 
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -247,7 +251,8 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                 Icon(
                     modifier = Modifier.padding(16.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_cake_24),
-                    tint = MaterialTheme.colors.secondary,
+                    tint = if (order.availabilityProduct) colorResource(id = R.color.green)
+                    else colorResource(id = R.color.red),
                     contentDescription = "Лейбл"
                 )
             }
@@ -269,7 +274,7 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                     )
 
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_circle_small_24),
+                        painter = painterResource(id = R.drawable.ic_baseline_monetization_on_24),
                         tint = if (order.isPaid) colorResource(id = R.color.green)
                         else colorResource(id = R.color.red),
                         contentDescription = "Выполнение заказа"

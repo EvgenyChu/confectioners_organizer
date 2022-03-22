@@ -61,6 +61,11 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
         focusedIndicatorColor = MaterialTheme.colors.secondary,
         cursorColor = MaterialTheme.colors.onPrimary
     )
+
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -98,7 +98,7 @@ fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typogr
         color = onPrimary
     ),
     body2 = TextStyle(
-        fontFamily = montserrataIternatesRegular,
+        fontFamily = montserrataIternatesBold,
         fontSize = 14.sp,
         color = onBackground
     ),

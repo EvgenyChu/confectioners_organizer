@@ -37,7 +37,7 @@ class RecsViewModel() : ViewModel() {
     val searchText
         get() = _searchText
 
-    init {
+    suspend fun initState() {
         viewModelScope.launch {
             _state.value = ReceptsState.Loading
             val recepts = repository.loadRecepts()

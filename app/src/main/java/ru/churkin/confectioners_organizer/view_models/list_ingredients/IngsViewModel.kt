@@ -33,7 +33,7 @@ class IngsViewModel() : ViewModel() {
     val searchText
         get() = _searchText
 
-    init {
+    suspend fun initState() {
         _state.value = IngredientsState.Loading
         viewModelScope.launch {
             val ingredients = repository.loadIngredients()

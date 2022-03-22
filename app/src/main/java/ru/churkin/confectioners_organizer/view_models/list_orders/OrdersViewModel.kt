@@ -30,7 +30,7 @@ class OrdersViewModel() : ViewModel() {
     val searchText
         get() = _searchText
 
-    init {
+    suspend fun initState() {
         viewModelScope.launch {
             _state.value = OrdersState.Loading
             val orders = repository.loadOrders()
@@ -78,13 +78,9 @@ class OrdersViewModel() : ViewModel() {
     fun searchDeadLine(date: String) {
         _state.value = OrdersState.Loading
         viewModelScope.launch {
-            val orders = repository.loadOrders()
-            val searchOrders: MutableList<Order> = mutableListOf()
-                orders.forEach{
-                if (it.deadline ==  date.parseDate()) searchOrders += it
-            }
-            if (searchOrders.size == 0) _state.value = OrdersState.Empty
-            else _state.value = OrdersState.Value(searchOrders.toList())
+            val orders = repository.findByDate(date.parseDate())
+            if (orders.size == 0) _state.value = OrdersState.Empty
+            else _state.value = OrdersState.Value(orders)
         }
     }
 }

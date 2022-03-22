@@ -54,6 +54,11 @@ fun CreateIngredientScreen(
         focusedIndicatorColor = MaterialTheme.colors.secondary,
         cursorColor = MaterialTheme.colors.onPrimary
     )
+
+    LaunchedEffect(key1 = Unit) {
+        vm.initState()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -151,7 +156,12 @@ fun CreateIngredientScreen(
             ) {
                 TextField(
                     value = "${if (state.available == 0) "" else state.available}",
-                    onValueChange = { vm.updateAvailable(if (it.isEmpty()) 0 else it.toInt()) },
+                    onValueChange = {
+                        try{
+                            vm.updateAvailable(if (it.isEmpty()) 0 else it.toInt())
+                        }
+                        catch (e:Exception){""}
+                         },
                     Modifier.weight(3f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     textStyle = MaterialTheme.typography.subtitle1,

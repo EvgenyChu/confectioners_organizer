@@ -6,6 +6,7 @@ import ru.churkin.confectioners_organizer.local.db.dao.ProductDao
 import ru.churkin.confectioners_organizer.local.db.dao.ProductIngredientItemDao
 import ru.churkin.confectioners_organizer.local.db.dao.ProductReceptItemDao
 import ru.churkin.confectioners_organizer.local.db.entity.*
+import java.util.*
 
 class OrdersRepository(
     val orderDao: OrderDao = AppDb.db.orderDao(),
@@ -45,4 +46,6 @@ class OrdersRepository(
     suspend fun createOrder() : Long  = orderDao.insert(Order())
 
     suspend fun searchOrder(query: String) = orderDao.searchOrder(query)
+
+    suspend fun findByDate(parseDate: Date): List<Order> = orderDao.findByDate(parseDate)
 }

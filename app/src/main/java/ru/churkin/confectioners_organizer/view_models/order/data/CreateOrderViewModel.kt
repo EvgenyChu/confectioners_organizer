@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
+import android.hardware.camera2.CameraManager
 import android.util.Log
 import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.SavedStateHandle
@@ -51,8 +52,14 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         val availableProducts =
             repository.loadOrderProducts(currentState.id).joinToString(",") { it.title }
 
+        var availabilityProduct = true
+            repository.loadOrderProducts(currentState.id).forEach {
+                availabilityProduct = !(!it.availabilityIngredients || !it.availabilityRecepts)
+        }
+
         _state.value = currentState.copy(
             availableProducts = availableProducts,
+            availabilityProduct = availabilityProduct,
             products = products
         )
     }
@@ -124,7 +131,8 @@ data class OrderState(
     val price: Int = 0,
     val isPaid: Boolean = false,
     val note: String? = "",
-    var isCooked: Boolean = false
+    var isCooked: Boolean = false,
+    val availabilityProduct: Boolean = true
 )
 
 fun OrderState.toOrder() = Order(
@@ -138,6 +146,7 @@ fun OrderState.toOrder() = Order(
     isPaid,
     note,
     isCooked,
-    availableProducts
+    availableProducts,
+    availabilityProduct
 )
 
