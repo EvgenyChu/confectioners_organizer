@@ -85,7 +85,7 @@ fun DrawerScreen(navController: NavController) {
         Row(
             modifier = Modifier
                 .padding(top = 24.dp, start = 16.dp, bottom = 16.dp)
-                .clickable { navController.navigate(Screen.Orders.route) }
+                .clickable { navController.navigate(Screen.History.route) }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_content_paste_24),

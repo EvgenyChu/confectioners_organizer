@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
@@ -264,12 +265,14 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
             }
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.Orders.route)
+                    vm.updateIsCooked(if (state.isCooked == false) true else false)
+                    navController.popBackStack()
                 },
                 modifier = Modifier
                     .align(alignment = Alignment.BottomEnd)
                     .padding(bottom = 28.dp, end = 16.dp),
-                backgroundColor = MaterialTheme.colors.secondary,
+                backgroundColor = if (state.isCooked == false) colorResource(id = R.color.green)
+                else colorResource(id = R.color.red),
                 contentColor = MaterialTheme.colors.onSecondary
             ) {
                 Icon(

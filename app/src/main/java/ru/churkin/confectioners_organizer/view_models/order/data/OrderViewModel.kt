@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
 class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val id : Long?  = savedStateHandle.get<Long>("id")
     private val repository: OrdersRepository = OrdersRepository()
+    private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
 
     val state: StateFlow<OrderState>
@@ -40,8 +42,16 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 price = order.price,
                 isPaid = order.isPaid,
                 note = order.note,
-                missingIngredients = order.missingIngredients
+                missingIngredients = order.missingIngredients,
+                isCooked = order.isCooked
             )
+        }
+    }
+    fun updateIsCooked(isCooked: Boolean) {
+        viewModelScope.launch {
+            _state.value = currentState.copy(isCooked = isCooked)
+            val order = currentState.toOrder()
+            repository.insertOrder(order, ordersProducts)
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
+import ru.churkin.confectioners_organizer.history.OrdersHistoryScreen
 import ru.churkin.confectioners_organizer.ingredient.IngredientScreen
 import ru.churkin.confectioners_organizer.listOrders.OrdersScreen
 import ru.churkin.confectioners_organizer.ui.list_recepts.RecsScreen
@@ -70,6 +71,9 @@ class RootActivity : ComponentActivity() {
                         composable(Screen.Orders.route) {
                             isLockDrawer = false
                             OrdersScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
+                        composable(Screen.History.route) {
+                            isLockDrawer = false
+                            OrdersHistoryScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
                         composable("orders/create") {
                             isLockDrawer = true
                             CreateOrderScreen(navController = navController) }
@@ -134,6 +138,7 @@ sealed class Screen(val route: String, val title: String) {
     object Orders : Screen("orders", "orders")
     object Product : Screen("product", "product")
     object Start : Screen("start", "start")
+    object History: Screen("history", "history")
 }
 
 

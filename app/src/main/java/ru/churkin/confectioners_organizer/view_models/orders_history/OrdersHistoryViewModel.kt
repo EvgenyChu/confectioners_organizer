@@ -1,4 +1,4 @@
-package ru.churkin.confectioners_organizer.view_models.list_orders
+package ru.churkin.confectioners_organizer.view_models.orders_history
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.date.parseDate
-import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
+import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 
-class OrdersViewModel() : ViewModel() {
+class OrdersHistoryViewModel : ViewModel(){
     private val repository: OrdersRepository = OrdersRepository()
 
     private val _state = MutableStateFlow(initialState())
@@ -33,7 +33,7 @@ class OrdersViewModel() : ViewModel() {
     suspend fun initState() {
         viewModelScope.launch {
             _state.value = OrdersState.Loading
-            val orders = repository.loadOrdersIsCooked(false)
+            val orders = repository.loadOrdersIsCooked(true)
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)
         }
@@ -41,7 +41,7 @@ class OrdersViewModel() : ViewModel() {
 
     fun currentOrdersState(){
         viewModelScope.launch {
-            val orders = repository.loadOrdersIsCooked(false)
+            val orders = repository.loadOrdersIsCooked(true)
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)
         }
@@ -52,7 +52,7 @@ class OrdersViewModel() : ViewModel() {
         _state.value = OrdersState.Loading
         viewModelScope.launch {
             val orders =
-                if (query.isEmpty()) repository.loadOrdersIsCooked(false) else repository.searchOrder(query)
+                if (query.isEmpty()) repository.loadOrdersIsCooked(true) else repository.searchOrder(query)
             Log.e("search", orders.toString())
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)
@@ -69,7 +69,7 @@ class OrdersViewModel() : ViewModel() {
             }
             repository.removeOrderProduct(id = id)
             repository.removeOrder(id = id)
-            val orders = repository.loadOrdersIsCooked(false)
+            val orders = repository.loadOrdersIsCooked(true)
             _state.value = if (orders.isEmpty()) OrdersState.Empty
             else OrdersState.Value(orders)
         }
@@ -83,10 +83,4 @@ class OrdersViewModel() : ViewModel() {
             else _state.value = OrdersState.Value(orders)
         }
     }
-}
-
-sealed class OrdersState {
-    object Loading : OrdersState()
-    object Empty : OrdersState()
-    data class Value(val orders: List<Order>) : OrdersState()
 }

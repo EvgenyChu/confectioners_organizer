@@ -47,4 +47,12 @@ interface OrderDao {
     """
     )
     suspend fun findByDate(parseDate: Date): List<Order>
+
+    @Query(
+        """
+        SELECT * FROM orders
+        WHERE isCooked = :isCooked
+    """
+    )
+    suspend fun loadOrdersIsCooked(isCooked: Boolean): List<Order>
 }
