@@ -126,7 +126,7 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
                     )
                 }
 
-                if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
+                if (state.ingredients.isNotEmpty()) state.ingredients.sortedBy { it.title }.forEach {
                     ReceptIngItem(receptIngredientItem = it)
                 }
 

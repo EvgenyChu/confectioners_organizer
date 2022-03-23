@@ -27,6 +27,7 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
         viewModelScope.launch {
             val order = repository.loadOrderFull(id)
+            Log.e("OrderViewModel", "$order")
 
             _state.value = currentState.copy(
                 id = order.id,

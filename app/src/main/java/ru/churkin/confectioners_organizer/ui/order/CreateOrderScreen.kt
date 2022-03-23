@@ -243,7 +243,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 )
             }
 
-            if (state.products?.isNotEmpty() == true) state.products?.forEach {product ->
+            if (state.products?.isNotEmpty() == true) state.products?.sortedBy { it.title }?.forEach {product ->
                 OrderProductItem(product = product) {
                     navController.navigate("orders/${product.orderId}/products/${product.id}")
                 }

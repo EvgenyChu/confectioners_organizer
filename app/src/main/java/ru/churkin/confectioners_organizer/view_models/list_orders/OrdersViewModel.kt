@@ -79,7 +79,7 @@ class OrdersViewModel() : ViewModel() {
         _state.value = OrdersState.Loading
         viewModelScope.launch {
             val orders = repository.findByDate(date.parseDate())
-            if (orders.size == 0) _state.value = OrdersState.Empty
+            if (orders.isEmpty()) _state.value = OrdersState.Empty
             else _state.value = OrdersState.Value(orders)
         }
     }

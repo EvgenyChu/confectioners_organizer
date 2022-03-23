@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,6 +46,7 @@ fun IngsScreen(
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
+    var counter by remember { mutableStateOf(0) }
 
     LaunchedEffect(key1 = Unit) {
         vm.initState()
@@ -71,9 +73,11 @@ fun IngsScreen(
                         },
                         onDismiss = { isShowSearch = false })
                 } else {
-                    IconButton(onClick = { scope.launch {
-                        scaffoldState.drawerState.open()
-                    } }) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
                             tint = MaterialTheme.colors.onPrimary,
@@ -86,132 +90,141 @@ fun IngsScreen(
                     )
                     Spacer(Modifier.weight(1f, true))
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        counter++
+                        if (counter > 2) counter = 0
+                        vm.filterIngredients(counter)
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                            tint = MaterialTheme.colors.onPrimary,
+                            tint = when (counter) {
+                                1 -> colorResource(id = R.color.green)
+                                2 -> colorResource(id = R.color.red)
+                                else -> MaterialTheme.colors.onPrimary
+                            },
                             contentDescription = "Сортировка"
                         )
                     }
+                }
 
-                    IconButton(onClick = {
-                        isShowSearch = true
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                            tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Найти"
+                IconButton(onClick = {
+                    isShowSearch = true
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                        tint = MaterialTheme.colors.onPrimary,
+                        contentDescription = "Найти"
+                    )
+                }
+            }
+
+        when (val listState = state) {
+            is IngredientsState.Empty -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize(1f)
+                ) {
+                    Text("Не найдено")
+                }
+            }
+            is IngredientsState.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize(1f)
+                        .background(color = MaterialTheme.colors.background)
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                }
+            }
+            is IngredientsState.Value -> {
+                LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
+                    items(listState.ingredients.sortedBy { it.title }, { it.id }) { item ->
+
+                        val dismissState = rememberDismissState()
+                        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                            vm.removeIngredient(item.id)
+                        }
+                        SwipeToDismiss(
+                            state = dismissState,
+                            directions = setOf(
+                                DismissDirection.StartToEnd,
+                            ),
+                            background = {
+
+                                val color by animateColorAsState(
+                                    when (dismissState.targetValue) {
+                                        DismissValue.Default -> MaterialTheme.colors.surface
+                                        else -> MaterialTheme.colors.secondary
+                                    }
+                                )
+
+                                val icon = Icons.Default.Delete
+
+                                val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                val alignment = Alignment.CenterStart
+
+
+                                Box(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .background(color)
+                                        .padding(start = 16.dp, end = 16.dp),
+                                    contentAlignment = alignment
+                                ) {
+                                    Icon(
+                                        icon,
+                                        contentDescription = "icon",
+                                        modifier = Modifier.scale(scale)
+                                    )
+                                }
+                            },
+                            dismissContent = {
+                                IngredientItem(ingredient = item, onClick = { id ->
+                                    navController.navigate("ingredients/$id")
+                                })
+                            }
                         )
                     }
+                    /*item { Spacer(modifier = Modifier.height(56.dp)) }*/
                 }
             }
-            when (val listState = state) {
-                is IngredientsState.Empty -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize(1f)
-                    ) {
-                        Text("Не найдено")
-                    }
-                }
-                is IngredientsState.Loading -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize(1f)
-                            .background(color = MaterialTheme.colors.background)
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
-                    }
-                }
-                is IngredientsState.Value -> {
-                    LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                        items(listState.ingredients, { it.id }) { item ->
-
-                            val dismissState = rememberDismissState()
-                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                                vm.removeIngredient(item.id)
-                            }
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd,
-                                ),
-                                background = {
-
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    IngredientItem(ingredient = item, onClick = { id ->
-                                        navController.navigate("ingredients/$id")
-                                    })
-                                }
-                            )
-                        }
-                        /*item { Spacer(modifier = Modifier.height(56.dp)) }*/
-                    }
-                }
-                is IngredientsState.ValueWithMessage -> {}
-            }
-        }
-
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Похоже чего-то не хватает)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
-        FloatingActionButton(
-            onClick = { navController.navigate("ingredients/create") },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "Добавить"
-            )
+            is IngredientsState.ValueWithMessage -> {}
         }
     }
+
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        BottomAppBar(
+            backgroundColor = MaterialTheme.colors.primary,
+            modifier = Modifier.height(56.dp)
+        ) {
+
+            Text(
+                "Похоже чего-то не хватает)",
+                modifier = Modifier.padding(start = 12.dp),
+                style = MaterialTheme.typography.body1
+            )
+
+        }
+    }
+    FloatingActionButton(
+        onClick = { navController.navigate("ingredients/create") },
+        modifier = Modifier
+            .align(alignment = Alignment.BottomEnd)
+            .padding(bottom = 28.dp, end = 16.dp),
+        backgroundColor = MaterialTheme.colors.secondary,
+        contentColor = MaterialTheme.colors.onSecondary
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_baseline_add_24),
+            contentDescription = "Добавить"
+        )
+    }
+}
 
 }
 

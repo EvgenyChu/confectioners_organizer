@@ -46,6 +46,7 @@ fun RecsScreen(
     val state by vm.state.collectAsState()
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
+    var counter by remember { mutableStateOf(0) }
 
     LaunchedEffect(key1 = Unit) {
         vm.initState()
@@ -90,10 +91,18 @@ fun RecsScreen(
                     )
                     Spacer(Modifier.weight(1f, true))
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        counter++
+                        if (counter > 2) counter = 0
+                        vm.filterRecepts(counter)
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                            tint = MaterialTheme.colors.onPrimary,
+                            tint = when (counter) {
+                                1 -> colorResource(id = R.color.green)
+                                2 -> colorResource(id = R.color.red)
+                                else -> MaterialTheme.colors.onPrimary
+                            },
                             contentDescription = "Сортировка"
                         )
                     }
@@ -134,7 +143,7 @@ fun RecsScreen(
 
                 is ReceptsState.Value -> {
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                        items(listState.recepts, { it.id }) { item ->
+                        items(listState.recepts.sortedBy { it.title }, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
                             if (dismissState.isDismissed(DismissDirection.StartToEnd)) {

@@ -27,6 +27,14 @@ interface IngredientDao {
     )
     suspend fun loadIngredient(id: Long): Ingredient
 
+    @Query(
+        """
+        SELECT * FROM ingredients
+        WHERE availability = :availability
+    """
+    )
+    suspend fun filterIngredients(availability: Boolean): List<Ingredient>
+
     @Query("SELECT * FROM ingredients WHERE title LIKE '%' || :search || '%'")
     suspend fun searchIngredient(search: String): List<Ingredient>
 }

@@ -102,8 +102,10 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun addProduct() {
-        val missingIngredients = _state.value.missingProductReceptIngredients.joinToString(",") { it } + _state.value.missingProductIngredients.joinToString(",") { it }
-        val product = currentState.copy(missingIngredients = missingIngredients).toProduct()
+        val missingIngredients = _state.value.missingProductReceptIngredients+_state.value.missingProductIngredients
+        Log.e("missingIngredients", "${missingIngredients.distinct()}")
+            /*_state.value.missingProductReceptIngredients.joinToString(",") { it } + _state.value.missingProductIngredients.joinToString(",") { it }*/
+        val product = currentState.copy(missingIngredients = missingIngredients.distinct().joinToString(",") { it }).toProduct()
         viewModelScope.launch {
             repository.insertProduct(product, productsIngredients, productsRecepts)
         }

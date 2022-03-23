@@ -19,6 +19,8 @@ class ReceptsRepository(
 
     suspend fun loadRecept(id: Long): ReceptFull = receptDao.loadReceptFull(id)
 
+    suspend fun filterRecepts(availabilityIngredients: Boolean): List<Recept> = receptDao.filterRecepts(availabilityIngredients)
+
     suspend fun insertRecept(recept: Recept, ingredients: List<ReceptIngredientItem>) {
         val id = receptDao.insert(recept = recept)
         receptIngredientItemDao.insertList(ingredients = ingredients.map { it.copy(receptId = id) })

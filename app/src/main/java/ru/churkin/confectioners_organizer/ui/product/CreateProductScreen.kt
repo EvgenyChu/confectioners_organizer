@@ -261,7 +261,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             if (state.recepts.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
-                        items(state.recepts, { it.id }) { item ->
+                        items(state.recepts.sortedBy { it.title }, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
 
@@ -336,7 +336,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
             if (state.ingredients.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
-                        items(state.ingredients, { it.id }) { item ->
+                        items(state.ingredients.sortedBy { it.title }, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
 
@@ -545,7 +545,7 @@ fun CreateReceptsDialog(
                         .heightIn(0.dp, 300.dp)
                 ) {
                     LazyColumn() {
-                        listRecepts.forEach {
+                        listRecepts.sortedBy { it.title }.forEach {
                             val backgroundColor =
                                 if (selectionItem == it.title) Color.Green
                                 else Color.Transparent

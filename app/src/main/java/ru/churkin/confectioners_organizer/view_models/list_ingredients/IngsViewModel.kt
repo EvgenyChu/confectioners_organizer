@@ -54,6 +54,22 @@ class IngsViewModel() : ViewModel() {
         }
     }
 
+    fun filterIngredients(counter: Int) {
+        _state.value = IngredientsState.Loading
+        viewModelScope.launch {
+            var ingredients: List<Ingredient> = listOf()
+            when (counter) {
+                1 -> {repository.loadIngredients()
+                      ingredients = repository.filterIngredients(true)}
+                2 -> {repository.loadIngredients()
+                      ingredients = repository.filterIngredients(false) }
+                else -> ingredients = repository.loadIngredients()
+            }
+            _state.value = if (ingredients.isEmpty()) IngredientsState.Empty
+            else IngredientsState.Value(ingredients)
+        }
+    }
+
     fun removeIngredient(id: Long) {
         _state.value = IngredientsState.Loading
         viewModelScope.launch{

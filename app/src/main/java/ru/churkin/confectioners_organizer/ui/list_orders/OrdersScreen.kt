@@ -141,7 +141,7 @@ fun OrdersScreen(
 
                 is OrdersState.Value -> {
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                        items(listState.orders, { it.id }) { item ->
+                        items(listState.orders.sortedBy { it.deadline }, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
                             if (dismissState.isDismissed(DismissDirection.StartToEnd)) {

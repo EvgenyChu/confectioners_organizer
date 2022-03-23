@@ -11,6 +11,7 @@ class IngredientsRepository(
 
     suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
     suspend fun loadIngredient(id: Long): Ingredient = ingredientDao.loadIngredient(id)
+    suspend fun filterIngredients(availability: Boolean): List<Ingredient> = ingredientDao.filterIngredients(availability)
     suspend fun insertIngredient(ingredient: Ingredient) {
         ingredientDao.insert(ingredient = ingredient)
     }
