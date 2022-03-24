@@ -25,7 +25,7 @@ interface ProductDao {
         suspend fun delete(id: Long)
 
         @Query("DELETE FROM products WHERE order_id = :id")
-        suspend fun deleteOrderProduct(id: Long)
+        suspend fun deleteOrderProducts(id: Long?)
 
         @Insert
         suspend fun insertList(products: List<Product>)

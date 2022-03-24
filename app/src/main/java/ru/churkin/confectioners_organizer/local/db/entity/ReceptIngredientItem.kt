@@ -13,6 +13,7 @@ data class ReceptIngredientItem(
     val availability: Boolean,
     val count: Int = 0,
     val unitsAvailable: String = "ед. изм.",
+    val costPrice: Float = 0f,
     // TODO: 25.02.2022 add forign key
     @ColumnInfo(name = "recept_id")
     val receptId: Long = 0

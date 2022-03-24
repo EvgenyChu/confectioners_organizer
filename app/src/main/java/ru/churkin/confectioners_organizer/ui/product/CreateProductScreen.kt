@@ -1,12 +1,9 @@
 package ru.churkin.confectioners_organizer.product
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,28 +20,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.listOrders.OrderItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.ui.recept.CreateIngredientsDialog
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.product.data.CreateProductViewModel
 import ru.churkin.confectioners_organizer.view_models.product.data.ReceptItem
-import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -387,28 +377,26 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                 }
             }
 
-            TextField(
-                value = "",
-                onValueChange = { },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Себестоимость, руб.",
-                        style = MaterialTheme.typography.subtitle2,
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_calculate_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Калькулятор"
-                        )
-                    }
-                },
-                colors = colors
-            )
+            Row(
+                Modifier
+                    .height(56.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable {
+                        vm.updateCostPrice() },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Себестоимость: ${state.costPrice} руб.",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(Modifier.weight(1f, true))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_calculate_24),
+                    tint = MaterialTheme.colors.secondary,
+                    contentDescription = "Калькулятор"
+                )
+            }
 
             TextField(
                 value = "${if (state.price == 0) "" else state.price}",
@@ -453,7 +441,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
         FloatingActionButton(
             onClick = {
                 vm.addProduct()
-                navController.popBackStack()
+                navController.navigate("orders/edit/${state.orderId}")
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -471,8 +459,8 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     if (state.isCreateIngredientDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateIngredientDialog() },
-            onCreate = { title, count, availability, unitsAvailable ->
-                vm.createProductIngredient(title, count, availability, unitsAvailable)
+            onCreate = { title, count, availability, unitsAvailable, costPrice ->
+                vm.createProductIngredient(title, count, availability, unitsAvailable, costPrice)
             },
             listIngredients = state.availableIngredients
         )
@@ -481,12 +469,13 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     if (state.isCreateReceptDialog) {
         CreateReceptsDialog(
             onDismiss = { vm.hideCreateReceptDialog() },
-            onCreate = { title, count, availability, missingReceptIngredients ->
+            onCreate = { title, count, availability, missingReceptIngredients, costPrice ->
                 vm.createProductRecept(
                     title = title,
                     count = count,
                     availability = availability,
-                    missingReceptIngredients = missingReceptIngredients)
+                    missingReceptIngredients = missingReceptIngredients,
+                    costPrice = costPrice)
             },
             listRecepts = state.availableRecepts
         )
@@ -501,7 +490,9 @@ fun CreateReceptsDialog(
         title: String,
         count: Int,
         availibility: Boolean,
-        missingReceptIngredients: String) -> Unit
+        missingReceptIngredients: String,
+        costPrice: Float
+    ) -> Unit
 ) {
 
     var selectionItem: String? by remember { mutableStateOf(null) }
@@ -509,6 +500,8 @@ fun CreateReceptsDialog(
     var selectionAvailability: Boolean? by remember { mutableStateOf(null) }
 
     var selectionmissingIgredient: String? by remember { mutableStateOf(null)}
+
+    var selectionCostPrice: Float by remember {mutableStateOf(0f)}
 
     var receptCount: Int by remember { mutableStateOf(0) }
 
@@ -560,6 +553,7 @@ fun CreateReceptsDialog(
                                             selectionItem = it.title
                                             selectionAvailability = it.availability
                                             selectionmissingIgredient = it.missingReceptIngredients
+                                            selectionCostPrice = it.costPrice
                                         })
                                         .height(44.dp)
                                         .padding(end = 16.dp)
@@ -627,7 +621,8 @@ fun CreateReceptsDialog(
                                     it,
                                     receptCount,
                                     selectionAvailability ?: true,
-                                    selectionmissingIgredient ?: ""
+                                    selectionmissingIgredient ?: "",
+                                    selectionCostPrice
                                 )
                             }
                         },

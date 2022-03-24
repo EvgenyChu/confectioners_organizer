@@ -13,6 +13,7 @@ data class ProductIngredientItem(
     val availability: Boolean,
     val count: Int = 0,
     val unitsAvailable: String = "ед. изм.",
+    val costPrice: Float = 0f,
     // TODO: 25.02.2022 add forign key
     @ColumnInfo(name = "product_id")
     val productId: Long = 0

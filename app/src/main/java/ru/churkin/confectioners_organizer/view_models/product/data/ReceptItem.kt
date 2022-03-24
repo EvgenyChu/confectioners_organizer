@@ -6,5 +6,6 @@ data class ReceptItem (
     val title: String,
     val availability: Boolean,
     val weight: Int,
-    val missingReceptIngredients: String
+    val missingReceptIngredients: String,
+    val costPrice: Float
         )

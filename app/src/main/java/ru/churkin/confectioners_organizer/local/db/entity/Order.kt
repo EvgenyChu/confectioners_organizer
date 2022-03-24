@@ -15,6 +15,7 @@ data class Order(
     val needDelivery: Boolean = false,
     val address: String? = null,
     val price: Int = 0,
+    val costPrice: Int = 0,
     val isPaid: Boolean = false,
     val note: String? = "",
     var isCooked: Boolean = false,
@@ -31,6 +32,7 @@ data class OrderFull(
     val needDelivery: Boolean = false,
     val address: String? = null,
     val price: Int = 0,
+    val costPrice: Int = 0,
     val isPaid: Boolean = false,
     @Relation(
         parentColumn = "id",

@@ -41,14 +41,15 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     title = recept.title,
                     weight = recept.weight,
                     time = recept.time,
-                    note = recept.note
+                    note = recept.note,
+                    costPrice = recept.costPrice
                 )
             }
 
             val ingredients = repository.loadReceptIngredients(currentState.id)
             val availableIngredients =
                 repository.loadIngredients()
-                    .map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
+                    .map { IngredientItem(it.title, it.availability, it.unitsAvailable, it.costPrice) }
 
             _state.value = currentState.copy(
                 availableIngredients = availableIngredients,
@@ -87,8 +88,13 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
 
     fun addRecept() {
-        val recept = currentState.toRecept()
         viewModelScope.launch {
+            val ingredients = repository.loadReceptIngredients(currentState.id)
+            var costPrice = 0f
+            ingredients.forEach { costPrice += it.costPrice * it.count }
+            costPrice = if (currentState.weight != 0) costPrice/currentState.weight
+            else costPrice
+            val recept = currentState.copy(costPrice = costPrice).toRecept()
             repository.insertRecept(recept, receptsIngredients)
         }
     }
@@ -97,7 +103,8 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         title: String,
         count: Int,
         availability: Boolean,
-        unitsAvailable: String
+        unitsAvailable: String,
+        costPrice: Float
     ) {
         viewModelScope.launch {
             val receptIngredientItem =
@@ -106,24 +113,24 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     availability = availability,
                     count = count,
                     unitsAvailable = unitsAvailable,
-                    receptId = currentState.id
+                    receptId = currentState.id,
+                    costPrice = costPrice
                 )
             repository.insertReceptIngredientItem(receptIngredientItem)
             val ingredients = repository.loadReceptIngredients(currentState.id)
-            val missingReceptIngredients = mutableListOf<String>()
+            val missingReceptIngredients: MutableSet<String> = mutableSetOf()
             var availabilityIngredients: Boolean = true
             ingredients.forEach {
                 if (!it.availability) {
                     availabilityIngredients = false
-                    missingReceptIngredients += it.title
+                    missingReceptIngredients += it.title.lowercase()
                 }
             }
             _state.value =
                 currentState.copy(
                     ingredients = ingredients,
                     availabilityIngredients = availabilityIngredients,
-                    missingReceptIngredients = missingReceptIngredients.toSet()
-                        .joinToString(",") { it },
+                    missingReceptIngredients = missingReceptIngredients.distinct().joinToString(",") { it },
                     isCreateDialog = false
                 )
         }
@@ -157,6 +164,7 @@ data class ReceptState(
     val isConfirm: Boolean = false,
     val available: Int = 0,
     val availabilityIngredients: Boolean = true,
+    val costPrice: Float = 0f,
     val missingReceptIngredients: String = ""
 )
 
@@ -168,6 +176,7 @@ fun ReceptState.toRecept() =
         time,
         note,
         availabilityIngredients,
+        costPrice,
         missingReceptIngredients
     )
 

@@ -1,8 +1,5 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
-import android.hardware.camera2.CameraManager
-import android.util.Log
-import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,6 +40,7 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 needDelivery = order.needDelivery,
                 address = order.address,
                 price = order.price,
+                costPrice = order.costPrice,
                 isPaid = order.isPaid,
                 note = order.note,
                 isCooked = order.isCooked
@@ -54,7 +52,9 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
         val missingIngredients: MutableSet<String> = mutableSetOf()
             repository.loadOrderProducts(currentState.id).forEach {
-                missingIngredients += it.missingIngredients.split(",").toSet()
+                it.missingIngredients.split(",").forEach { ingredient ->
+                    missingIngredients += ingredient
+                }
             }
 
         var availabilityProduct = true
@@ -107,13 +107,23 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         _state.value = currentState.copy(note = note)
     }
 
+    fun updateCostPrice() {
+            var costPrice = 0
+            val products = currentState.products
+            products?.forEach { costPrice += it.costPrice }
+            _state.value = currentState.copy(costPrice = costPrice)
+    }
+
     fun emptyState() {
         _state.value = OrderState(id = currentState.id)
     }
 
     fun addOrder() {
-        val order = currentState.toOrder()
         viewModelScope.launch {
+            var costPrice = 0
+            val products = repository.loadOrderProducts(currentState.id)
+            products.forEach { costPrice += it.costPrice}
+            val order = currentState.copy(costPrice=costPrice).toOrder()
             repository.insertOrder(order, ordersProducts)
         }
     }
@@ -122,6 +132,16 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch {
             repository.removeOrder(id = id)
             repository.loadOrders()
+        }
+    }
+
+    fun removeOrderProduct(id: Long) {
+        viewModelScope.launch {
+            repository.removeOrderProduct(id)
+            repository.removeOrderProductIngredient(id)
+            repository.removeOrderProductRecept(id)
+            val products = repository.loadOrderProducts(currentState.id)
+            _state.value = currentState.copy(products = products)
         }
     }
 }
@@ -136,6 +156,7 @@ data class OrderState(
     val availableProducts: String = "",
     val products: List<Product>? = listOf(),
     val price: Int = 0,
+    val costPrice: Int = 0,
     val isPaid: Boolean = false,
     val note: String? = "",
     var isCooked: Boolean = false,
@@ -151,6 +172,7 @@ fun OrderState.toOrder() = Order(
     needDelivery,
     address,
     price,
+    costPrice,
     isPaid,
     note,
     isCooked,

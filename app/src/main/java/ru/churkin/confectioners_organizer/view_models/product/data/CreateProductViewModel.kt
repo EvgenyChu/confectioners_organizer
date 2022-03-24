@@ -45,7 +45,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             }
             val ingredients = repository.loadProductIngredients(currentState.id)
             val availableIngredients =
-                repository.loadIngredients().map { IngredientItem(it.title, it.availability, it.unitsAvailable) }
+                repository.loadIngredients().map { IngredientItem(it.title, it.availability, it.unitsAvailable, it.costPrice) }
 
             val recepts = repository.loadProductRecepts(currentState.id)
             val availableRecepts =
@@ -53,7 +53,8 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     it.title,
                     it.availabilityIngredients,
                     it.weight,
-                    it.missingReceptIngredients
+                    it.missingReceptIngredients,
+                    it.costPrice
                 ) }
 
             _state.value = currentState.copy(
@@ -97,21 +98,33 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         _state.value = currentState.copy(price = price)
     }
 
+    fun updateCostPrice() {
+                var costPrice = 0f
+                val ingredients = currentState.ingredients
+                val recepts = currentState.recepts
+                ingredients.forEach { costPrice += it.costPrice * it.count }
+                recepts.forEach { costPrice += it.costPrice * it.count }
+            _state.value = currentState.copy(costPrice = costPrice.toInt())
+    }
+
     fun emptyState() {
         _state.value = ProductState()
     }
 
     fun addProduct() {
-        val missingIngredients = _state.value.missingProductReceptIngredients+_state.value.missingProductIngredients
-        Log.e("missingIngredients", "${missingIngredients.distinct()}")
-            /*_state.value.missingProductReceptIngredients.joinToString(",") { it } + _state.value.missingProductIngredients.joinToString(",") { it }*/
-        val product = currentState.copy(missingIngredients = missingIngredients.distinct().joinToString(",") { it }).toProduct()
         viewModelScope.launch {
+            val missingIngredients = _state.value.missingProductReceptIngredients+_state.value.missingProductIngredients
+            var costPrice = 0f
+            val ingredients = repository.loadProductIngredients(currentState.id)
+            val recepts = repository.loadProductRecepts(currentState.id)
+            ingredients.forEach { costPrice += it.costPrice * it.count }
+            recepts.forEach { costPrice += it.costPrice * it.count }
+            val product = currentState.copy(missingIngredients = missingIngredients.distinct().joinToString(",") { it }, costPrice = costPrice.toInt()).toProduct()
             repository.insertProduct(product, productsIngredients, productsRecepts)
         }
     }
 
-    fun createProductIngredient(title: String, count: Int, availability: Boolean, unitsAvailable: String) {
+    fun createProductIngredient(title: String, count: Int, availability: Boolean, unitsAvailable: String, costPrice: Float) {
         viewModelScope.launch {
             val productIngredientItem =
                 ProductIngredientItem(
@@ -119,16 +132,17 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     availability = availability,
                     count = count,
                     unitsAvailable = unitsAvailable,
-                    productId = currentState.id
+                    productId = currentState.id,
+                    costPrice = costPrice
                 )
             repository.insertProductIngredientItem(productIngredientItem)
             val ingredients = repository.loadProductIngredients(currentState.id)
-            var availabilityIngredients: Boolean = true
+            var availabilityIngredients = true
             val missingProductIngredients = mutableSetOf<String>()
             ingredients.forEach {
                 if (!it.availability)  {
                     availabilityIngredients = false
-                    missingProductIngredients += it.title
+                    missingProductIngredients += it.title.lowercase()
                 }}
             _state.value =
                 currentState.copy(
@@ -140,7 +154,7 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun createProductRecept(title: String, count: Int, availability: Boolean, missingReceptIngredients: String) {
+    fun createProductRecept(title: String, count: Int, availability: Boolean, missingReceptIngredients: String, costPrice: Float) {
         viewModelScope.launch {
             val productReceptItem =
                 ProductReceptItem(
@@ -148,16 +162,19 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                     count = count,
                     availability = availability,
                     productId = currentState.id,
-                    missingReceptIngredients = missingReceptIngredients
+                    missingReceptIngredients = missingReceptIngredients,
+                    costPrice = costPrice
                 )
             repository.insertProductReceptItem(productReceptItem)
             val recepts = repository.loadProductRecepts(currentState.id)
-            var availabilityRecepts: Boolean = true
+            var availabilityRecepts = true
             val missingProductReceptIngredients = mutableSetOf<String>()
             recepts.forEach {
                 if (!it.availability)  {
                     availabilityRecepts = false
-                    missingProductReceptIngredients += it.missingReceptIngredients
+                    it.missingReceptIngredients.lowercase().split(",").forEach { ingredient ->
+                        missingProductReceptIngredients += ingredient
+                    }
                 }}
             _state.value =
                 currentState.copy(

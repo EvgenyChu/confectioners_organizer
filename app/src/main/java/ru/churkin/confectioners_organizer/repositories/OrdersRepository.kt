@@ -27,8 +27,12 @@ class OrdersRepository(
         orderDao.delete(orderId = id)
     }
 
+    suspend fun removeOrderProducts(id: Long?) {
+        productDao.deleteOrderProducts(id = id)
+    }
+
     suspend fun removeOrderProduct(id: Long) {
-        productDao.deleteOrderProduct(id = id)
+        productDao.delete(id = id)
     }
 
     suspend fun removeOrderProductIngredient(id: Long) {

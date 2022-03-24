@@ -67,7 +67,7 @@ class OrdersViewModel() : ViewModel() {
                 repository.removeOrderProductIngredient(it.id)
                 repository.removeOrderProductRecept(it.id)
             }
-            repository.removeOrderProduct(id = id)
+            repository.removeOrderProducts(id = id)
             repository.removeOrder(id = id)
             val orders = repository.loadOrdersIsCooked(false)
             _state.value = if (orders.isEmpty()) OrdersState.Empty

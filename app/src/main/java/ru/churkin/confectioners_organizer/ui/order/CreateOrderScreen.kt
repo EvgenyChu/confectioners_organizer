@@ -1,16 +1,23 @@
 package ru.churkin.confectioners_organizer.ui.order
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,8 +29,10 @@ import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
+import ru.churkin.confectioners_organizer.ui.recept.ReceptIngItem
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = viewModel()) {
 
@@ -40,6 +49,8 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
     }
 
     var isShowDatePicker by remember { mutableStateOf(false) }
+
+    var calculate by remember { mutableStateOf(false)}
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -243,10 +254,81 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 )
             }
 
-            if (state.products?.isNotEmpty() == true) state.products?.sortedBy { it.title }?.forEach {product ->
-                OrderProductItem(product = product) {
-                    navController.navigate("orders/${product.orderId}/products/${product.id}")
+            if (state.products?.isNotEmpty() == true) {
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                    LazyColumn() {
+                        items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
+
+                            val dismissState = rememberDismissState()
+
+                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+                                vm.removeOrderProduct(item.id)
+                            }
+                            SwipeToDismiss(
+                                state = dismissState,
+                                directions = setOf(
+                                    DismissDirection.StartToEnd
+                                ),
+                                background = {
+
+                                    val color by animateColorAsState(
+                                        when (dismissState.targetValue) {
+                                            DismissValue.Default -> MaterialTheme.colors.surface
+                                            else -> MaterialTheme.colors.secondary
+                                        }
+                                    )
+
+                                    val icon = Icons.Default.Delete
+
+                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
+
+                                    val alignment = Alignment.CenterStart
+
+
+                                    Box(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(color)
+                                            .padding(start = 16.dp, end = 16.dp),
+                                        contentAlignment = alignment
+                                    ) {
+                                        Icon(
+                                            icon,
+                                            contentDescription = "icon",
+                                            modifier = Modifier.scale(scale)
+                                        )
+                                    }
+                                },
+                                dismissContent = {
+                                    OrderProductItem(product = item) {
+                                        navController.navigate("orders/${item.orderId}/products/${item.id}")
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
+            }
+
+            Row(
+                Modifier
+                    .height(56.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable {
+                        vm.updateCostPrice() },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Себестоимость: ${state.costPrice} руб.",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(Modifier.weight(1f, true))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_calculate_24),
+                    tint = MaterialTheme.colors.secondary,
+                    contentDescription = "Калькулятор"
+                )
             }
 
             TextField(

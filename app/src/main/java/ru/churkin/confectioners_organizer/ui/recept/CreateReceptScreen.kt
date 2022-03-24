@@ -287,8 +287,8 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     if (state.isCreateDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateDialog() },
-            onCreate = { title, count, availability, unitsAvailable ->
-                vm.createReceptIngredient(title, count, availability, unitsAvailable)
+            onCreate = { title, count, availability, unitsAvailable, costPrice ->
+                vm.createReceptIngredient(title, count, availability, unitsAvailable, costPrice)
             },
             listIngredients = state.availableIngredients
         )
@@ -302,7 +302,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
 fun CreateIngredientsDialog(
     listIngredients: List<IngredientItem>,
     onDismiss: () -> Unit,
-    onCreate: (title: String, count: Int, availibility: Boolean, unitsAvailable: String) -> Unit
+    onCreate: (title: String, count: Int, availibility: Boolean, unitsAvailable: String, costPrise: Float) -> Unit
 ) {
     Log.e("dialog", listIngredients.toString())
     var selectionItem: String? by remember { mutableStateOf(null) }
@@ -312,6 +312,8 @@ fun CreateIngredientsDialog(
     var selectionUnitsAvailable: String? by remember { mutableStateOf(null)}
 
     var ingredientCount: Int by remember { mutableStateOf(0) }
+
+    var selectionCostPrice: Float by remember {mutableStateOf(0f)}
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -358,6 +360,7 @@ fun CreateIngredientsDialog(
                                             selectionItem = it.title
                                             selectionAvailability = it.availability
                                             selectionUnitsAvailable = it.unitsAvailable
+                                            selectionCostPrice = it.costPrice
                                         })
                                         .height(44.dp)
                                         .padding(horizontal = 16.dp)
@@ -422,7 +425,7 @@ fun CreateIngredientsDialog(
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(
                         onClick = {
-                            selectionItem?.let { onCreate(it, ingredientCount, selectionAvailability?: true, selectionUnitsAvailable?: "г.") }
+                            selectionItem?.let { onCreate(it, ingredientCount, selectionAvailability?: true, selectionUnitsAvailable?: "г.", selectionCostPrice) }
                         },
                         enabled = selectionItem != null && ingredientCount > 0
                     )
