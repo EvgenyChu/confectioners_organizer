@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
@@ -39,14 +40,10 @@ import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngsViewM
 fun IngsScreen(
     navController: NavController,
     vm: IngsViewModel = viewModel(),
-    scaffoldState: ScaffoldState,
-    scope: CoroutineScope
 ) {
 
     val state by vm.state.collectAsState()
-    val searchText by vm.searchText.collectAsState()
-    var isShowSearch by remember { mutableStateOf(false) }
-    var counter by remember { mutableStateOf(0) }
+
 
     LaunchedEffect(key1 = Unit) {
         vm.initState()
@@ -62,61 +59,6 @@ fun IngsScreen(
             Modifier
                 .fillMaxSize()
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                if (isShowSearch) {
-                    SearchBar(
-                        searchText = searchText,
-                        onSearch = { vm.searchIngredients(it) },
-                        onSubmit = {
-                            vm.searchIngredients(it)
-                            isShowSearch = false
-                        },
-                        onDismiss = { isShowSearch = false })
-                } else {
-                    IconButton(onClick = {
-                        scope.launch {
-                            scaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                            tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Меню навигации"
-                        )
-                    }
-                    Text(
-                        "Ингредиенты",
-                        style = MaterialTheme.typography.h6,
-                    )
-                    Spacer(Modifier.weight(1f, true))
-
-                    IconButton(onClick = {
-                        counter++
-                        if (counter > 2) counter = 0
-                        vm.filterIngredients(counter)
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                            tint = when (counter) {
-                                1 -> colorResource(id = R.color.green)
-                                2 -> colorResource(id = R.color.red)
-                                else -> MaterialTheme.colors.onPrimary
-                            },
-                            contentDescription = "Сортировка"
-                        )
-                    }
-                }
-
-                IconButton(onClick = {
-                    isShowSearch = true
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Найти"
-                    )
-                }
-            }
 
         when (val listState = state) {
             is IngredientsState.Empty -> {
@@ -269,6 +211,70 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun IngsToolBar(
+    vm: IngsViewModel = viewModel(),
+    onMenuClick: ()-> Unit
+){
+    val searchText by vm.searchText.collectAsState()
+    var isShowSearch by remember { mutableStateOf(false) }
+    var counter by remember { mutableStateOf(0) }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        if (isShowSearch) {
+            SearchBar(
+                searchText = searchText,
+                onSearch = { vm.searchIngredients(it) },
+                onSubmit = {
+                    vm.searchIngredients(it)
+                    isShowSearch = false
+                },
+                onDismiss = { isShowSearch = false })
+        } else {
+            IconButton(onClick = {
+                onMenuClick()
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Меню навигации"
+                )
+            }
+            Text(
+                "Ингредиенты",
+                style = MaterialTheme.typography.h6,
+            )
+            Spacer(Modifier.weight(1f, true))
+
+            IconButton(onClick = {
+                counter++
+                if (counter > 2) counter = 0
+                vm.filterIngredients(counter)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                    tint = when (counter) {
+                        1 -> colorResource(id = R.color.green)
+                        2 -> colorResource(id = R.color.red)
+                        else -> MaterialTheme.colors.onPrimary
+                    },
+                    contentDescription = "Сортировка"
+                )
+            }
+        }
+
+        IconButton(onClick = {
+            isShowSearch = true
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Найти"
+            )
+        }
+    }
+}
 
 /*
 @Preview

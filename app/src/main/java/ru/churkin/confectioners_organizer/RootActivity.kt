@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavType
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.history.OrdersHistoryScreen
@@ -26,6 +27,7 @@ import ru.churkin.confectioners_organizer.ui.drawer.DrawerScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.CreateIngredientScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
+import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsToolBar
 import ru.churkin.confectioners_organizer.ui.order.CreateOrderScreen
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
 import ru.churkin.confectioners_organizer.ui.start.StartScreen
@@ -41,20 +43,35 @@ class RootActivity : ComponentActivity() {
             val navController = rememberNavController()
             val scaffoldState = rememberScaffoldState()
             val scope = rememberCoroutineScope()
-            var isLockDrawer by remember { mutableStateOf(false)}
-            LaunchedEffect(key1 = Unit){
+            var isLockDrawer by remember { mutableStateOf(false) }
+            LaunchedEffect(key1 = Unit) {
                 navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                   scope.launch {
-                       Log.e("RootActivity", "${scaffoldState.drawerState}")
-                       scaffoldState.drawerState.close()
-                   }
+                    isLockDrawer = when (destination.route) {
+                        "ingredients" -> false
+                        "recepts" -> false
+                        "orders" -> false
+                        "history" -> false
+                        else -> true
+                    }
+                    scope.launch {
+                        Log.e("RootActivity", "${scaffoldState.drawerState}")
+                        scaffoldState.drawerState.close()
+                    }
                 }
             }
             AppTheme() {
                 Scaffold(
                     scaffoldState = scaffoldState,
                     drawerGesturesEnabled = !isLockDrawer,
-                    drawerContent = { DrawerScreen(navController = navController) }) {
+                    drawerContent = { DrawerScreen(navController = navController) },
+                    topBar = {
+                        ToolBarHost(navController, onMenuClick = {
+                            scope.launch {
+                                scaffoldState.drawerState.open()
+                            }
+                        })
+                    }
+                ) {
                     NavHost(
                         navController = navController,
                         startDestination = Screen.Start.route
@@ -63,23 +80,31 @@ class RootActivity : ComponentActivity() {
                             StartScreen(navController = navController)
                         }
                         composable(Screen.Ingredients.route) {
-                            isLockDrawer = false
-                            IngsScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
+                            IngsScreen(navController = navController)
+                        }
                         composable(Screen.Recepts.route) {
-                            isLockDrawer = false
-                            RecsScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
+                            RecsScreen(
+                                navController = navController
+                            )
+                        }
                         composable(Screen.Orders.route) {
-                            isLockDrawer = false
-                            OrdersScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
+                            OrdersScreen(
+                                navController = navController,
+                                scaffoldState = scaffoldState,
+                                scope = scope
+                            )
+                        }
                         composable(Screen.History.route) {
-                            isLockDrawer = false
-                            OrdersHistoryScreen(navController = navController, scaffoldState = scaffoldState, scope = scope) }
+                            OrdersHistoryScreen(
+                                navController = navController
+                            )
+                        }
                         composable("orders/create") {
-                            isLockDrawer = true
-                            CreateOrderScreen(navController = navController) }
+                            CreateOrderScreen(navController = navController)
+                        }
                         composable("products/create") {
-                            isLockDrawer = true
-                            CreateProductScreen(navController = navController) }
+                            CreateProductScreen(navController = navController)
+                        }
                         composable(
                             "orders/{order_id}/products/create",
                             arguments = listOf(navArgument("order_id")
@@ -126,6 +151,17 @@ class RootActivity : ComponentActivity() {
             }
 
         }
+    }
+}
+
+@Composable
+private fun ToolBarHost(navController: NavHostController, onMenuClick: () -> Unit) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    when (currentRoute){
+
+        Screen.Ingredients.route -> IngsToolBar(onMenuClick = onMenuClick)
+        else -> Text(text = "jfjfj")
     }
 }
 

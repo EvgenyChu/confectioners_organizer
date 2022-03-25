@@ -43,29 +43,7 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
             Modifier
                 .fillMaxSize()
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    "Pецепт",
-                    style = MaterialTheme.typography.h6,
-                )
 
-                Spacer(Modifier.weight(1f, true))
-
-                IconButton(onClick = { navController.navigate("recepts/edit/${state.id}") }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
             Column(Modifier.verticalScroll(rememberScrollState())) {
 
                 Row(
@@ -176,6 +154,38 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_done_24),
                 contentDescription = "Добавить"
+            )
+        }
+    }
+}
+
+@Composable
+fun ReceptToolBar(
+    navController: NavController,
+    vm: ReceptViewModel = viewModel()
+){
+    val state by vm.state.collectAsState()
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            "Pецепт",
+            style = MaterialTheme.typography.h6,
+        )
+
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { navController.navigate("recepts/edit/${state.id}") }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
             )
         }
     }

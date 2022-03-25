@@ -41,14 +41,6 @@ import ru.churkin.confectioners_organizer.view_models.product.data.ReceptItem
 fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
-    val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}")
-    }
-    val title by remember {
-        mutableStateOf(
-            if (!isCreate) "Новое изделие" else "Редактирование"
-        )
-    }
 
     var openDialogUnits by remember { mutableStateOf(false) }
 
@@ -77,31 +69,6 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                    if (!isCreate) vm.removeProduct(state.id)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    title,
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(Modifier.weight(1f, true))
-
-                IconButton(onClick = { vm.emptyState() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
 
             TextField(
                 value = state.title,
@@ -383,7 +350,8 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clickable {
-                        vm.updateCostPrice() },
+                        vm.updateCostPrice()
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -718,6 +686,48 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
                 .height(1.dp),
             color = colors.secondary
         )
+    }
+}
+
+@Composable
+fun CreateProductToolBar(
+    navController: NavController,
+    vm: CreateProductViewModel = viewModel()
+){
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}")
+    }
+    val state by vm.state.collectAsState()
+    val title by remember {
+        mutableStateOf(
+            if (!isCreate) "Новое изделие" else "Редактирование"
+        )
+    }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = {
+            navController.popBackStack()
+            if (!isCreate) vm.removeProduct(state.id)
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            title,
+            style = MaterialTheme.typography.h6,
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { vm.emptyState() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
+            )
+        }
     }
 }
 

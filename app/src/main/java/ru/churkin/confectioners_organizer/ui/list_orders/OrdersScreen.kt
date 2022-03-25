@@ -45,9 +45,6 @@ fun OrdersScreen(
 ) {
 
     val state by vm.state.collectAsState()
-    val searchText by vm.searchText.collectAsState()
-    var isShowSearch by remember { mutableStateOf(false) }
-    var isShowDatePicker by remember { mutableStateOf(false) }
     var isShowDate by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
@@ -64,60 +61,7 @@ fun OrdersScreen(
             Modifier
                 .fillMaxSize()
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                if (isShowSearch) {
-                    SearchBar(
-                        searchText = searchText,
-                        onSearch = { vm.searchOrders(it) },
-                        onSubmit = {
-                            vm.searchOrders(it)
-                            isShowSearch = false
-                        },
-                        onDismiss = { isShowSearch = false })
-                } else {
-                    IconButton(onClick = {
-                        scope.launch {
-                            scaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                            tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Меню навигации"
-                        )
-                    }
-                    Text(
-                        "Список заказов",
-                        style = MaterialTheme.typography.h6,
-                    )
-                    Spacer(Modifier.weight(1f, true))
 
-                    IconButton(onClick = { isShowDatePicker = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                            tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Календарь"
-                        )
-                        if (isShowDatePicker) DatePicker(
-                            onSelect = {
-                                vm.searchDeadLine(it)
-                                isShowDatePicker = false
-                                isShowDate = true
-                            },
-                            onDismiss = {
-                                isShowDatePicker = false
-                            })
-                    }
-
-                    IconButton(onClick = { isShowSearch = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                            tint = MaterialTheme.colors.onPrimary,
-                            contentDescription = "Найти"
-                        )
-                    }
-                }
-            }
             when (val listState = state) {
 
                 is OrdersState.Empty -> {
@@ -323,6 +267,72 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                 .height(1.dp),
             color = MaterialTheme.colors.secondary
         )
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun OrderToolBar(
+    vm: OrdersViewModel = viewModel(),
+            onMenuClick: ()-> Unit
+){
+
+    val searchText by vm.searchText.collectAsState()
+    var isShowSearch by remember { mutableStateOf(false) }
+    var isShowDatePicker by remember { mutableStateOf(false) }
+    var isShowDate by remember { mutableStateOf(false) }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        if (isShowSearch) {
+            SearchBar(
+                searchText = searchText,
+                onSearch = { vm.searchOrders(it) },
+                onSubmit = {
+                    vm.searchOrders(it)
+                    isShowSearch = false
+                },
+                onDismiss = { isShowSearch = false })
+        } else {
+            IconButton(onClick = {
+                    onMenuClick()
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Меню навигации"
+                )
+            }
+            Text(
+                "Список заказов",
+                style = MaterialTheme.typography.h6,
+            )
+            Spacer(Modifier.weight(1f, true))
+
+            IconButton(onClick = { isShowDatePicker = true }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Календарь"
+                )
+                if (isShowDatePicker) DatePicker(
+                    onSelect = {
+                        vm.searchDeadLine(it)
+                        isShowDatePicker = false
+                        isShowDate = true
+                    },
+                    onDismiss = {
+                        isShowDatePicker = false
+                    })
+            }
+
+            IconButton(onClick = { isShowSearch = true }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Найти"
+                )
+            }
+        }
     }
 }
 

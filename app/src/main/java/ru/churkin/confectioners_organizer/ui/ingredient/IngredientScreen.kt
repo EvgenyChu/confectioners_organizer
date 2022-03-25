@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -38,28 +39,6 @@ fun IngredientScreen(navController: NavController, vm: IngredientViewModel = vie
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = {navController.popBackStack() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    text = "Ингредиент",
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(Modifier.weight(1f, true))
-
-                IconButton(onClick = { navController.navigate("ingredients/edit/${state.id}")}) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
 
             Row(
                 modifier = Modifier
@@ -188,6 +167,38 @@ fun IngredientScreen(navController: NavController, vm: IngredientViewModel = vie
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_done_24),
                 contentDescription = "Добавить"
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun IngredientToolBar(
+    navController: NavController,
+    vm: IngredientViewModel = viewModel()
+){
+    val state by vm.state.collectAsState()
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = {navController.popBackStack() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            text = "Ингредиент",
+            style = MaterialTheme.typography.h6,
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { navController.navigate("ingredients/edit/${state.id}")}) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
             )
         }
     }

@@ -46,11 +46,6 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     val isCreate: Boolean by remember {
         mutableStateOf(navController.currentDestination?.route == "recepts/create")
     }
-    val title by remember {
-        mutableStateOf(
-            if (isCreate) "Новый рецепт" else "Редактирование"
-        )
-    }
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -76,32 +71,6 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
             Modifier
                 .fillMaxSize()
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                    if (isCreate) vm.removeRecept(state.id)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    title,
-                    style = MaterialTheme.typography.h6,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(Modifier.weight(1f, true))
-
-                IconButton(onClick = { vm.emptyState() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 TextField(
                     value = state.title,
@@ -474,6 +443,50 @@ fun ReceptIngItem(receptIngredientItem: ReceptIngredientItem) {
             )
         }
         Divider(color = MaterialTheme.colors.secondary)
+    }
+}
+
+@OptIn(InternalCoroutinesApi::class)
+@Composable
+fun CreateReceptToolBar(
+    navController: NavController,
+    vm: CreateReceptViewModel = viewModel()
+){
+    val state by vm.state.collectAsState()
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "recepts/create")
+    }
+    val title by remember {
+        mutableStateOf(
+            if (isCreate) "Новый рецепт" else "Редактирование"
+        )
+    }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = {
+            navController.popBackStack()
+            if (isCreate) vm.removeRecept(state.id)
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            title,
+            style = MaterialTheme.typography.h6,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { vm.emptyState() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
+            )
+        }
     }
 }
 

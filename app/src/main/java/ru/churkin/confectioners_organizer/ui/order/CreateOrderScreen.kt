@@ -42,12 +42,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
         mutableStateOf(navController.currentDestination?.route == "orders/create")
     }
 
-    val title by remember {
-        mutableStateOf(
-            if (isCreate) "Новый заказ" else "Редактирование"
-        )
-    }
-
     var isShowDatePicker by remember { mutableStateOf(false) }
 
     var calculate by remember { mutableStateOf(false)}
@@ -75,31 +69,6 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                    if (isCreate) vm.removeOrder(state.id)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    title,
-                    style = MaterialTheme.typography.h6,
-                )
-                Spacer(Modifier.weight(1f, true))
-
-                IconButton(onClick = { vm.emptyState() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
 
             TextField(
                 value = state.customer,
@@ -316,7 +285,8 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .clickable {
-                        vm.updateCostPrice() },
+                        vm.updateCostPrice()
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -476,5 +446,49 @@ fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
             }
         }
         Divider(color = MaterialTheme.colors.secondary)
+    }
+}
+
+@Composable
+fun CreateOrderToolBar(
+    navController: NavController,
+    vm: CreateOrderViewModel = viewModel()
+){
+    val state by vm.state.collectAsState()
+
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "orders/create")
+    }
+
+    val title by remember {
+        mutableStateOf(
+            if (isCreate) "Новый заказ" else "Редактирование"
+        )
+    }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = {
+            navController.popBackStack()
+            if (isCreate) vm.removeOrder(state.id)
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            title,
+            style = MaterialTheme.typography.h6,
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { vm.emptyState() }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
+            )
+        }
     }
 }

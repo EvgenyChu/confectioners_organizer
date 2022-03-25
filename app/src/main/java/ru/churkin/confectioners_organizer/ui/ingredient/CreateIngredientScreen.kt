@@ -34,11 +34,7 @@ fun CreateIngredientScreen(
     val isCreate: Boolean by remember {
         mutableStateOf(navController.currentDestination?.route == "ingredients/create")
     }
-    val title by remember {
-        mutableStateOf(
-            if (isCreate) "Новый ингредиент" else "Редактирование"
-        )
-    }
+
 
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
@@ -70,34 +66,7 @@ fun CreateIngredientScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TopAppBar() {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                    if (isCreate) vm.removeIngredient(state.id)
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Назад"
-                    )
-                }
-                Text(
-                    title,
-                    style = MaterialTheme.typography.h6,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(Modifier.weight(1f, true))
 
-                IconButton(onClick = {
-                    vm.emptyState()
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                        tint = MaterialTheme.colors.onPrimary,
-                        contentDescription = "Очистить"
-                    )
-                }
-            }
             TextField(
                 value = if (state.title == "") "" else state.title,
                 onValueChange = { vm.updateTitle(it) },
@@ -403,6 +372,50 @@ fun CreateIngredientScreen(
     }
 }
 
+@Composable
+fun CreateIngredientToolBar(
+    navController: NavController,
+    vm: CreateIngredientViewModel = viewModel()
+){
+    val state by vm.state.collectAsState()
+    val isCreate: Boolean by remember {
+        mutableStateOf(navController.currentDestination?.route == "ingredients/create")
+    }
+    val title by remember {
+        mutableStateOf(
+            if (isCreate) "Новый ингредиент" else "Редактирование"
+        )
+    }
+
+    TopAppBar() {
+        IconButton(onClick = {
+            navController.popBackStack()
+            if (isCreate) vm.removeIngredient(state.id)
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            title,
+            style = MaterialTheme.typography.h6,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = {
+            vm.emptyState()
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
+            )
+        }
+    }
+}
 
 /*@Preview
 @Composable
