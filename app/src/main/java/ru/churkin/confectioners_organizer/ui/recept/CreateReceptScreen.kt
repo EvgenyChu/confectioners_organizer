@@ -43,9 +43,6 @@ import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewMod
 fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel = viewModel()) {
 
     val state by vm.state.collectAsState()
-    val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "recepts/create")
-    }
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,

@@ -18,18 +18,28 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.history.OrdersHistoryScreen
+import ru.churkin.confectioners_organizer.history.OrdersHistoryToolBar
 import ru.churkin.confectioners_organizer.ingredient.IngredientScreen
+import ru.churkin.confectioners_organizer.ingredient.IngredientToolBar
 import ru.churkin.confectioners_organizer.listOrders.OrdersScreen
+import ru.churkin.confectioners_organizer.listOrders.OrdersToolBar
 import ru.churkin.confectioners_organizer.ui.list_recepts.RecsScreen
 import ru.churkin.confectioners_organizer.order.OrderScreen
+import ru.churkin.confectioners_organizer.order.OrderToolBar
 import ru.churkin.confectioners_organizer.product.CreateProductScreen
+import ru.churkin.confectioners_organizer.product.CreateProductToolBar
 import ru.churkin.confectioners_organizer.ui.drawer.DrawerScreen
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptScreen
 import ru.churkin.confectioners_organizer.ui.ingredient.CreateIngredientScreen
+import ru.churkin.confectioners_organizer.ui.ingredient.CreateIngredientToolBar
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsScreen
 import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsToolBar
+import ru.churkin.confectioners_organizer.ui.list_recepts.RecsToolBar
 import ru.churkin.confectioners_organizer.ui.order.CreateOrderScreen
+import ru.churkin.confectioners_organizer.ui.order.CreateOrderToolBar
+import ru.churkin.confectioners_organizer.ui.recept.CreateReceptToolBar
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
+import ru.churkin.confectioners_organizer.ui.recept.ReceptToolBar
 import ru.churkin.confectioners_organizer.ui.start.StartScreen
 import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 
@@ -154,14 +164,33 @@ class RootActivity : ComponentActivity() {
     }
 }
 
+
+@OptIn(InternalCoroutinesApi::class)
 @Composable
-private fun ToolBarHost(navController: NavHostController, onMenuClick: () -> Unit) {
+private fun ToolBarHost(navController: NavController, onMenuClick: () -> Unit) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    when (currentRoute){
-
+    when (currentRoute) {
         Screen.Ingredients.route -> IngsToolBar(onMenuClick = onMenuClick)
-        else -> Text(text = "jfjfj")
+        Screen.Ingredient.route -> IngredientToolBar(navController = navController)
+        "ingredients/{id}" -> IngredientToolBar(navController = navController)
+        Screen.Recept.route -> ReceptToolBar(navController = navController)
+        "recepts/{id}" -> ReceptToolBar(navController = navController)
+        Screen.Recepts.route -> RecsToolBar(onMenuClick = onMenuClick)
+        Screen.Order.route -> OrderToolBar(navController = navController)
+        "orders/{id}" -> OrderToolBar(navController = navController)
+        Screen.Orders.route -> OrdersToolBar(onMenuClick = onMenuClick)
+        Screen.History.route -> OrdersHistoryToolBar(onMenuClick = onMenuClick)
+        "products/create" -> CreateProductToolBar(navController = navController)
+        "orders/{order_id}/products/create" -> CreateProductToolBar(navController = navController)
+        "orders/{order_id}/products/{id}" -> CreateProductToolBar(navController = navController)
+        "recepts/create" -> CreateReceptToolBar(navController = navController)
+        "recepts/edit/{id}" -> CreateReceptToolBar(navController = navController)
+        "ingredients/create" -> CreateIngredientToolBar(navController = navController)
+        "ingredients/edit/{id}" -> CreateIngredientToolBar(navController = navController)
+        "orders/create" -> CreateOrderToolBar(navController = navController)
+        "orders/edit/{id}" -> CreateOrderToolBar(navController = navController)
+        else -> ""
     }
 }
 

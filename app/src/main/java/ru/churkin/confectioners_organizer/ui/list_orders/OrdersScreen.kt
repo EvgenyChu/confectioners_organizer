@@ -270,9 +270,10 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
     }
 }
 
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun OrderToolBar(
+fun OrdersToolBar(
     vm: OrdersViewModel = viewModel(),
             onMenuClick: ()-> Unit
 ){
