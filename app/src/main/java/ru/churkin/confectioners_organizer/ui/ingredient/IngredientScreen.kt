@@ -11,22 +11,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun IngredientScreen(navController: NavController, vm: IngredientViewModel = viewModel()) {
+fun IngredientScreen(
+    navController: NavController,
+    id: Long,
+    vm: IngredientViewModel = viewModel(LocalContext.current as RootActivity, key = "ingredient")
+) {
 
     val state by vm.state.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
 
     Box(
@@ -172,16 +182,18 @@ fun IngredientScreen(navController: NavController, vm: IngredientViewModel = vie
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun IngredientToolBar(
     navController: NavController,
-    vm: IngredientViewModel = viewModel()
-){
+    vm: IngredientViewModel = viewModel(LocalContext.current as RootActivity, key = "ingredient")
+) {
     val state by vm.state.collectAsState()
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = {navController.popBackStack() }) {
+        IconButton(onClick = { navController.popBackStack() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
                 tint = MaterialTheme.colors.onPrimary,
@@ -194,7 +206,7 @@ fun IngredientToolBar(
         )
         Spacer(Modifier.weight(1f, true))
 
-        IconButton(onClick = { navController.navigate("ingredients/edit/${state.id}")}) {
+        IconButton(onClick = { navController.navigate("ingredients/edit/${state.id}") }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_edit_24),
                 tint = MaterialTheme.colors.onPrimary,

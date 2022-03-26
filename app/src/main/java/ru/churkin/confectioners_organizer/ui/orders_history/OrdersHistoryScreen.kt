@@ -6,8 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -16,28 +14,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.listOrders.OrderItem
+import ru.churkin.confectioners_organizer.RootActivity
+import ru.churkin.confectioners_organizer.ui.list_orders.OrderItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
-import ru.churkin.confectioners_organizer.ui.theme.AppTheme
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
-import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
 import ru.churkin.confectioners_organizer.view_models.orders_history.OrdersHistoryViewModel
 
+@InternalCoroutinesApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun OrdersHistoryScreen(
     navController: NavController,
-    vm: OrdersHistoryViewModel = viewModel(),
+    vm: OrdersHistoryViewModel = viewModel(LocalContext.current as RootActivity, key = "order_history"),
 ) {
 
     val state by vm.state.collectAsState()
@@ -171,10 +168,12 @@ fun OrdersHistoryScreen(
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OrdersHistoryToolBar(
-    vm: OrdersHistoryViewModel = viewModel(),
+    vm: OrdersHistoryViewModel = viewModel(LocalContext.current as RootActivity, key = "order_history"),
     onMenuClick: ()-> Unit
 ){
     val searchText by vm.searchText.collectAsState()

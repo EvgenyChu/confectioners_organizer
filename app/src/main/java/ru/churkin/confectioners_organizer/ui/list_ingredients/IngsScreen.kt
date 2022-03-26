@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -24,8 +25,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -34,16 +37,16 @@ import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngsViewModel
 
+@InternalCoroutinesApi
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun IngsScreen(
     navController: NavController,
-    vm: IngsViewModel = viewModel(),
+    vm: IngsViewModel = viewModel(LocalContext.current as RootActivity, key = "ingredients")
 ) {
 
     val state by vm.state.collectAsState()
-
 
     LaunchedEffect(key1 = Unit) {
         vm.initState()
@@ -211,10 +214,12 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun IngsToolBar(
-    vm: IngsViewModel = viewModel(),
+    vm: IngsViewModel = viewModel(LocalContext.current as RootActivity, key = "ingredients"),
     onMenuClick: ()-> Unit
 ){
     val searchText by vm.searchText.collectAsState()

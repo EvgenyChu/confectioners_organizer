@@ -21,7 +21,7 @@ class IngredientViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: IngredientState
         get() = state.value
 
-    suspend fun initState() {
+    suspend fun initState(id: Long) {
         checkNotNull(id)
 
         viewModelScope.launch {

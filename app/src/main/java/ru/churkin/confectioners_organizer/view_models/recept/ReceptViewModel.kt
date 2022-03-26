@@ -20,7 +20,7 @@ class ReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: ReceptState
         get() = state.value
 
-    suspend fun initState() {
+    suspend fun initState(id: Long) {
         Log.e("ReceptViewModel", "recept id $id")
 
         checkNotNull(id)

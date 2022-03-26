@@ -10,31 +10,35 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateIngredientScreen(
     navController: NavController,
-    vm: CreateIngredientViewModel = viewModel()
+    id: Long?,
+    vm: CreateIngredientViewModel = viewModel(LocalContext.current as RootActivity,key = "create_ingredient")
 ) {
 
     val state by vm.state.collectAsState()
-    val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "ingredients/create")
-    }
-
 
     var openDialogUnits by remember { mutableStateOf(false) }
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
@@ -52,7 +56,7 @@ fun CreateIngredientScreen(
     )
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
 
     Box(
@@ -372,10 +376,13 @@ fun CreateIngredientScreen(
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateIngredientToolBar(
     navController: NavController,
-    vm: CreateIngredientViewModel = viewModel()
+    vm: CreateIngredientViewModel = viewModel(LocalContext.current as RootActivity,key = "create_ingredient")
 ){
     val state by vm.state.collectAsState()
     val isCreate: Boolean by remember {

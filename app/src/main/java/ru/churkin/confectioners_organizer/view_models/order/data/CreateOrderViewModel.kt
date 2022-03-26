@@ -13,7 +13,6 @@ import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import java.util.*
 
 class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private var id: Long? = savedStateHandle.get<Long>("id")
     private val repository: OrdersRepository = OrdersRepository()
     private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
@@ -24,11 +23,10 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: OrderState
         get() = state.value
 
-    suspend fun initState() {
+    suspend fun initState(id: Long?) {
         if (id == null && currentState.id == 0L) {
             val localId = repository.createOrder()
             _state.value = currentState.copy(id = localId)
-            id = localId
         } else if (currentState == OrderState()) {
 
             val order = repository.loadOrder(checkNotNull(id))

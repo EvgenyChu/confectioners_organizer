@@ -17,9 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -37,10 +40,15 @@ import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.product.ProductIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewModel
 
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @InternalCoroutinesApi
 @Composable
-fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel = viewModel()) {
+fun CreateReceptScreen(
+    navController: NavController,
+    id: Long?,
+    vm: CreateReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "create_recept")
+) {
 
     val state by vm.state.collectAsState()
 
@@ -55,7 +63,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
     )
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
 
     Box(
@@ -143,7 +151,7 @@ fun CreateReceptScreen(navController: NavController, vm: CreateReceptViewModel =
 
 
                 if (state.ingredients.isNotEmpty()) {
-                    Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                    Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                         LazyColumn() {
                             items(state.ingredients.sortedBy { it.title }, { it.id }) { item ->
 
@@ -273,13 +281,13 @@ fun CreateIngredientsDialog(
     Log.e("dialog", listIngredients.toString())
     var selectionItem: String? by remember { mutableStateOf(null) }
 
-    var selectionAvailability: Boolean? by remember { mutableStateOf(null)}
+    var selectionAvailability: Boolean? by remember { mutableStateOf(null) }
 
-    var selectionUnitsAvailable: String? by remember { mutableStateOf(null)}
+    var selectionUnitsAvailable: String? by remember { mutableStateOf(null) }
 
     var ingredientCount: Int by remember { mutableStateOf(0) }
 
-    var selectionCostPrice: Float by remember {mutableStateOf(0f)}
+    var selectionCostPrice: Float by remember { mutableStateOf(0f) }
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -309,8 +317,10 @@ fun CreateIngredientsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box(modifier = Modifier
-                    .heightIn(0.dp, 300.dp)) {
+                Box(
+                    modifier = Modifier
+                        .heightIn(0.dp, 300.dp)
+                ) {
                     LazyColumn() {
                         listIngredients.sortedBy { it.title }.forEach {
                             val backgroundColor =
@@ -391,7 +401,15 @@ fun CreateIngredientsDialog(
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(
                         onClick = {
-                            selectionItem?.let { onCreate(it, ingredientCount, selectionAvailability?: true, selectionUnitsAvailable?: "г.", selectionCostPrice) }
+                            selectionItem?.let {
+                                onCreate(
+                                    it,
+                                    ingredientCount,
+                                    selectionAvailability ?: true,
+                                    selectionUnitsAvailable ?: "г.",
+                                    selectionCostPrice
+                                )
+                            }
                         },
                         enabled = selectionItem != null && ingredientCount > 0
                     )
@@ -443,12 +461,14 @@ fun ReceptIngItem(receptIngredientItem: ReceptIngredientItem) {
     }
 }
 
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
 fun CreateReceptToolBar(
     navController: NavController,
-    vm: CreateReceptViewModel = viewModel()
-){
+    vm: CreateReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "create_recept")
+) {
     val state by vm.state.collectAsState()
     val isCreate: Boolean by remember {
         mutableStateOf(navController.currentDestination?.route == "recepts/create")

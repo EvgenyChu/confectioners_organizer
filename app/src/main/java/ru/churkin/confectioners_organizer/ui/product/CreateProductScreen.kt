@@ -17,9 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
 import ru.churkin.confectioners_organizer.ui.recept.CreateIngredientsDialog
@@ -36,9 +40,16 @@ import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.product.data.CreateProductViewModel
 import ru.churkin.confectioners_organizer.view_models.product.data.ReceptItem
 
+@InternalCoroutinesApi
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel = viewModel()) {
+fun CreateProductScreen(
+    navController: NavController,
+    id: Long?,
+    orderId: Long?,
+    vm: CreateProductViewModel = viewModel(LocalContext.current as RootActivity, key = "create_product")
+) {
 
     val state by vm.state.collectAsState()
 
@@ -55,7 +66,7 @@ fun CreateProductScreen(navController: NavController, vm: CreateProductViewModel
     )
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id, orderId)
     }
 
     Box(
@@ -689,10 +700,13 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
     }
 }
 
+@InternalCoroutinesApi
+@OptIn(ExperimentalMaterialApi::class)
+@ExperimentalComposeUiApi
 @Composable
 fun CreateProductToolBar(
     navController: NavController,
-    vm: CreateProductViewModel = viewModel()
+    vm: CreateProductViewModel = viewModel(LocalContext.current as RootActivity, key = "create_product")
 ){
     val isCreate: Boolean by remember {
         mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}")

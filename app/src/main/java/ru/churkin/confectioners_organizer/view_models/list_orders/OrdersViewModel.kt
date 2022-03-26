@@ -30,6 +30,10 @@ class OrdersViewModel() : ViewModel() {
     val searchText
         get() = _searchText
 
+    init {
+        Log.e("OrdersViewModel", "init ${this.hashCode()}")
+    }
+
     suspend fun initState() {
         viewModelScope.launch {
             _state.value = OrdersState.Loading

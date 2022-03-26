@@ -12,7 +12,6 @@ import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
 class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val id : Long?  = savedStateHandle.get<Long>("id")
     private val repository: OrdersRepository = OrdersRepository()
     private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
@@ -23,9 +22,8 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: OrderState
         get() = state.value
 
-    suspend fun initState() {
-
-        checkNotNull(id)
+    suspend fun initState(id:Long) {
+    Log.e("OrderViewModel", "$id")
 
         viewModelScope.launch {
             val order = repository.loadOrderFull(id)

@@ -10,27 +10,38 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.order.OrderProductItem
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
-fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) {
+fun OrderScreen(
+    navController: NavController,
+    id:Long,
+    vm: OrderViewModel = viewModel(LocalContext.current as RootActivity, key = "order")
+) {
 
     val state by vm.state.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
 
     Box(
@@ -309,10 +320,13 @@ fun OrderScreen(navController: NavController, vm: OrderViewModel = viewModel()) 
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
 fun OrderToolBar(
     navController: NavController,
-    vm: OrderViewModel = viewModel()
+    vm: OrderViewModel = viewModel(LocalContext.current as RootActivity, key = "order")
 ){
     val state by vm.state.collectAsState()
 

@@ -12,8 +12,6 @@ import ru.churkin.confectioners_organizer.repositories.ProductsRepository
 import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
 class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private var id: Long? = savedStateHandle.get<Long>("id")
-    private var orderId: Long? = savedStateHandle.get<Long>("order_id")
     private val repository: ProductsRepository = ProductsRepository()
     private val productsIngredients: MutableList<ProductIngredientItem> = mutableListOf()
     private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
@@ -25,12 +23,11 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: ProductState
         get() = state.value
 
-    suspend fun initState() {
+    suspend fun initState(id: Long?, orderId: Long?) {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createProduct(orderId = checkNotNull(orderId))
                 _state.value = currentState.copy(id = localId, orderId = orderId)
-                id = localId
             } else {
                 val product = repository.loadProduct(checkNotNull(id))
                 _state.value = currentState.copy(

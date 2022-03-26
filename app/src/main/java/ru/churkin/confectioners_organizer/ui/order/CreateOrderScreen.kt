@@ -16,15 +16,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Product
@@ -32,19 +36,19 @@ import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.recept.ReceptIngItem
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
+@InternalCoroutinesApi
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = viewModel()) {
+fun CreateOrderScreen(
+    navController: NavController,
+    id: Long?,
+    vm: CreateOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "create_order")
+) {
 
     val state by vm.state.collectAsState()
 
-    val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "orders/create")
-    }
-
     var isShowDatePicker by remember { mutableStateOf(false) }
-
-    var calculate by remember { mutableStateOf(false)}
 
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
@@ -56,7 +60,7 @@ fun CreateOrderScreen(navController: NavController, vm: CreateOrderViewModel = v
         cursorColor = MaterialTheme.colors.onPrimary
     )
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
     Box(
         modifier = Modifier
@@ -449,10 +453,13 @@ fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
 fun CreateOrderToolBar(
     navController: NavController,
-    vm: CreateOrderViewModel = viewModel()
+    vm: CreateOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "create_order")
 ){
     val state by vm.state.collectAsState()
 

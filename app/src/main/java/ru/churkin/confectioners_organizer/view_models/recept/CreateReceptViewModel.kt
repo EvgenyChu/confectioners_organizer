@@ -17,7 +17,6 @@ import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 
 @InternalCoroutinesApi
 class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private var id: Long? = savedStateHandle.get<Long>("id")
     private val repository: ReceptsRepository = ReceptsRepository()
     private val receptsIngredients: MutableList<ReceptIngredientItem> = mutableListOf()
     private val _state: MutableStateFlow<ReceptState> = MutableStateFlow(ReceptState())
@@ -28,12 +27,11 @@ class CreateReceptViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val currentState: ReceptState
         get() = state.value
 
-    suspend fun initState() {
+    suspend fun initState(id: Long?) {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createRecept()
                 _state.value = currentState.copy(id = localId)
-                id = localId
             } else {
                 val recept = repository.loadRecept(checkNotNull(id))
                 _state.value = currentState.copy(

@@ -4,12 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,8 +18,8 @@ import ru.churkin.confectioners_organizer.history.OrdersHistoryScreen
 import ru.churkin.confectioners_organizer.history.OrdersHistoryToolBar
 import ru.churkin.confectioners_organizer.ingredient.IngredientScreen
 import ru.churkin.confectioners_organizer.ingredient.IngredientToolBar
-import ru.churkin.confectioners_organizer.listOrders.OrdersScreen
-import ru.churkin.confectioners_organizer.listOrders.OrdersToolBar
+import ru.churkin.confectioners_organizer.ui.list_orders.OrdersScreen
+import ru.churkin.confectioners_organizer.ui.list_orders.OrdersToolBar
 import ru.churkin.confectioners_organizer.ui.list_recepts.RecsScreen
 import ru.churkin.confectioners_organizer.order.OrderScreen
 import ru.churkin.confectioners_organizer.order.OrderToolBar
@@ -100,8 +97,6 @@ class RootActivity : ComponentActivity() {
                         composable(Screen.Orders.route) {
                             OrdersScreen(
                                 navController = navController,
-                                scaffoldState = scaffoldState,
-                                scope = scope
                             )
                         }
                         composable(Screen.History.route) {
@@ -110,49 +105,49 @@ class RootActivity : ComponentActivity() {
                             )
                         }
                         composable("orders/create") {
-                            CreateOrderScreen(navController = navController)
+                            CreateOrderScreen(navController = navController, id = null)
                         }
                         composable("products/create") {
-                            CreateProductScreen(navController = navController)
+                            CreateProductScreen(navController = navController, id = null, orderId = null)
                         }
                         composable(
                             "orders/{order_id}/products/create",
                             arguments = listOf(navArgument("order_id")
                             { type = NavType.LongType })
-                        ) { CreateProductScreen(navController = navController) }
-                        composable("recepts/create") { CreateReceptScreen(navController = navController) }
-                        composable("ingredients/create") { CreateIngredientScreen(navController = navController) }
+                        ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id=null) }
+                        composable("recepts/create") { CreateReceptScreen(navController = navController, id = null) }
+                        composable("ingredients/create") { CreateIngredientScreen(navController = navController, id=null) }
                         composable(
                             "orders/{order_id}/products/{id}",
                             arguments = listOf(
                                 navArgument("id") { type = NavType.LongType },
                                 navArgument("order_id") { type = NavType.LongType }
                             )
-                        ) { CreateProductScreen(navController = navController) }
+                        ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id = it.arguments?.getLong("id")) }
                         composable(
                             "orders/edit/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { CreateOrderScreen(navController = navController) }
+                        ) { CreateOrderScreen(navController = navController, id = it.arguments?.getLong("id")) }
                         composable(
                             "recepts/edit/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { CreateReceptScreen(navController = navController) }
+                        ) { CreateReceptScreen(navController = navController, id = it.arguments?.getLong("id")) }
                         composable(
                             "ingredients/edit/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { CreateIngredientScreen(navController = navController) }
+                        ) { CreateIngredientScreen(navController = navController, id = it.arguments?.getLong("id")) }
                         composable(
                             "orders/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { OrderScreen(navController = navController) }
+                        ) { OrderScreen(navController = navController, id = checkNotNull(it.arguments?.getLong("id"))) }
                         composable(
                             "recepts/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { ReceptScreen(navController = navController) }
+                        ) { ReceptScreen(navController = navController, id = checkNotNull(it.arguments?.getLong("id"))) }
                         composable(
                             "ingredients/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { IngredientScreen(navController = navController) }
+                        ) { IngredientScreen(navController = navController, id = checkNotNull(it.arguments?.getLong("id"))) }
 
                     }
 
@@ -165,6 +160,8 @@ class RootActivity : ComponentActivity() {
 }
 
 
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
 @OptIn(InternalCoroutinesApi::class)
 @Composable
 private fun ToolBarHost(navController: NavController, onMenuClick: () -> Unit) {

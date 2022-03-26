@@ -12,7 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -20,17 +22,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
-fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()) {
+fun ReceptScreen(
+    navController: NavController,
+    id:Long,
+    vm: ReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "recept")
+) {
 
     val state by vm.state.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
-        vm.initState()
+        vm.initState(id)
     }
 
     Box(
@@ -159,10 +170,13 @@ fun ReceptScreen(navController: NavController, vm: ReceptViewModel = viewModel()
     }
 }
 
+@InternalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 @Composable
 fun ReceptToolBar(
     navController: NavController,
-    vm: ReceptViewModel = viewModel()
+    vm: ReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "recept")
 ){
     val state by vm.state.collectAsState()
 

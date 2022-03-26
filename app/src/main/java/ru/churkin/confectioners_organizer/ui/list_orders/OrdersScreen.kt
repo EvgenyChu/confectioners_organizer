@@ -1,5 +1,6 @@
-package ru.churkin.confectioners_organizer.listOrders
+package ru.churkin.confectioners_organizer.ui.list_orders
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -17,6 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,9 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
@@ -34,14 +36,13 @@ import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
 
+@OptIn(InternalCoroutinesApi::class)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun OrdersScreen(
     navController: NavController,
-    vm: OrdersViewModel = viewModel(),
-    scaffoldState: ScaffoldState,
-    scope: CoroutineScope
+    vm: OrdersViewModel = viewModel(LocalContext.current as RootActivity,key = "orders"),
 ) {
 
     val state by vm.state.collectAsState()
@@ -128,6 +129,7 @@ fun OrdersScreen(
                                 },
                                 dismissContent = {
                                     OrderItem(order = item, onClick = { id ->
+                                        Log.e("OrdersScreen", "navigate to order $id")
                                         navController.navigate("orders/$id")
                                     })
                                 }
@@ -271,10 +273,12 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
 }
 
 
+@ExperimentalMaterialApi
+@InternalCoroutinesApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OrdersToolBar(
-    vm: OrdersViewModel = viewModel(),
+    vm: OrdersViewModel= viewModel(LocalContext.current as RootActivity, key = "orders"),
             onMenuClick: ()-> Unit
 ){
 
