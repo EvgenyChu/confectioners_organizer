@@ -1,6 +1,7 @@
 package ru.churkin.confectioners_organizer.view_models.product.data
 
 import android.util.Log
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,9 +28,30 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createProduct(orderId = checkNotNull(orderId))
-                _state.value = currentState.copy(id = localId, orderId = orderId)
+                val product = ProductState()
+                _state.value = currentState.copy(
+                    id = localId,
+                    title = product.title,
+                    weight = product.weight,
+                    units = product.units,
+                    costPrice = product.costPrice,
+                    price = product.price,
+                    orderId = orderId,
+                    availableRecepts = product.availableRecepts,
+                    availabilityRecepts = product.availabilityRecepts,
+                    availableIngredients = product.availableIngredients,
+                    availabilityIngredients = product.availabilityIngredients,
+                    recepts = product.recepts,
+                    ingredients = product.ingredients,
+                    isCreateIngredientDialog = product.isCreateIngredientDialog,
+                    isCreateReceptDialog = product.isCreateReceptDialog,
+                    isConfirm = product.isConfirm,
+                    missingIngredients = product.missingIngredients,
+                    missingProductIngredients = product.missingProductIngredients,
+                    missingProductReceptIngredients = product.missingProductReceptIngredients
+                )
             } else {
-                val product = repository.loadProduct(checkNotNull(id))
+                val product = repository.loadProduct(id)
                 _state.value = currentState.copy(
                     id = product.id,
                     title = product.title,

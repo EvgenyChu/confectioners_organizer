@@ -60,6 +60,7 @@ fun CreateOrderScreen(
         cursorColor = MaterialTheme.colors.onPrimary
     )
     LaunchedEffect(key1 = Unit) {
+        Log.e("CreateOrderScreen", "$id")
         vm.initState(id)
     }
     Box(
@@ -124,7 +125,7 @@ fun CreateOrderScreen(
                 enabled = false,
                 placeholder = {
                     Text(
-                        "дд/мм/гггг",
+                        "дата выполнения: дд/мм/гггг",
                         style = MaterialTheme.typography.subtitle2,
                     )
                 },

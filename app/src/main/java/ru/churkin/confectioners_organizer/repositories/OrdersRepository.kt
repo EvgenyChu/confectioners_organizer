@@ -15,7 +15,7 @@ class OrdersRepository(
     val productReceptItemDao: ProductReceptItemDao = AppDb.db.productReceptItemDao()
 ) {
     suspend fun loadOrders(): List<Order> = orderDao.loadAll()
-    suspend fun loadOrdersIsCooked(isCooked: Boolean): List<Order> = orderDao.loadOrdersIsCooked(isCooked)
+    suspend fun loadOrdersIsCooked(isCooked: Boolean): List<Order> = orderDao.loadOrdersIsCooked(isCooked).sortedBy { it.deadline }
     suspend fun loadOrderFull(id: Long): OrderFull = orderDao.loadOrderFull(id)
     suspend fun loadOrder(id: Long): Order = orderDao.loadOrder(id)
     suspend fun insertOrder(order: Order, products: List<Product>) {

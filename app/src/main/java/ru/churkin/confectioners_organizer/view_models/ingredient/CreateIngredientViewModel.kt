@@ -37,7 +37,19 @@ class CreateIngredientViewModel(savedStateHandle: SavedStateHandle) : ViewModel(
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createIngredient()
-                _state.value = currentState.copy(id = localId)
+                val ingredient = IngredientState()
+                _state.value = currentState.copy(
+                    id = localId,
+                    title = ingredient.title,
+                    availability = ingredient.availability,
+                    available = ingredient.available,
+                    unitsAvailable = ingredient.unitsAvailable,
+                    unitsPrice = ingredient.unitsPrice,
+                    _costPrice = ingredient.costPrice.toString(),
+                    sellBy = ingredient.sellBy,
+                    errors = ingredient.errors
+                )
+
             } else {
                 val ingredient = repository.loadIngredient(checkNotNull(id))
                 _state.value = currentState.copy(

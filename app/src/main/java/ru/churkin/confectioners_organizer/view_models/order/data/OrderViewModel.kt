@@ -23,11 +23,9 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         get() = state.value
 
     suspend fun initState(id:Long) {
-    Log.e("OrderViewModel", "$id")
 
         viewModelScope.launch {
             val order = repository.loadOrderFull(id)
-            Log.e("OrderViewModel", "$order")
 
             _state.value = currentState.copy(
                 id = order.id,

@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +13,7 @@ import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import java.util.*
 
-class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class CreateOrderViewModel() : ViewModel() {
     private val repository: OrdersRepository = OrdersRepository()
     private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
@@ -24,11 +25,28 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         get() = state.value
 
     suspend fun initState(id: Long?) {
-        if (id == null && currentState.id == 0L) {
+        Log.e("OrderViewModel", "$id, ${currentState.id}")
+        if (id == null) {
             val localId = repository.createOrder()
-            _state.value = currentState.copy(id = localId)
-        } else if (currentState == OrderState()) {
-
+            val order = OrderState()
+            _state.value = currentState.copy(
+                id = localId,
+                customer = order.customer,
+                phone = order.phone,
+                deadLine = null,
+                needDelivery = order.needDelivery,
+                address = order.address,
+                price = order.price,
+                costPrice = order.costPrice,
+                isPaid = order.isPaid,
+                note = order.note,
+                isCooked = order.isCooked,
+                availabilityProduct = order.availabilityProduct,
+                missingIngredients = order.missingIngredients,
+                availableProducts = order.availableProducts,
+                products = order.products
+            )
+        } else {
             val order = repository.loadOrder(checkNotNull(id))
             _state.value = currentState.copy(
                 id = order.id,
@@ -49,15 +67,15 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             repository.loadOrderProducts(currentState.id).joinToString(",") { it.title }
 
         val missingIngredients: MutableSet<String> = mutableSetOf()
-            repository.loadOrderProducts(currentState.id).forEach {
-                it.missingIngredients.split(",").forEach { ingredient ->
-                    missingIngredients += ingredient
-                }
+        repository.loadOrderProducts(currentState.id).forEach {
+            it.missingIngredients.split(",").forEach { ingredient ->
+                missingIngredients += ingredient
             }
+        }
 
         var availabilityProduct = true
-            repository.loadOrderProducts(currentState.id).forEach {
-                availabilityProduct = !(!it.availabilityIngredients || !it.availabilityRecepts)
+        repository.loadOrderProducts(currentState.id).forEach {
+            availabilityProduct = !(!it.availabilityIngredients || !it.availabilityRecepts)
         }
 
         _state.value = currentState.copy(
@@ -106,10 +124,10 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun updateCostPrice() {
-            var costPrice = 0
-            val products = currentState.products
-            products?.forEach { costPrice += it.costPrice }
-            _state.value = currentState.copy(costPrice = costPrice)
+        var costPrice = 0
+        val products = currentState.products
+        products?.forEach { costPrice += it.costPrice }
+        _state.value = currentState.copy(costPrice = costPrice)
     }
 
     fun emptyState() {
@@ -120,8 +138,8 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         viewModelScope.launch {
             var costPrice = 0
             val products = repository.loadOrderProducts(currentState.id)
-            products.forEach { costPrice += it.costPrice}
-            val order = currentState.copy(costPrice=costPrice).toOrder()
+            products.forEach { costPrice += it.costPrice }
+            val order = currentState.copy(costPrice = costPrice).toOrder()
             repository.insertOrder(order, ordersProducts)
         }
     }
@@ -139,7 +157,25 @@ class CreateOrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             repository.removeOrderProductIngredient(id)
             repository.removeOrderProductRecept(id)
             val products = repository.loadOrderProducts(currentState.id)
-            _state.value = currentState.copy(products = products)
+            val missingIngredients: MutableSet<String> = mutableSetOf()
+            repository.loadOrderProducts(currentState.id).forEach {
+                it.missingIngredients.split(",").forEach { ingredient ->
+                    missingIngredients += ingredient
+                }
+            }
+            val availableProducts =
+                repository.loadOrderProducts(currentState.id).joinToString(",") { it.title }
+
+            var availabilityProduct = true
+            repository.loadOrderProducts(currentState.id).forEach {
+                availabilityProduct = !(!it.availabilityIngredients || !it.availabilityRecepts)
+            }
+            _state.value = currentState.copy(
+                products = products,
+                availableProducts = availableProducts,
+                missingIngredients = missingIngredients.joinToString(", ") { it },
+                availabilityProduct = availabilityProduct
+                )
         }
     }
 }
@@ -159,7 +195,7 @@ data class OrderState(
     val note: String? = "",
     var isCooked: Boolean = false,
     val availabilityProduct: Boolean = true,
-    val missingIngredients: String =""
+    val missingIngredients: String = ""
 )
 
 fun OrderState.toOrder() = Order(

@@ -22,9 +22,6 @@ class OrdersViewModel() : ViewModel() {
     val state: StateFlow<OrdersState>
         get() = _state
 
-    private val currentState: OrdersState
-        get() = _state.value
-
     private fun initialState(): OrdersState {
         return OrdersState.Empty
     }

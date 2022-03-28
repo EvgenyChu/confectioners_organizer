@@ -123,7 +123,7 @@ fun OrderScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (state.deadLine == null) "DeadLine: _._._ г." else "DeadLine: ${
+                    text = if (state.deadLine == null) "Дата выполнения: _._._ г." else "Дата выполнения: ${
                         state.deadLine?.format(
                             "dd.MM.yyyy"
                         )
