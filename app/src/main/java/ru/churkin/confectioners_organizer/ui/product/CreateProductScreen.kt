@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.product
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -229,7 +230,7 @@ fun CreateProductScreen(
             if (state.recepts.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
-                        items(state.recepts.sortedBy { it.title }, { it.id }) { item ->
+                        items(state.recepts, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
 
@@ -304,7 +305,7 @@ fun CreateProductScreen(
             if (state.ingredients.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
-                        items(state.ingredients.sortedBy { it.title }, { it.id }) { item ->
+                        items(state.ingredients, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
 
@@ -420,7 +421,8 @@ fun CreateProductScreen(
         FloatingActionButton(
             onClick = {
                 vm.addProduct()
-                navController.navigate("orders/edit/${state.orderId}")
+                Log.e("CreateProductScreen", "${state.orderId}")
+                navController.popBackStack()
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -517,7 +519,7 @@ fun CreateReceptsDialog(
                         .heightIn(0.dp, 300.dp)
                 ) {
                     LazyColumn() {
-                        listRecepts.sortedBy { it.title }.forEach {
+                        listRecepts.forEach {
                             val backgroundColor =
                                 if (selectionItem == it.title) Color.Green
                                 else Color.Transparent

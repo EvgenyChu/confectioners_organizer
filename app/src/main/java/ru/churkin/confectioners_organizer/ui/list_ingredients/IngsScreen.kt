@@ -84,7 +84,7 @@ fun IngsScreen(
             }
             is IngredientsState.Value -> {
                 LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                    items(listState.ingredients.sortedBy { it.title }, { it.id }) { item ->
+                    items(listState.ingredients, { it.id }) { item ->
 
                         val dismissState = rememberDismissState()
                         if (dismissState.isDismissed(DismissDirection.StartToEnd)) {

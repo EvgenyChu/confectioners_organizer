@@ -153,7 +153,7 @@ fun CreateReceptScreen(
                 if (state.ingredients.isNotEmpty()) {
                     Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                         LazyColumn() {
-                            items(state.ingredients.sortedBy { it.title }, { it.id }) { item ->
+                            items(state.ingredients, { it.id }) { item ->
 
                                 val dismissState = rememberDismissState()
 
@@ -322,7 +322,7 @@ fun CreateIngredientsDialog(
                         .heightIn(0.dp, 300.dp)
                 ) {
                     LazyColumn() {
-                        listIngredients.sortedBy { it.title }.forEach {
+                        listIngredients.forEach {
                             val backgroundColor =
                                 if (selectionItem == it.title) Color.Green
                                 else Color.Transparent

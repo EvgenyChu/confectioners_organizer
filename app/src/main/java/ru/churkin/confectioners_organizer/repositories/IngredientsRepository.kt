@@ -9,9 +9,9 @@ class IngredientsRepository(
     private val ingredientDao: IngredientDao = AppDb.db.ingredientDao()
 ) {
 
-    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll().sortedBy { it.title }
     suspend fun loadIngredient(id: Long): Ingredient = ingredientDao.loadIngredient(id)
-    suspend fun filterIngredients(availability: Boolean): List<Ingredient> = ingredientDao.filterIngredients(availability)
+    suspend fun filterIngredients(availability: Boolean): List<Ingredient> = ingredientDao.filterIngredients(availability).sortedBy { it.title }
     suspend fun insertIngredient(ingredient: Ingredient) {
         ingredientDao.insert(ingredient = ingredient)
     }
@@ -24,5 +24,5 @@ class IngredientsRepository(
 
     suspend fun createIngredient() : Long  = ingredientDao.insert(Ingredient())
 
-    suspend fun searchIngredient(query: String) = ingredientDao.searchIngredient(query)
+    suspend fun searchIngredient(query: String) = ingredientDao.searchIngredient(query).sortedBy { it.title }
 }

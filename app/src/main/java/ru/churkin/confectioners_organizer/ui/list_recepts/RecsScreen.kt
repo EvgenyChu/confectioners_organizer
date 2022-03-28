@@ -86,7 +86,7 @@ fun RecsScreen(
 
                 is ReceptsState.Value -> {
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                        items(listState.recepts.sortedBy { it.title }, { it.id }) { item ->
+                        items(listState.recepts, { it.id }) { item ->
 
                             val dismissState = rememberDismissState()
                             if (dismissState.isDismissed(DismissDirection.StartToEnd)) {

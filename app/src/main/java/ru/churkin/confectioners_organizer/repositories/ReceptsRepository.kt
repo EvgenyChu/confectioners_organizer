@@ -15,11 +15,12 @@ class ReceptsRepository(
     val receptIngredientItemDao: ReceptIngredientItemDao = AppDb.db.receptIngredientItemDao()
 ) {
 
-    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll()
+    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll().sortedBy { it.title }
 
     suspend fun loadRecept(id: Long): ReceptFull = receptDao.loadReceptFull(id)
 
-    suspend fun filterRecepts(availabilityIngredients: Boolean): List<Recept> = receptDao.filterRecepts(availabilityIngredients)
+    suspend fun filterRecepts(availabilityIngredients: Boolean): List<Recept> =
+        receptDao.filterRecepts(availabilityIngredients).sortedBy { it.title }
 
     suspend fun insertRecept(recept: Recept, ingredients: List<ReceptIngredientItem>) {
         val id = receptDao.insert(recept = recept)
@@ -36,16 +37,16 @@ class ReceptsRepository(
 
     suspend fun isEmptyRecepts() = receptDao.loadAll().isEmpty()
 
-    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll().sortedBy { it.title }
 
     suspend fun loadReceptIngredients(receptId: Long) =
-        receptIngredientItemDao.loadReceptIngredients(receptId)
+        receptIngredientItemDao.loadReceptIngredients(receptId).sortedBy { it.title }
 
     suspend fun insertReceptIngredientItem(ingredient: ReceptIngredientItem) =
         receptIngredientItemDao.insert(receptIngredientItem = ingredient)
 
     suspend fun createRecept() : Long  = receptDao.insert(Recept())
 
-    suspend fun searchRecept(query: String) = receptDao.searchRecept(query)
+    suspend fun searchRecept(query: String) = receptDao.searchRecept(query).sortedBy { it.title }
 
 }

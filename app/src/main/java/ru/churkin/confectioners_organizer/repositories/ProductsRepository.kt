@@ -11,7 +11,7 @@ class ProductsRepository(
     val productReceptItemDao: ProductReceptItemDao = AppDb.db.productReceptItemDao(),
     val productIngredientItemDao: ProductIngredientItemDao = AppDb.db.productIngredientItemDao()
 ) {
-    suspend fun loadProducts(): List<Product> = productDao.loadAll()
+    suspend fun loadProducts(): List<Product> = productDao.loadAll().sortedBy { it.title }
 
     suspend fun loadProduct(id: Long): ProductFull = productDao.loadProductFull(id)
 
@@ -49,13 +49,13 @@ class ProductsRepository(
 
     suspend fun createProduct(orderId: Long): Long = productDao.insert(Product(orderId = orderId))
 
-    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll()
+    suspend fun loadIngredients(): List<Ingredient> = ingredientDao.loadAll().sortedBy { it.title }
 
     suspend fun loadProductIngredients(productId: Long) =
-        productIngredientItemDao.loadProductIngredients(productId)
+        productIngredientItemDao.loadProductIngredients(productId).sortedBy { it.title }
 
-    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll()
+    suspend fun loadRecepts(): List<Recept> = receptDao.loadAll().sortedBy { it.title }
 
     suspend fun loadProductRecepts(productId: Long) =
-        productReceptItemDao.loadProductRecepts(productId)
+        productReceptItemDao.loadProductRecepts(productId).sortedBy { it.title }
 }

@@ -14,7 +14,7 @@ class OrdersRepository(
     val productIngredientItemDao: ProductIngredientItemDao = AppDb.db.productIngredientItemDao(),
     val productReceptItemDao: ProductReceptItemDao = AppDb.db.productReceptItemDao()
 ) {
-    suspend fun loadOrders(): List<Order> = orderDao.loadAll()
+    suspend fun loadOrders(): List<Order> = orderDao.loadAll().sortedBy { it.customer }
     suspend fun loadOrdersIsCooked(isCooked: Boolean): List<Order> = orderDao.loadOrdersIsCooked(isCooked).sortedBy { it.deadline }
     suspend fun loadOrderFull(id: Long): OrderFull = orderDao.loadOrderFull(id)
     suspend fun loadOrder(id: Long): Order = orderDao.loadOrder(id)
@@ -50,7 +50,7 @@ class OrdersRepository(
 
     suspend fun createOrder() : Long  = orderDao.insert(Order())
 
-    suspend fun searchOrder(query: String) = orderDao.searchOrder(query)
+    suspend fun searchOrder(query: String) = orderDao.searchOrder(query).sortedBy { it.customer }
 
-    suspend fun findByDate(parseDate: Date): List<Order> = orderDao.findByDate(parseDate)
+    suspend fun findByDate(parseDate: Date): List<Order> = orderDao.findByDate(parseDate).sortedBy { it.deadline }
 }

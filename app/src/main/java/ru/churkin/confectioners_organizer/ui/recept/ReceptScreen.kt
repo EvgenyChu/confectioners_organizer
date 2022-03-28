@@ -115,7 +115,7 @@ fun ReceptScreen(
                     )
                 }
 
-                if (state.ingredients.isNotEmpty()) state.ingredients.sortedBy { it.title }.forEach {
+                if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
                     ReceptIngItem(receptIngredientItem = it)
                 }
 

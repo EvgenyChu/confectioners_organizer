@@ -47,7 +47,7 @@ class CreateOrderViewModel() : ViewModel() {
                 products = order.products
             )
         } else {
-            val order = repository.loadOrder(checkNotNull(id))
+            val order = repository.loadOrder(id)
             _state.value = currentState.copy(
                 id = order.id,
                 customer = order.customer,
