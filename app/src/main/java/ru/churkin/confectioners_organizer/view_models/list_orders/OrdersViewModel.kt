@@ -17,6 +17,8 @@ class OrdersViewModel() : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
 
+    var isShowDate = MutableStateFlow(false)
+
     val state: StateFlow<OrdersState>
         get() = _state
 
@@ -29,10 +31,6 @@ class OrdersViewModel() : ViewModel() {
 
     val searchText
         get() = _searchText
-
-    init {
-        Log.e("OrdersViewModel", "init ${this.hashCode()}")
-    }
 
     suspend fun initState() {
         viewModelScope.launch {

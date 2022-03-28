@@ -17,6 +17,8 @@ class OrdersHistoryViewModel : ViewModel(){
 
     private val _searchText = MutableStateFlow("")
 
+    var isShowDate = MutableStateFlow(false)
+
     val state: StateFlow<OrdersState>
         get() = _state
 

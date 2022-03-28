@@ -1,5 +1,6 @@
 package ru.churkin.confectioners_organizer.history
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.orders_history.OrdersHistoryViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @InternalCoroutinesApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -38,8 +40,6 @@ fun OrdersHistoryScreen(
 ) {
 
     val state by vm.state.collectAsState()
-
-    var isShowDate by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         vm.initState()
@@ -147,10 +147,10 @@ fun OrdersHistoryScreen(
         }
         FloatingActionButton(
             onClick = {
-                if (!isShowDate) navController.navigate("orders")
+                if (!vm.isShowDate.value) navController.navigate("orders")
                 else {
                     vm.currentOrdersState()
-                    isShowDate = false
+                    vm.isShowDate.value = false
                 }
             },
             modifier = Modifier
@@ -160,7 +160,7 @@ fun OrdersHistoryScreen(
             contentColor = MaterialTheme.colors.onSecondary
         ) {
             Icon(
-                painter = if (isShowDate) painterResource(id = R.drawable.ic_baseline_arrow_back_24)
+                painter = if (vm.isShowDate.value) painterResource(id = R.drawable.ic_baseline_arrow_back_24)
                 else painterResource(id = R.drawable.ic_baseline_add_24),
                 contentDescription = "Добавить"
             )
@@ -179,7 +179,6 @@ fun OrdersHistoryToolBar(
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
     var isShowDatePicker by remember { mutableStateOf(false) }
-    var isShowDate by remember { mutableStateOf(false) }
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         if (isShowSearch) {
@@ -189,8 +188,12 @@ fun OrdersHistoryToolBar(
                 onSubmit = {
                     vm.searchOrders(it)
                     isShowSearch = false
+                    vm.isShowDate.value = false
                 },
-                onDismiss = { isShowSearch = false })
+                onDismiss = {
+                    isShowSearch = false
+                    vm.isShowDate.value = false
+                })
         } else {
             IconButton(onClick = {
                     onMenuClick()
@@ -217,7 +220,7 @@ fun OrdersHistoryToolBar(
                     onSelect = {
                         vm.searchDeadLine(it)
                         isShowDatePicker = false
-                        isShowDate = true
+                        vm.isShowDate.value = true
                     },
                     onDismiss = {
                         isShowDatePicker = false
