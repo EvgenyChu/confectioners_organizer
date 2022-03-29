@@ -25,6 +25,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.ui.order.OrderProductItem
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
@@ -194,11 +195,8 @@ fun OrderScreen(
                 )
             }
 
-            if (state.products?.isNotEmpty() == true) state.products?.sortedBy { it.title }
-                ?.forEach { product ->
-                    OrderProductItem(product = product) {
-                        navController.navigate("orders/${product.orderId}/products/${product.id}")
-                    }
+            if (state.products?.isNotEmpty() == true) state.products?.forEach { product ->
+                    OrderProduct(product = product)
                 }
 
             Row(
@@ -264,7 +262,7 @@ fun OrderScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Отсутствуют продукты: \n${state.missingIngredients.lowercase().capitalize()}",
+                    "Отсутствуют продукты: \n${state.missingIngredients}",
                     style = MaterialTheme.typography.subtitle1
                 )
             }
@@ -317,6 +315,41 @@ fun OrderScreen(
                 contentDescription = "Добавить"
             )
         }
+    }
+}
+
+@Composable
+fun OrderProduct(product: Product) {
+    Column(
+        modifier = Modifier
+
+            .background(color = MaterialTheme.colors.background)
+    ) {
+        Row(
+            modifier = Modifier
+                .height(56.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = product.title,
+                style = MaterialTheme.typography.subtitle1
+            )
+            Spacer(Modifier.weight(1f))
+            Column() {
+                Text(
+                    text = "${product.weight} ${product.units}",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = "${product.price} руб.",
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
+        }
+        Divider(color = MaterialTheme.colors.secondary)
     }
 }
 

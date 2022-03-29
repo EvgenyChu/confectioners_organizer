@@ -34,6 +34,8 @@ import ru.churkin.confectioners_organizer.ui.list_ingredients.IngsToolBar
 import ru.churkin.confectioners_organizer.ui.list_recepts.RecsToolBar
 import ru.churkin.confectioners_organizer.ui.order.CreateOrderScreen
 import ru.churkin.confectioners_organizer.ui.order.CreateOrderToolBar
+import ru.churkin.confectioners_organizer.ui.order.EditOrderScreen
+import ru.churkin.confectioners_organizer.ui.order.EditOrderToolBar
 import ru.churkin.confectioners_organizer.ui.recept.CreateReceptToolBar
 import ru.churkin.confectioners_organizer.ui.recept.ReceptScreen
 import ru.churkin.confectioners_organizer.ui.recept.ReceptToolBar
@@ -107,11 +109,20 @@ class RootActivity : ComponentActivity() {
                         composable("orders/create") {
                             CreateOrderScreen(navController = navController, id = null)
                         }
+                        composable(
+                            "orders/create/{id}",
+                            arguments = listOf(navArgument("id") { type = NavType.LongType })
+                        ) { CreateOrderScreen(navController = navController, id = it.arguments?.getLong("id")) }
                         composable("products/create") {
                             CreateProductScreen(navController = navController, id = null, orderId = null)
                         }
                         composable(
                             "orders/{order_id}/products/create",
+                            arguments = listOf(navArgument("order_id")
+                            { type = NavType.LongType })
+                        ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id=null) }
+                        composable(
+                            "create_orders/{order_id}/products/create",
                             arguments = listOf(navArgument("order_id")
                             { type = NavType.LongType })
                         ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id=null) }
@@ -125,9 +136,16 @@ class RootActivity : ComponentActivity() {
                             )
                         ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id = it.arguments?.getLong("id")) }
                         composable(
+                            "create_orders/{order_id}/products/{id}",
+                            arguments = listOf(
+                                navArgument("id") { type = NavType.LongType },
+                                navArgument("order_id") { type = NavType.LongType }
+                            )
+                        ) { CreateProductScreen(navController = navController, orderId = it.arguments?.getLong("order_id"), id = it.arguments?.getLong("id")) }
+                        composable(
                             "orders/edit/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
-                        ) { CreateOrderScreen(navController = navController, id = it.arguments?.getLong("id")) }
+                        ) { EditOrderScreen(navController = navController, id = it.arguments?.getLong("id")) }
                         composable(
                             "recepts/edit/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.LongType })
@@ -181,12 +199,15 @@ private fun ToolBarHost(navController: NavController, onMenuClick: () -> Unit) {
         "products/create" -> CreateProductToolBar(navController = navController)
         "orders/{order_id}/products/create" -> CreateProductToolBar(navController = navController)
         "orders/{order_id}/products/{id}" -> CreateProductToolBar(navController = navController)
+        "create_orders/{order_id}/products/create" -> CreateProductToolBar(navController = navController)
+        "create_orders/{order_id}/products/{id}" -> CreateProductToolBar(navController = navController)
         "recepts/create" -> CreateReceptToolBar(navController = navController)
         "recepts/edit/{id}" -> CreateReceptToolBar(navController = navController)
         "ingredients/create" -> CreateIngredientToolBar(navController = navController)
         "ingredients/edit/{id}" -> CreateIngredientToolBar(navController = navController)
         "orders/create" -> CreateOrderToolBar(navController = navController)
-        "orders/edit/{id}" -> CreateOrderToolBar(navController = navController)
+        "orders/edit/{id}" -> EditOrderToolBar(navController = navController)
+        "orders/create/{id}" -> CreateOrderToolBar(navController = navController)
         else -> ""
     }
 }

@@ -421,8 +421,7 @@ fun CreateProductScreen(
         FloatingActionButton(
             onClick = {
                 vm.addProduct()
-                Log.e("CreateProductScreen", "${state.orderId}")
-                navController.popBackStack()
+                navController.navigate(vm.navigation(navController.currentDestination?.route))
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -711,7 +710,8 @@ fun CreateProductToolBar(
     vm: CreateProductViewModel = viewModel(LocalContext.current as RootActivity, key = "create_product")
 ){
     val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}")
+        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}" ||
+                navController.currentDestination?.route == "create_orders/{order_id}/products/{id}")
     }
     val state by vm.state.collectAsState()
     val title by remember {
@@ -722,7 +722,7 @@ fun CreateProductToolBar(
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         IconButton(onClick = {
-            navController.popBackStack()
+            navController.navigate(vm.navigation(navController.currentDestination?.route))
             if (!isCreate) vm.removeProduct(state.id)
         }) {
             Icon(

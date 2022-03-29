@@ -46,7 +46,7 @@ class OrdersRepository(
     suspend fun isEmptyOrders() = orderDao.loadAll().isEmpty()
 
     suspend fun loadOrderProducts(orderId: Long) =
-        productDao.loadOrderProducts(orderId)
+        productDao.loadOrderProducts(orderId).sortedBy { it.title }
 
     suspend fun createOrder() : Long  = orderDao.insert(Order())
 

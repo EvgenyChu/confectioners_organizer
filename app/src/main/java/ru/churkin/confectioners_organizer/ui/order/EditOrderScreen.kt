@@ -31,19 +31,18 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.ui.recept.ReceptIngItem
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
+import ru.churkin.confectioners_organizer.view_models.order.data.EditOrderViewModel
 
 @InternalCoroutinesApi
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CreateOrderScreen(
+fun EditOrderScreen(
     navController: NavController,
     id: Long?,
-    vm: CreateOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "create_order")
+    vm: EditOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "edit_order")
 ) {
 
     val state by vm.state.collectAsState()
@@ -60,7 +59,6 @@ fun CreateOrderScreen(
         cursorColor = MaterialTheme.colors.onPrimary
     )
     LaunchedEffect(key1 = Unit) {
-        Log.e("CreateOrderScreen", "$id")
         vm.initState(id)
     }
     Box(
@@ -211,7 +209,7 @@ fun CreateOrderScreen(
                     .fillMaxWidth()
                     .height(44.dp)
                     .clickable {
-                        navController.navigate("create_orders/${state.id}/products/create")
+                        navController.navigate("orders/${state.id}/products/create")
                         vm.addOrder()
                     }
                     .padding(horizontal = 16.dp),
@@ -276,7 +274,7 @@ fun CreateOrderScreen(
                                 },
                                 dismissContent = {
                                     OrderProductItem(product = item) {
-                                        navController.navigate("create_orders/${item.orderId}/products/${item.id}")
+                                        navController.navigate("orders/${item.orderId}/products/${item.id}")
                                         vm.addOrder()
                                     }
                                 }
@@ -387,7 +385,7 @@ fun CreateOrderScreen(
             ) {
 
                 Text(
-                    "Новый заказ - новая история)",
+                    "Тут что-то не так?)",
                     modifier = Modifier.padding(start = 12.dp),
                     style = MaterialTheme.typography.body1
                 )
@@ -397,7 +395,7 @@ fun CreateOrderScreen(
         FloatingActionButton(
             onClick = {
                 vm.addOrder()
-                navController.navigate(Screen.Orders.route)
+                navController.navigate("orders/$id")
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -413,63 +411,18 @@ fun CreateOrderScreen(
     }
 }
 
-@Composable
-fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
-    Column(
-        modifier = Modifier
-
-            .background(color = MaterialTheme.colors.background)
-    ) {
-        Row(
-            modifier = Modifier
-                .height(56.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = product.title,
-                style = MaterialTheme.typography.subtitle1
-            )
-            Spacer(Modifier.weight(1f))
-            Column() {
-                Text(
-                    text = "${product.weight} ${product.units}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = "${product.price} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = { onClick(product.id) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Очистить"
-                )
-            }
-        }
-        Divider(color = MaterialTheme.colors.secondary)
-    }
-}
-
 @InternalCoroutinesApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
-fun CreateOrderToolBar(
+fun EditOrderToolBar(
     navController: NavController,
-    vm: CreateOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "create_order")
+    vm: EditOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "edit_order")
 ){
-    val state by vm.state.collectAsState()
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         IconButton(onClick = {
             navController.popBackStack()
-            vm.removeOrder(state.id)
         }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
@@ -478,7 +431,7 @@ fun CreateOrderToolBar(
             )
         }
         Text(
-            "Новый заказ",
+           "Редактирование",
             style = MaterialTheme.typography.h6,
         )
         Spacer(Modifier.weight(1f, true))

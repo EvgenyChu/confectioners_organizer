@@ -12,7 +12,7 @@ import ru.churkin.confectioners_organizer.local.db.entity.*
 import ru.churkin.confectioners_organizer.repositories.ProductsRepository
 import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
-class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class CreateProductViewModel() : ViewModel() {
     private val repository: ProductsRepository = ProductsRepository()
     private val productsIngredients: MutableList<ProductIngredientItem> = mutableListOf()
     private val productsRecepts: MutableList<ProductReceptItem> = mutableListOf()
@@ -128,6 +128,16 @@ class CreateProductViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     fun emptyState() {
         _state.value = ProductState()
+    }
+
+    fun navigation(route: String?) : String {
+        return when (route){
+            "orders/{order_id}/products/create" -> "orders/edit/${currentState.orderId}"
+            "orders/{order_id}/products/{id}" -> "orders/edit/${currentState.orderId}"
+            "create_orders/{order_id}/products/create" -> "orders/create/${currentState.orderId}"
+            "create_orders/{order_id}/products/{id}" -> "orders/create/${currentState.orderId}"
+            else -> ""
+        }
     }
 
     fun addProduct() {

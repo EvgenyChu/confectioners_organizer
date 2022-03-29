@@ -11,7 +11,7 @@ import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
-class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class OrderViewModel() : ViewModel() {
     private val repository: OrdersRepository = OrdersRepository()
     private val ordersProducts: MutableList<Product> = mutableListOf()
     private val _state: MutableStateFlow<OrderState> = MutableStateFlow(OrderState())
@@ -38,7 +38,7 @@ class OrderViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 price = order.price,
                 isPaid = order.isPaid,
                 note = order.note,
-                missingIngredients = order.missingIngredients,
+                missingIngredients = order.missingIngredients.lowercase().capitalize(),
                 isCooked = order.isCooked,
                 costPrice = order.costPrice
             )
