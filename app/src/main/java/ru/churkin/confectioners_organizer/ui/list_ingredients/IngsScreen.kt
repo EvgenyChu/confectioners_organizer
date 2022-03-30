@@ -7,8 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -21,19 +19,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.ui.theme.Green
-import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
+import ru.churkin.confectioners_organizer.ui.theme.Green
+import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngredientsState
 import ru.churkin.confectioners_organizer.view_models.list_ingredients.IngsViewModel
 

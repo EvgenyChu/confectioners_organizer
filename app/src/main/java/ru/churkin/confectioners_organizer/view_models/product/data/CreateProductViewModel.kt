@@ -1,14 +1,14 @@
 package ru.churkin.confectioners_organizer.view_models.product.data
 
 import android.util.Log
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.churkin.confectioners_organizer.local.db.entity.*
+import ru.churkin.confectioners_organizer.local.db.entity.Product
+import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
+import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
 import ru.churkin.confectioners_organizer.repositories.ProductsRepository
 import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
@@ -25,30 +25,13 @@ class CreateProductViewModel() : ViewModel() {
         get() = state.value
 
     suspend fun initState(id: Long?, orderId: Long?) {
+        _state.value = ProductState()
         viewModelScope.launch {
             if (id == null) {
                 val localId = repository.createProduct(orderId = checkNotNull(orderId))
-                val product = ProductState()
                 _state.value = currentState.copy(
                     id = localId,
-                    title = product.title,
-                    weight = product.weight,
-                    units = product.units,
-                    costPrice = product.costPrice,
-                    price = product.price,
                     orderId = orderId,
-                    availableRecepts = product.availableRecepts,
-                    availabilityRecepts = product.availabilityRecepts,
-                    availableIngredients = product.availableIngredients,
-                    availabilityIngredients = product.availabilityIngredients,
-                    recepts = product.recepts,
-                    ingredients = product.ingredients,
-                    isCreateIngredientDialog = product.isCreateIngredientDialog,
-                    isCreateReceptDialog = product.isCreateReceptDialog,
-                    isConfirm = product.isConfirm,
-                    missingIngredients = product.missingIngredients,
-                    missingProductIngredients = product.missingProductIngredients,
-                    missingProductReceptIngredients = product.missingProductReceptIngredients
                 )
             } else {
                 val product = repository.loadProduct(id)
@@ -128,16 +111,6 @@ class CreateProductViewModel() : ViewModel() {
 
     fun emptyState() {
         _state.value = ProductState()
-    }
-
-    fun navigation(route: String?) : String {
-        return when (route){
-            "orders/{order_id}/products/create" -> "orders/edit/${currentState.orderId}"
-            "orders/{order_id}/products/{id}" -> "orders/edit/${currentState.orderId}"
-            "create_orders/{order_id}/products/create" -> "orders/create/${currentState.orderId}"
-            "create_orders/{order_id}/products/{id}" -> "orders/create/${currentState.orderId}"
-            else -> ""
-        }
     }
 
     fun addProduct() {

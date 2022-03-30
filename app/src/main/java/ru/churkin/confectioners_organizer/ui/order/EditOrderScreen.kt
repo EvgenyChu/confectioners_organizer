@@ -1,6 +1,5 @@
 package ru.churkin.confectioners_organizer.ui.order
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -29,10 +28,8 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 import ru.churkin.confectioners_organizer.view_models.order.data.EditOrderViewModel
 
 @InternalCoroutinesApi

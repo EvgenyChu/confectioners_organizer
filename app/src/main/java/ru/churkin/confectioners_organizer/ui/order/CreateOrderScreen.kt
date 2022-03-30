@@ -33,7 +33,6 @@ import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.ui.recept.ReceptIngItem
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
 @InternalCoroutinesApi

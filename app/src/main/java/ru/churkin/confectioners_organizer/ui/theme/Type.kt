@@ -1,58 +1,21 @@
 package ru.churkin.confectioners_organizer.ui.theme
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.churkin.confectioners_organizer.R
 
- val lektonBold = FontFamily(
-     Font(R.font.lekton_bold)
- )
-val lektonItalic = FontFamily(
-    Font(R.font.lekton_italic)
-)
-val lektonRegular = FontFamily(
-    Font(R.font.lekton_regular),
-)
-
-val montserrataIternatesBlack = FontFamily(
-    Font(R.font.montserratalternates_black)
-)
-
 val montserrataIternatesBold = FontFamily(
     Font(R.font.montserratalternates_bold)
-)
-
-val montserrataIternatesItalic = FontFamily(
-    Font(R.font.montserratalternates_italic),
-)
-
-val montserrataIternatesLight = FontFamily(
-    Font(R.font.montserratalternates_light)
 )
 
 val montserrataIternatesMedium = FontFamily(
     Font(R.font.montserratalternates_medium)
 )
 
-val montserrataIternatesRegular = FontFamily(
-    Font(R.font.montserratalternates_regular)
-)
-
-val montserrataIternatesThin = FontFamily(
-    Font(R.font.montserratalternates_thin)
-)
-
-
-// Set of Material typography styles to start with
 fun MyTypography(onPrimary: Color, onBackground: Color, surface: Color) = Typography(
     h1 = TextStyle(
         fontFamily = montserrataIternatesBold,

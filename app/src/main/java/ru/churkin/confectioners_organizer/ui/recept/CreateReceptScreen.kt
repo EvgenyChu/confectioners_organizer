@@ -33,12 +33,11 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
-import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
-import ru.churkin.confectioners_organizer.product.ProductIngredientItem
 import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewModel
+import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)

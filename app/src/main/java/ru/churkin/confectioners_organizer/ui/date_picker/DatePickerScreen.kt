@@ -1,11 +1,9 @@
 package ru.churkin.confectioners_organizer.ui.date_picker
 
 import android.app.DatePickerDialog
-import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import ru.churkin.confectioners_organizer.date.parseDate
 import java.util.*
 
 @Composable

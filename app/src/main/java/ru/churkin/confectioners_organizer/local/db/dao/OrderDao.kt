@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.local.db.entity.OrderFull
-import ru.churkin.confectioners_organizer.local.db.entity.ProductFull
 import java.util.*
 
 @Dao

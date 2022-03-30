@@ -1,6 +1,5 @@
 package ru.churkin.confectioners_organizer.product
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -13,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
@@ -49,7 +47,10 @@ fun CreateProductScreen(
     navController: NavController,
     id: Long?,
     orderId: Long?,
-    vm: CreateProductViewModel = viewModel(LocalContext.current as RootActivity, key = "create_product")
+    vm: CreateProductViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_product"
+    )
 ) {
 
     val state by vm.state.collectAsState()
@@ -57,13 +58,13 @@ fun CreateProductScreen(
     var openDialogUnits by remember { mutableStateOf(false) }
 
     val colors = TextFieldDefaults.textFieldColors(
-        textColor = colors.onPrimary,
-        backgroundColor = colors.background,
-        disabledTextColor = colors.background,
-        placeholderColor = colors.background,
-        disabledPlaceholderColor = colors.background,
-        focusedIndicatorColor = colors.secondary,
-        cursorColor = colors.onPrimary
+        textColor = MaterialTheme.colors.onPrimary,
+        backgroundColor = MaterialTheme.colors.background,
+        disabledTextColor = MaterialTheme.colors.background,
+        placeholderColor = MaterialTheme.colors.background,
+        disabledPlaceholderColor = MaterialTheme.colors.background,
+        focusedIndicatorColor = MaterialTheme.colors.secondary,
+        cursorColor = MaterialTheme.colors.onPrimary
     )
 
     LaunchedEffect(key1 = Unit) {
@@ -81,7 +82,7 @@ fun CreateProductScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
+            ParamsItem("weight", "weight", tailContent = {Text("test")}, onValueChange = {})
             TextField(
                 value = state.title,
                 onValueChange = { vm.updateTitle(it) },
@@ -154,55 +155,6 @@ fun CreateProductScreen(
                             .padding(top = 14.dp)
                             .weight(1f),
                         contentDescription = "Выбор ед.изм."
-                    )
-                }
-                if (openDialogUnits) {
-                    AlertDialog(
-                        onDismissRequest = {
-                            openDialogUnits = false
-                        },
-                        title = {
-                            Text(
-                                style = MaterialTheme.typography.h6,
-                                text = "Выберите единицу измерения",
-                            )
-                        },
-                        buttons = {
-                            Column(modifier = Modifier.padding(all = 16.dp)) {
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Грамм", modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnits("г.")
-                                            openDialogUnits = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Миллилитр",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnits("мл")
-                                            openDialogUnits = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Штука",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnits("шт")
-                                            openDialogUnits = false
-                                        }
-                                )
-                            }
-                        }
                     )
                 }
             }
@@ -301,6 +253,55 @@ fun CreateProductScreen(
                 )
             }
 
+            if (openDialogUnits) {
+                AlertDialog(
+                    onDismissRequest = {
+                        openDialogUnits = false
+                    },
+                    title = {
+                        Text(
+                            style = MaterialTheme.typography.h6,
+                            text = "Выберите единицу измерения",
+                        )
+                    },
+                    buttons = {
+                        Column(modifier = Modifier.padding(all = 16.dp)) {
+                            Text(
+                                style = MaterialTheme.typography.subtitle1,
+                                text = "Грамм", modifier = Modifier
+                                    .height(44.dp)
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        vm.updateUnits("г.")
+                                        openDialogUnits = false
+                                    }
+                            )
+                            Text(
+                                style = MaterialTheme.typography.subtitle1,
+                                text = "Миллилитр",
+                                modifier = Modifier
+                                    .height(44.dp)
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        vm.updateUnits("мл")
+                                        openDialogUnits = false
+                                    }
+                            )
+                            Text(
+                                style = MaterialTheme.typography.subtitle1,
+                                text = "Штука",
+                                modifier = Modifier
+                                    .height(44.dp)
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        vm.updateUnits("шт")
+                                        openDialogUnits = false
+                                    }
+                            )
+                        }
+                    }
+                )
+            }
 
             if (state.ingredients.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
@@ -421,7 +422,13 @@ fun CreateProductScreen(
         FloatingActionButton(
             onClick = {
                 vm.addProduct()
-                navController.navigate(vm.navigation(navController.currentDestination?.route))
+                when (navController.currentDestination?.route){
+                    "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
+                    "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
+                    "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
+                    "create_orders/{order_id}/products/{id}" -> navController.navigate("orders/create/${state.orderId}")
+                    else -> ""
+                }
             },
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -455,7 +462,8 @@ fun CreateProductScreen(
                     count = count,
                     availability = availability,
                     missingReceptIngredients = missingReceptIngredients,
-                    costPrice = costPrice)
+                    costPrice = costPrice
+                )
             },
             listRecepts = state.availableRecepts
         )
@@ -479,20 +487,20 @@ fun CreateReceptsDialog(
 
     var selectionAvailability: Boolean? by remember { mutableStateOf(null) }
 
-    var selectionmissingIgredient: String? by remember { mutableStateOf(null)}
+    var selectionmissingIgredient: String? by remember { mutableStateOf(null) }
 
-    var selectionCostPrice: Float by remember {mutableStateOf(0f)}
+    var selectionCostPrice: Float by remember { mutableStateOf(0f) }
 
     var receptCount: Int by remember { mutableStateOf(0) }
 
     val colors = TextFieldDefaults.textFieldColors(
-        textColor = colors.onPrimary,
-        backgroundColor = colors.background,
-        disabledTextColor = colors.background,
-        placeholderColor = colors.background,
-        disabledPlaceholderColor = colors.background,
-        focusedIndicatorColor = colors.secondary,
-        cursorColor = colors.onPrimary
+        textColor = MaterialTheme.colors.onPrimary,
+        backgroundColor = MaterialTheme.colors.background,
+        disabledTextColor = MaterialTheme.colors.background,
+        placeholderColor = MaterialTheme.colors.background,
+        disabledPlaceholderColor = MaterialTheme.colors.background,
+        focusedIndicatorColor = MaterialTheme.colors.secondary,
+        cursorColor = MaterialTheme.colors.onPrimary
     )
 
     Dialog(onDismissRequest = onDismiss) {
@@ -621,14 +629,14 @@ fun CreateReceptsDialog(
 fun ProductReceptItem(productReceptItem: ProductReceptItem) {
     Column(
         modifier = Modifier
-            .background(color = colors.background)
+            .background(color = MaterialTheme.colors.background)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
                 .padding(end = 16.dp)
-                .background(color = colors.background),
+                .background(color = MaterialTheme.colors.background),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -652,7 +660,7 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp),
-            color = colors.secondary
+            color = MaterialTheme.colors.secondary
         )
     }
 }
@@ -661,7 +669,7 @@ fun ProductReceptItem(productReceptItem: ProductReceptItem) {
 fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
     Column(
         modifier = Modifier
-            .background(color = colors.background)
+            .background(color = MaterialTheme.colors.background)
     ) {
         Row(
             modifier = Modifier
@@ -696,7 +704,7 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp),
-            color = colors.secondary
+            color = MaterialTheme.colors.secondary
         )
     }
 }
@@ -707,11 +715,16 @@ fun ProductIngredientItem(productIngredientItem: ProductIngredientItem) {
 @Composable
 fun CreateProductToolBar(
     navController: NavController,
-    vm: CreateProductViewModel = viewModel(LocalContext.current as RootActivity, key = "create_product")
-){
+    vm: CreateProductViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_product"
+    )
+) {
     val isCreate: Boolean by remember {
-        mutableStateOf(navController.currentDestination?.route == "orders/{order_id}/products/{id}" ||
-                navController.currentDestination?.route == "create_orders/{order_id}/products/{id}")
+        mutableStateOf(
+            navController.currentDestination?.route == "orders/{order_id}/products/{id}" ||
+                    navController.currentDestination?.route == "create_orders/{order_id}/products/{id}"
+        )
     }
     val state by vm.state.collectAsState()
     val title by remember {
@@ -722,7 +735,13 @@ fun CreateProductToolBar(
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         IconButton(onClick = {
-            navController.navigate(vm.navigation(navController.currentDestination?.route))
+            when (navController.currentDestination?.route){
+                "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
+                "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
+                "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
+                "create_orders/{order_id}/products/{id}" -> navController.navigate("orders/create/${state.orderId}")
+                else -> ""
+            }
             if (!isCreate) vm.removeProduct(state.id)
         }) {
             Icon(
@@ -744,6 +763,74 @@ fun CreateProductToolBar(
                 contentDescription = "Очистить"
             )
         }
+    }
+}
+
+@Composable
+fun ParamsItem(
+    value: String,
+    placeholder: String,
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .height(56.dp),
+    inputType: KeyboardType = KeyboardType.Text,
+    tailContent: @Composable (() -> Unit)? = null,
+    onValueChange: (String) -> Unit
+) {
+
+    val colors = TextFieldDefaults.textFieldColors(
+        textColor = MaterialTheme.colors.onPrimary,
+        backgroundColor = MaterialTheme.colors.background,
+        disabledTextColor = MaterialTheme.colors.background,
+        placeholderColor = MaterialTheme.colors.background,
+        disabledPlaceholderColor = MaterialTheme.colors.background,
+        focusedIndicatorColor = MaterialTheme.colors.secondary,
+        cursorColor = MaterialTheme.colors.onPrimary
+    )
+
+    Row(
+        modifier = modifier
+    ) {
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .weight(3f),
+            textStyle = MaterialTheme.typography.subtitle1,
+            keyboardOptions = KeyboardOptions(keyboardType = inputType),
+            placeholder = {
+                Text(
+                    placeholder,
+                    style = MaterialTheme.typography.subtitle2
+                )
+            },
+            colors = colors
+        )
+        if (tailContent != null) tailContent()
+        /* Box(
+             Modifier
+                 .height(56.dp)
+                 .weight(1f)
+                 .clickable { openDialogUnits = true }
+         ) {
+             Text(
+                 state.units,
+                 modifier = Modifier
+                     .padding(top = 16.dp),
+                 style = if (state.units == "ед. изм.") MaterialTheme.typography.subtitle2
+                 else MaterialTheme.typography.subtitle1
+             )
+         }
+         IconButton(onClick = { openDialogUnits = true }) {
+             Icon(
+                 painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
+                 tint = MaterialTheme.colors.secondary,
+                 modifier = Modifier
+                     .padding(top = 14.dp)
+                     .weight(1f),
+                 contentDescription = "Выбор ед.изм."
+             )
+         }*/
     }
 }
 

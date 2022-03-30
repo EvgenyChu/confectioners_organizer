@@ -1,9 +1,9 @@
 package ru.churkin.confectioners_organizer.local.db.entity
 
-import androidx.room.*
-import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
-import ru.churkin.confectioners_organizer.local.db.entity.Recept
-import java.util.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity(
     tableName = "products",

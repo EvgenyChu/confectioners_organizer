@@ -1,7 +1,5 @@
 package ru.churkin.confectioners_organizer.view_models.order.data
 
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.repositories.OrdersRepository
-import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
 class OrderViewModel() : ViewModel() {
     private val repository: OrdersRepository = OrdersRepository()

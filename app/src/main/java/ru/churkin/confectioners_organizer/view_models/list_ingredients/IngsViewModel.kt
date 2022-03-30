@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
-import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
-import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 
 class IngsViewModel() : ViewModel() {
 
