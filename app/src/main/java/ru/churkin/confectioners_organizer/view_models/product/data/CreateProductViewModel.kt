@@ -88,8 +88,10 @@ class CreateProductViewModel() : ViewModel() {
         _state.value = currentState.copy(title = title)
     }
 
-    fun updateWeight(weight: Int) {
-        _state.value = currentState.copy(weight = weight)
+    fun updateWeight(weight: String) {
+        try{
+            _state.value = currentState.copy(weight = if (weight.isEmpty()) 0 else weight.toInt())
+        } catch(e: Exception){}
     }
 
     fun updateUnits(units: String) {

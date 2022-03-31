@@ -1,11 +1,9 @@
 package ru.churkin.confectioners_organizer.ui.ingredient
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -25,6 +23,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.product.ParamsItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
@@ -122,192 +121,26 @@ fun CreateIngredientScreen(
                 color = MaterialTheme.colors.surface
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                TextField(
-                    value = "${if (state.available == 0) "" else state.available}",
-                    onValueChange = {
-                        try{
-                            vm.updateAvailable(if (it.isEmpty()) 0 else it.toInt())
-                        }
-                        catch (e:Exception){""}
-                         },
-                    Modifier.weight(3f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    placeholder = {
-                        Text(
-                            "Количество",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
-                )
+            ParamsItem(
+                if (state.available == 0) "" else "${state.available}",
+                "Количество",
+                onValueChange = { vm.updateAvailable(it) },
+                inputType = KeyboardType.Number,
+                tailIcon = R.drawable.ic_baseline_keyboard_arrow_down_24,
+                onTailClick = { openDialogUnits = true },
+                optionsItem = state.unitsAvailable
+            )
 
-                Text(
-                    state.unitsAvailable,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .clickable { openDialogUnits = true },
-                    style = if (state.unitsAvailable == "ед. изм.") MaterialTheme.typography.subtitle2
-                    else MaterialTheme.typography.subtitle1
-                )
-
-                IconButton(onClick = { openDialogUnits = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier
-                            .padding(top = 14.dp)
-                            .weight(1f),
-                        contentDescription = "Выбор ед.изм."
-                    )
-                }
-                if (openDialogUnits) {
-                    AlertDialog(
-                        onDismissRequest = {
-                            openDialogUnits = false
-                        },
-                        title = {
-                            Text(
-                                style = MaterialTheme.typography.h6,
-                                text = "Выберите единицу измерения",
-                            )
-                        },
-                        buttons = {
-                            Column(modifier = Modifier.padding(all = 16.dp)) {
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Грамм", modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsAvailable("г.")
-                                            openDialogUnits = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Миллилитр",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsAvailable("мл")
-                                            openDialogUnits = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Штука",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsAvailable("шт")
-                                            openDialogUnits = false
-                                        }
-                                )
-                            }
-                        }
-                    )
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                TextField(
-                    modifier = Modifier.weight(3f),
-                    value = state._costPrice,
-                    onValueChange = { vm.updatecostPrice(it) },
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    isError = state.errors["costPrice"]?.isNotEmpty() ?: false,
-                    label = {
-                        Text(
-                            text = state.errors["costPrice"] ?: "Цена",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
-                )
-
-                Text(
-                    state.unitsPrice,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .clickable { openDialogUnitsPrice = true },
-                    style = if (state.unitsPrice == "рубль за ______") MaterialTheme.typography.subtitle2
-                    else MaterialTheme.typography.subtitle1
-                )
-                //}
-                IconButton(onClick = { openDialogUnitsPrice = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier
-                            .padding(top = 14.dp)
-                            .weight(1f),
-                        contentDescription = "Выбор ед.изм."
-                    )
-                }
-                if (openDialogUnitsPrice)
-                    AlertDialog(
-                        onDismissRequest = {
-                            openDialogUnitsPrice = false
-                        },
-                        title = {
-                            Text(
-                                style = MaterialTheme.typography.h6,
-                                text = "Выберите единицу измерения",
-                            )
-                        },
-                        buttons = {
-                            Column(modifier = Modifier.padding(all = 16.dp)) {
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Грамм",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsPrice("руб./г.")
-                                            openDialogUnitsPrice = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Миллилитр",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsPrice("руб./мл")
-                                            openDialogUnitsPrice = false
-                                        }
-                                )
-                                Text(
-                                    style = MaterialTheme.typography.subtitle1,
-                                    text = "Штука",
-                                    modifier = Modifier
-                                        .height(44.dp)
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            vm.updateUnitsPrice("руб./шт.")
-                                            openDialogUnitsPrice = false
-                                        }
-                                )
-                            }
-                        }
-                    )
-            }
-
+            ParamsItem(
+                state._costPrice,
+                state.errors["costPrice"] ?: "Цена",
+                onValueChange = { vm.updatecostPrice(it) },
+                inputType = KeyboardType.Number,
+                tailIcon = R.drawable.ic_baseline_keyboard_arrow_down_24,
+                onTailClick = { openDialogUnitsPrice = true },
+                optionsItem = state.unitsPrice,
+                isError = state.errors["costPrice"]?.isNotEmpty() ?: false
+            )
 
             TextField(
                 value = state.sellBy?.format() ?: "",
@@ -373,6 +206,106 @@ fun CreateIngredientScreen(
                 contentDescription = "Добавить",
             )
         }
+    }
+    if (openDialogUnits) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialogUnits = false
+            },
+            title = {
+                Text(
+                    style = MaterialTheme.typography.h6,
+                    text = "Выберите единицу измерения",
+                )
+            },
+            buttons = {
+                Column(modifier = Modifier.padding(all = 16.dp)) {
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "Грамм", modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsAvailable("г.")
+                                openDialogUnits = false
+                            }
+                    )
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "Миллилитр",
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsAvailable("мл")
+                                openDialogUnits = false
+                            }
+                    )
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "Штука",
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsAvailable("шт")
+                                openDialogUnits = false
+                            }
+                    )
+                }
+            }
+        )
+    }
+
+    if (openDialogUnitsPrice) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialogUnitsPrice = false
+            },
+            title = {
+                Text(
+                    style = MaterialTheme.typography.h6,
+                    text = "Выберите единицу измерения",
+                )
+            },
+            buttons = {
+                Column(modifier = Modifier.padding(all = 16.dp)) {
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "руб./г.",
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsPrice("руб./г.")
+                                openDialogUnitsPrice = false
+                            }
+                    )
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "руб./мл",
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsPrice("руб./мл")
+                                openDialogUnitsPrice = false
+                            }
+                    )
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = "руб./шт.",
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                vm.updateUnitsPrice("руб./шт.")
+                                openDialogUnitsPrice = false
+                            }
+                    )
+                }
+            }
+        )
     }
 }
 

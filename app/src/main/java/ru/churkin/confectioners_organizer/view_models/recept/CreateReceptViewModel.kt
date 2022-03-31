@@ -76,12 +76,12 @@ class CreateReceptViewModel() : ViewModel() {
         _state.value = currentState.copy(title = title)
     }
 
-    fun updateWeight(weight: Int) {
-        _state.value = currentState.copy(weight = weight)
+    fun updateWeight(weight: String) {
+        _state.value = currentState.copy(weight = if (weight.isEmpty()) 0 else weight.toInt())
     }
 
-    fun updateTime(time: Int) {
-        _state.value = currentState.copy(time = time)
+    fun updateTime(time: String) {
+        _state.value = currentState.copy(time = if (time.isEmpty()) 0 else time.toInt())
     }
 
     fun updateNote(note: String) {

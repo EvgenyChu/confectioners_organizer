@@ -95,7 +95,7 @@ fun CreateReceptScreen(
 
                 TextField(
                     value = "${if (state.weight == 0) "" else state.weight}",
-                    onValueChange = { vm.updateWeight(if (it.isEmpty()) 0 else it.toInt()) },
+                    onValueChange = { vm.updateWeight(it) },
                     modifier = Modifier
                         .height(56.dp)
                         .fillMaxWidth(),
@@ -112,7 +112,7 @@ fun CreateReceptScreen(
 
                 TextField(
                     value = "${if (state.time == 0) "" else state.time}",
-                    onValueChange = { vm.updateTime(if (it.isEmpty()) 0 else it.toInt()) },
+                    onValueChange = { vm.updateTime(it) },
                     modifier = Modifier
                         .height(56.dp)
                         .fillMaxWidth(),
@@ -256,7 +256,6 @@ fun CreateReceptScreen(
         }
     }
 
-    //modals
     if (state.isCreateDialog) {
         CreateIngredientsDialog(
             onDismiss = { vm.hideCreateDialog() },

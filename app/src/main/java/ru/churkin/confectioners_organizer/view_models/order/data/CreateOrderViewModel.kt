@@ -110,8 +110,7 @@ class CreateOrderViewModel() : ViewModel() {
     fun updatePrice(price: String) {
         try {
             _state.value = currentState.copy(price = price.toInt())
-        } catch (e: Exception) {
-        }
+        } catch (e: Exception) { }
     }
 
     fun updateIsPaid(isPaid: Boolean) {

@@ -71,8 +71,11 @@ class CreateIngredientViewModel() : ViewModel() {
         _state.value = currentState.copy(availability = availability)
     }
 
-    fun updateAvailable(available: Int) {
-        _state.value = currentState.copy(available = available)
+    fun updateAvailable(available: String) {
+        try {
+            _state.value = currentState.copy(available = if (available.isEmpty()) 0 else available.toInt())
+        }
+        catch (e:Exception){}
     }
 
     fun updateUnitsAvailable(unitsAvailable: String) {
@@ -131,7 +134,7 @@ data class IngredientState(
     val availability: Boolean = false,
     val available: Int = 0,
     val unitsAvailable: String = "ед. изм.",
-    val unitsPrice: String = "рубль за ______",
+    val unitsPrice: String = "ед. изм.",
     val _costPrice: String = "",
     val sellBy: Date? = null,
     val errors: Map<String, String> = emptyMap()

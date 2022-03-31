@@ -82,7 +82,7 @@ fun CreateProductScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            ParamsItem("weight", "weight", tailContent = {Text("test")}, onValueChange = {})
+
             TextField(
                 value = state.title,
                 onValueChange = { vm.updateTitle(it) },
@@ -94,70 +94,18 @@ fun CreateProductScreen(
                         style = MaterialTheme.typography.subtitle2,
                     )
                 },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Поиск изделий"
-                        )
-                    }
-                },
                 colors = colors
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                TextField(
-                    value = "${if (state.weight == 0) "" else state.weight}",
-                    onValueChange = {
-                        try {
-                            vm.updateWeight(if (it.isEmpty()) 0 else it.toInt())
-                        } catch (e: Exception) {
-                            ""
-                        }
-                    },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .weight(3f),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = {
-                        Text(
-                            "Количество изделия",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
-                )
 
-                Box(
-                    Modifier
-                        .height(56.dp)
-                        .weight(1f)
-                        .clickable { openDialogUnits = true }
-                ) {
-                    Text(
-                        state.units,
-                        modifier = Modifier
-                            .padding(top = 16.dp),
-                        style = if (state.units == "ед. изм.") MaterialTheme.typography.subtitle2
-                        else MaterialTheme.typography.subtitle1
-                    )
-                }
-                IconButton(onClick = { openDialogUnits = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                        tint = MaterialTheme.colors.secondary,
-                        modifier = Modifier
-                            .padding(top = 14.dp)
-                            .weight(1f),
-                        contentDescription = "Выбор ед.изм."
-                    )
-                }
-            }
+            ParamsItem(
+                if (state.weight == 0) "" else "${state.weight}",
+                "Количество изделия",
+                onValueChange = { vm.updateWeight(it) },
+                inputType = KeyboardType.Number,
+                tailIcon = R.drawable.ic_baseline_keyboard_arrow_down_24,
+                onTailClick = { openDialogUnits = true },
+                optionsItem = state.units
+            )
 
             Row(
                 modifier = Modifier
@@ -422,7 +370,7 @@ fun CreateProductScreen(
         FloatingActionButton(
             onClick = {
                 vm.addProduct()
-                when (navController.currentDestination?.route){
+                when (navController.currentDestination?.route) {
                     "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
                     "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
                     "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
@@ -735,7 +683,7 @@ fun CreateProductToolBar(
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         IconButton(onClick = {
-            when (navController.currentDestination?.route){
+            when (navController.currentDestination?.route) {
                 "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
                 "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
                 "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
@@ -769,13 +717,14 @@ fun CreateProductToolBar(
 @Composable
 fun ParamsItem(
     value: String,
-    placeholder: String,
-    modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .height(56.dp),
+    label: String,
+    modifier: Modifier = Modifier,
     inputType: KeyboardType = KeyboardType.Text,
-    tailContent: @Composable (() -> Unit)? = null,
-    onValueChange: (String) -> Unit
+    optionsItem: String = "ед. изм.",
+    tailIcon: Int,
+    onValueChange: (String) -> Unit,
+    onTailClick: () -> Unit,
+    isError: Boolean = false
 ) {
 
     val colors = TextFieldDefaults.textFieldColors(
@@ -790,7 +739,10 @@ fun ParamsItem(
 
     Row(
         modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
     ) {
+
         TextField(
             value = value,
             onValueChange = onValueChange,
@@ -798,39 +750,38 @@ fun ParamsItem(
                 .weight(3f),
             textStyle = MaterialTheme.typography.subtitle1,
             keyboardOptions = KeyboardOptions(keyboardType = inputType),
-            placeholder = {
+            label = {
                 Text(
-                    placeholder,
+                    label,
                     style = MaterialTheme.typography.subtitle2
                 )
             },
-            colors = colors
+            colors = colors,
+            isError = isError
         )
-        if (tailContent != null) tailContent()
-        /* Box(
-             Modifier
-                 .height(56.dp)
-                 .weight(1f)
-                 .clickable { openDialogUnits = true }
-         ) {
-             Text(
-                 state.units,
-                 modifier = Modifier
-                     .padding(top = 16.dp),
-                 style = if (state.units == "ед. изм.") MaterialTheme.typography.subtitle2
-                 else MaterialTheme.typography.subtitle1
-             )
-         }
-         IconButton(onClick = { openDialogUnits = true }) {
-             Icon(
-                 painter = painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24),
-                 tint = MaterialTheme.colors.secondary,
-                 modifier = Modifier
-                     .padding(top = 14.dp)
-                     .weight(1f),
-                 contentDescription = "Выбор ед.изм."
-             )
-         }*/
+        Box(
+            Modifier
+                .height(56.dp)
+                .weight(1f)
+                .clickable { onTailClick() }
+        ) {
+            Text(
+                optionsItem,
+                modifier = Modifier
+                    .padding(top = 16.dp),
+                style = MaterialTheme.typography.subtitle1
+            )
+        }
+        IconButton(onClick = { onTailClick() }) {
+            Icon(
+                painter = painterResource(id = tailIcon),
+                tint = MaterialTheme.colors.secondary,
+                modifier = Modifier
+                    .padding(top = 14.dp)
+                    .weight(1f),
+                contentDescription = "Выбор ед.изм."
+            )
+        }
     }
 }
 
