@@ -98,8 +98,11 @@ class CreateProductViewModel() : ViewModel() {
         _state.value = currentState.copy(units = units)
     }
 
-    fun updatePrice(price: Int) {
-        _state.value = currentState.copy(price = price)
+    fun updatePrice(price: String) {
+        try {
+            _state.value = currentState.copy(price = if (price.isEmpty()) 0 else price.toInt())
+        }
+        catch (e: Exception) {}
     }
 
     fun updateCostPrice() {

@@ -21,6 +21,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
 @InternalCoroutinesApi
@@ -52,79 +53,26 @@ fun ReceptScreen(
 
             Column(Modifier.verticalScroll(rememberScrollState())) {
 
-                Row(
-                    Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        state.title,
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
-
+                ParamsTextItem(state.title)
 
                 Divider(color = MaterialTheme.colors.secondary)
 
-                Row(
-                    Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Выход: ${state.weight} грамм",
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                ParamsTextItem("Выход: ${state.weight} грамм")
 
                 Divider(color = MaterialTheme.colors.secondary)
 
-                Row(
-                    Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Время приготовления: ${state.time} мин.",
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                ParamsTextItem("Время приготовления: ${state.time} мин.")
+
                 Divider(color = MaterialTheme.colors.secondary)
 
-                Row(
-                    Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Список ингредиентов для рецепта:",
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                ParamsTextItem("Список ингредиентов для рецепта:")
 
                 if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
                     ReceptIngItem(receptIngredientItem = it)
                 }
 
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Примечание: \n${state.note}",
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                ParamsTextItem("Примечание: \n${state.note}")
+
                 Divider(color = MaterialTheme.colors.secondary)
 
                 Spacer(modifier = Modifier.height(56.dp))

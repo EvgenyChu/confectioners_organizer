@@ -31,6 +31,9 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
+import ru.churkin.confectioners_organizer.items.ParamsAddItem
+import ru.churkin.confectioners_organizer.items.ParamsItem
+import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
 import ru.churkin.confectioners_organizer.ui.recept.CreateIngredientsDialog
@@ -82,19 +85,10 @@ fun CreateProductScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
-            TextField(
+            ParamsTextFieldItem(
                 value = state.title,
                 onValueChange = { vm.updateTitle(it) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Название изделия",
-                        style = MaterialTheme.typography.subtitle2,
-                    )
-                },
-                colors = colors
+                label = "Название изделия"
             )
 
             ParamsItem(
@@ -107,25 +101,10 @@ fun CreateProductScreen(
                 optionsItem = state.units
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp)
-                    .clickable { vm.showCreateReceptDialog() }
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Добавьте рецепт, кол-во",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.subtitle2
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Наличие"
-                )
-            }
+            ParamsAddItem(
+                onTailClick = { vm.showCreateReceptDialog() },
+                text = "Добавьте рецепт, кол-во"
+            )
 
             if (state.recepts.isNotEmpty()) {
                 Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
@@ -181,25 +160,10 @@ fun CreateProductScreen(
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp)
-                    .clickable { vm.showCreateIngredientDialog() }
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Добавьте ингредиент, кол-во",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.subtitle2
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Наличие"
-                )
-            }
+            ParamsAddItem(
+                onTailClick = { vm.showCreateIngredientDialog() },
+                text = "Добавьте ингредиент, кол-во"
+            )
 
             if (openDialogUnits) {
                 AlertDialog(
@@ -261,6 +225,12 @@ fun CreateProductScreen(
                             if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
                                 vm.removeProductIngredient(item.id)
                             }
+
+                            /*ParamsSwipeItem(
+                                dismissState = dismissState,
+                                onTailClick = {ProductIngredientItem(productIngredientItem = item)}
+                            )*/
+
                             SwipeToDismiss(
                                 state = dismissState,
                                 directions = setOf(
@@ -327,27 +297,13 @@ fun CreateProductScreen(
                 )
             }
 
-            TextField(
+            ParamsTextFieldItem(
                 value = "${if (state.price == 0) "" else state.price}",
-                onValueChange = {
-                    try {
-                        vm.updatePrice(if (it.isEmpty()) 0 else it.toInt())
-                    } catch (e: Exception) {
-                        ""
-                    }
-                },
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Стоимость изделия, руб.",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                colors = colors
+                onValueChange = { vm.updatePrice(it) },
+                label = "Стоимость изделия, руб.",
+                inputType = KeyboardType.Number
             )
+
             Spacer(modifier = Modifier.height(56.dp))
         }
 
@@ -709,77 +665,6 @@ fun CreateProductToolBar(
                 painter = painterResource(id = R.drawable.ic_baseline_delete_24),
                 tint = MaterialTheme.colors.onPrimary,
                 contentDescription = "Очистить"
-            )
-        }
-    }
-}
-
-@Composable
-fun ParamsItem(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    inputType: KeyboardType = KeyboardType.Text,
-    optionsItem: String = "ед. изм.",
-    tailIcon: Int,
-    onValueChange: (String) -> Unit,
-    onTailClick: () -> Unit,
-    isError: Boolean = false
-) {
-
-    val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
-    )
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .weight(3f),
-            textStyle = MaterialTheme.typography.subtitle1,
-            keyboardOptions = KeyboardOptions(keyboardType = inputType),
-            label = {
-                Text(
-                    label,
-                    style = MaterialTheme.typography.subtitle2
-                )
-            },
-            colors = colors,
-            isError = isError
-        )
-        Box(
-            Modifier
-                .height(56.dp)
-                .weight(1f)
-                .clickable { onTailClick() }
-        ) {
-            Text(
-                optionsItem,
-                modifier = Modifier
-                    .padding(top = 16.dp),
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
-        IconButton(onClick = { onTailClick() }) {
-            Icon(
-                painter = painterResource(id = tailIcon),
-                tint = MaterialTheme.colors.secondary,
-                modifier = Modifier
-                    .padding(top = 14.dp)
-                    .weight(1f),
-                contentDescription = "Выбор ед.изм."
             )
         }
     }

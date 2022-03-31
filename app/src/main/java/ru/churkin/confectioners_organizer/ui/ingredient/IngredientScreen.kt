@@ -21,6 +21,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
 @InternalCoroutinesApi
@@ -50,25 +51,15 @@ fun IngredientScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = state.title,
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+            ParamsTextItem(state.title)
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp),
                 color = MaterialTheme.colors.secondary
             )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,57 +85,27 @@ fun IngredientScreen(
                     .height(1.dp),
                 color = MaterialTheme.colors.secondary
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "В наличии: ${state.available} ${state.unitsAvailable}",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+
+            ParamsTextItem("В наличии: ${state.available} ${state.unitsAvailable}")
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp),
                 color = MaterialTheme.colors.secondary
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Цена: ${state.costPrice} ${state.unitsPrice}",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+
+            ParamsTextItem("Цена: ${state.costPrice} ${state.unitsPrice}")
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp),
                 color = MaterialTheme.colors.secondary
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Годен до: ${state.sellBy?.format("dd.MM.yyyy")}",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+
+            ParamsTextItem("Годен до: ${state.sellBy?.format("dd.MM.yyyy")}")
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()

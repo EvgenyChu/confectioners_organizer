@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -34,6 +33,8 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.items.ParamsAddItem
+import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewModel
@@ -46,7 +47,10 @@ import ru.churkin.confectioners_organizer.view_models.recept.IngredientItem
 fun CreateReceptScreen(
     navController: NavController,
     id: Long?,
-    vm: CreateReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "create_recept")
+    vm: CreateReceptViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_recept"
+    )
 ) {
 
     val state by vm.state.collectAsState()
@@ -76,78 +80,31 @@ fun CreateReceptScreen(
                 .fillMaxSize()
         ) {
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                TextField(
+
+                ParamsTextFieldItem(
                     value = state.title,
                     onValueChange = { vm.updateTitle(it) },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    label = {
-                        Text(
-                            "Название рецепта",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                    label = "Название рецепта"
                 )
 
-
-                TextField(
+                ParamsTextFieldItem(
                     value = "${if (state.weight == 0) "" else state.weight}",
                     onValueChange = { vm.updateWeight(it) },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = {
-                        Text(
-                            "Выход, грамм",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                    label = "Выход, грамм",
+                    inputType = KeyboardType.Number
                 )
 
-                TextField(
+                ParamsTextFieldItem(
                     value = "${if (state.time == 0) "" else state.time}",
                     onValueChange = { vm.updateTime(it) },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = {
-                        Text(
-                            "Время приготовления, мин.",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                    label = "Время приготовления, мин.",
+                    inputType = KeyboardType.Number
                 )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(44.dp)
-                        .clickable { vm.showCreateDialog() }
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Добавьте ингредиент, кол-во",
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                        tint = MaterialTheme.colors.secondary,
-                        contentDescription = "Наличие"
-                    )
-                }
-
-
+                ParamsAddItem(
+                    onTailClick = { vm.showCreateDialog() },
+                    text = "Добавьте ингредиент, кол-во"
+                )
 
                 if (state.ingredients.isNotEmpty()) {
                     Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
@@ -203,21 +160,12 @@ fun CreateReceptScreen(
                     }
                 }
 
-                TextField(
+                ParamsTextFieldItem(
                     value = state.note,
                     onValueChange = { vm.updateNote(it) },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    textStyle = MaterialTheme.typography.subtitle1,
-                    label = {
-                        Text(
-                            "Примечание",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                    label = "Примечание"
                 )
+
                 Spacer(modifier = Modifier.height(56.dp))
             }
 
@@ -364,7 +312,7 @@ fun CreateIngredientsDialog(
                     }
                 }
 
-                TextField(
+                ParamsTextFieldItem(
                     value = "${if (ingredientCount == 0) "" else ingredientCount}",
                     onValueChange = {
                         try {
@@ -373,18 +321,8 @@ fun CreateIngredientsDialog(
                             ingredientCount = 0
                         }
                     },
-                    textStyle = MaterialTheme.typography.body2,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth(),
-                    label = {
-                        Text(
-                            "Кол-во для рецепта",
-                            style = MaterialTheme.typography.subtitle2
-                        )
-                    },
-                    colors = colors
+                    label = "Кол-во для рецепта",
+                    inputType = KeyboardType.Number
                 )
 
                 Row(
@@ -465,7 +403,10 @@ fun ReceptIngItem(receptIngredientItem: ReceptIngredientItem) {
 @Composable
 fun CreateReceptToolBar(
     navController: NavController,
-    vm: CreateReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "create_recept")
+    vm: CreateReceptViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_recept"
+    )
 ) {
     val state by vm.state.collectAsState()
     val isCreate: Boolean by remember {

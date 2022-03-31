@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,7 +22,9 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.product.ParamsItem
+import ru.churkin.confectioners_organizer.items.ParamsItem
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
@@ -69,57 +70,19 @@ fun CreateIngredientScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
-            TextField(
+            ParamsTextFieldItem(
                 value = if (state.title == "") "" else state.title,
                 onValueChange = { vm.updateTitle(it) },
-                textStyle = MaterialTheme.typography.subtitle1,
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        "Наименование",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                colors = colors
+                label = "Наименование"
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (state.availability) "В наличии" else "Отсутствует",
-                    style = MaterialTheme.typography.subtitle1
-                )
-
-                Spacer(Modifier.weight(1f, true))
-
-                Switch(
-                    checked = state.availability,
-                    onCheckedChange = {
-                        vm.updateAvailability(it)
-                    },
-                    colors = SwitchDefaults.colors(
-                        uncheckedThumbColor = Color(0xFFE61610),
-                        uncheckedTrackColor = Color(0xFF840705),
-                        checkedThumbColor = Color(0xFF72BB53),
-                        checkedTrackColor = Color(0xFF4C7A34)
-                    )
-                )
-            }
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.surface
+            ParamsSwipeItem(
+                text = if (state.availability) "В наличии" else "Отсутствует",
+                value = state.availability,
+                onValueChange = {vm.updateAvailability(state.availability)}
             )
+
+            Divider(color = MaterialTheme.colors.surface)
 
             ParamsItem(
                 if (state.available == 0) "" else "${state.available}",
@@ -164,12 +127,6 @@ fun CreateIngredientScreen(
                             contentDescription = "Наличие"
                         )
                     }
-                    if (isShowDatePicker) DatePicker(
-                        onSelect = {
-                            vm.updateSellBy(it)
-                            isShowDatePicker = false
-                        },
-                        onDismiss = { isShowDatePicker = false })
                 },
                 colors = colors
             )
@@ -307,6 +264,13 @@ fun CreateIngredientScreen(
             }
         )
     }
+
+    if (isShowDatePicker) DatePicker(
+        onSelect = {
+            vm.updateSellBy(it)
+            isShowDatePicker = false
+        },
+        onDismiss = { isShowDatePicker = false })
 }
 
 @InternalCoroutinesApi

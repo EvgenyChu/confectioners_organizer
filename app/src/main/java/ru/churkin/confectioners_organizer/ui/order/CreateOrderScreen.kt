@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -32,6 +31,9 @@ import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.local.db.entity.Product
+import ru.churkin.confectioners_organizer.items.ParamsAddItem
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
@@ -97,21 +99,11 @@ fun CreateOrderScreen(
                 colors = colors
             )
 
-            TextField(
+            ParamsTextFieldItem(
                 value = state.phone ?: "",
                 onValueChange = { vm.updatePhone(it) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Телефон заказчика",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                colors = colors
+                label = "Телефон заказчика",
+                inputType = KeyboardType.Phone
             )
 
             TextField(
@@ -149,33 +141,11 @@ fun CreateOrderScreen(
                 )
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (state.needDelivery) "Доставка" else "Без доставки",
-                    style = MaterialTheme.typography.subtitle1
-                )
-
-                Spacer(Modifier.weight(1f, true))
-
-                Switch(
-                    checked = state.needDelivery,
-                    onCheckedChange = {
-                        vm.updateNeedDelivery(it)
-                    },
-                    colors = SwitchDefaults.colors(
-                        uncheckedThumbColor = Color(0xFFE61610),
-                        uncheckedTrackColor = Color(0xFF840705),
-                        checkedThumbColor = Color(0xFF72BB53),
-                        checkedTrackColor = Color(0xFF4C7A34)
-                    )
-                )
-            }
+            ParamsSwipeItem(
+                text = if (state.needDelivery) "Доставка" else "Без доставки",
+                value = state.needDelivery,
+                onValueChange = {vm.updateNeedDelivery(state.needDelivery)}
+            )
 
             Divider(
                 color = MaterialTheme.colors.surface
@@ -205,31 +175,16 @@ fun CreateOrderScreen(
                 colors = colors
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp)
-                    .clickable {
-                        navController.navigate("create_orders/${state.id}/products/create")
-                        vm.addOrder()
-                    }
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Добавьте изделие, кол-во",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.subtitle2
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Наличие"
-                )
-            }
+            ParamsAddItem(
+                onTailClick = {
+                    navController.navigate("create_orders/${state.id}/products/create")
+                    vm.addOrder()
+                },
+                text = "Добавьте изделие, кол-во"
+            )
 
             if (state.products?.isNotEmpty() == true) {
-                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
                         items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
 
@@ -307,21 +262,11 @@ fun CreateOrderScreen(
                 )
             }
 
-            TextField(
+            ParamsTextFieldItem(
                 value = "${if (state.price == 0) "" else state.price}",
                 onValueChange = { vm.updatePrice(it) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                label = {
-                    Text(
-                        "Стоимость заказа, руб.",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                colors = colors
+                label = "Стоимость заказа, руб.",
+                inputType = KeyboardType.Number
             )
 
             Row(
@@ -359,21 +304,12 @@ fun CreateOrderScreen(
                 color = MaterialTheme.colors.surface
             )
 
-            TextField(
+            ParamsTextFieldItem(
                 value = state.note ?: "",
                 onValueChange = { vm.updateNote(it) },
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                placeholder = {
-                    Text(
-                        "Примечание",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                colors = colors
+                label = "Примечание"
             )
+
             Spacer(modifier = Modifier.height(56.dp))
         }
 
@@ -462,7 +398,7 @@ fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
 fun CreateOrderToolBar(
     navController: NavController,
     vm: CreateOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "create_order")
-){
+) {
     val state by vm.state.collectAsState()
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {

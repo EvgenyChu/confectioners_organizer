@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -23,6 +22,8 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
@@ -54,83 +55,32 @@ fun OrderScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
-                    style = MaterialTheme.typography.subtitle1
-                )
+            ParamsSwipeItem(
+                text = if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
+                value = state.isCooked,
+                onValueChange = {vm.updateIsCooked(if (state.isCooked == false) true else false)}
+            )
 
-                Spacer(Modifier.weight(1f, true))
+            Divider(color = MaterialTheme.colors.secondary)
 
-                Switch(
-                    checked = state.isCooked,
-                    onCheckedChange = {
-                        vm.updateIsCooked(if (state.isCooked == false) true else false)
-                    },
-                    colors = SwitchDefaults.colors(
-                        uncheckedThumbColor = Color(0xFFE61610),
-                        uncheckedTrackColor = Color(0xFF840705),
-                        checkedThumbColor = Color(0xFF72BB53),
-                        checkedTrackColor = Color(0xFF4C7A34)
+            ParamsTextItem("Заказчик: ${state.customer}")
+
+            Divider(color = MaterialTheme.colors.secondary)
+
+            ParamsTextItem(
+                if (state.phone == null) "тел. +7хххххххххх" else "тел. ${state.phone}"
+            )
+
+            Divider(color = MaterialTheme.colors.secondary)
+
+            ParamsTextItem(
+                if (state.deadLine == null) "Дата выполнения: _._._ г." else "Дата выполнения: ${
+                    state.deadLine?.format(
+                        "dd.MM.yyyy"
                     )
-                )
-            }
+                }"
+            )
 
-            Divider(color = MaterialTheme.colors.secondary)
-
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Заказчик: ${state.customer}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-
-            Divider(color = MaterialTheme.colors.secondary)
-
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (state.phone == null) "тел. +7хххххххххх" else "тел. ${state.phone}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-
-            Divider(color = MaterialTheme.colors.secondary)
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (state.deadLine == null) "Дата выполнения: _._._ г." else "Дата выполнения: ${
-                        state.deadLine?.format(
-                            "dd.MM.yyyy"
-                        )
-                    }",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,65 +114,29 @@ fun OrderScreen(
                 color = MaterialTheme.colors.secondary
             )
 
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (state.address == null) "Адрес доставки не указан" else "Адрес: ${state.address}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                if (state.address == null) "Адрес доставки не указан" else "Адрес: ${state.address}"
+            )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Список изделий для заказа:",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                "Список изделий для заказа:"
+            )
 
             if (state.products?.isNotEmpty() == true) state.products?.forEach { product ->
                     OrderProduct(product = product)
                 }
 
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Себестоимость: ${state.costPrice} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                "Себестоимость: ${state.costPrice} руб."
+            )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Цена заказа: ${state.price} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                "Цена заказа: ${state.price} руб."
+            )
 
             Divider(color = MaterialTheme.colors.secondary)
 
@@ -252,30 +166,16 @@ fun OrderScreen(
                 color = MaterialTheme.colors.secondary
             )
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Отсутствуют продукты: \n${state.missingIngredients}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                "Отсутствуют продукты: \n${state.missingIngredients}"
+            )
+
             Divider(color = MaterialTheme.colors.secondary)
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Примечание: \n${state.note}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
+            ParamsTextItem(
+                "Примечание: \n${state.note}"
+            )
+
             Divider(color = MaterialTheme.colors.secondary)
 
             Spacer(modifier = Modifier.height(56.dp))
