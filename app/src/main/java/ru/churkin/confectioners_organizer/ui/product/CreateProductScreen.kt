@@ -582,8 +582,10 @@ fun CreateProductToolBar(
         )
     }
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = {
+    ParamsToolBar(
+        text = title,
+        editIcon = R.drawable.ic_baseline_delete_24,
+        onBackClick = {
             when (navController.currentDestination?.route) {
                 "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
                 "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
@@ -592,27 +594,9 @@ fun CreateProductToolBar(
                 else -> ""
             }
             if (!isCreate) vm.removeProduct(state.id)
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            title,
-            style = MaterialTheme.typography.h6,
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { vm.emptyState() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+        },
+        onEditClick = { vm.emptyState() }
+    )
 }
 
 /*

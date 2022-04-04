@@ -277,29 +277,12 @@ fun EditOrderToolBar(
     navController: NavController,
     vm: EditOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "edit_order")
 ){
-
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = {
+    ParamsToolBar(
+        text = "Редактирование",
+        editIcon = R.drawable.ic_baseline_delete_24,
+        onBackClick = {
             navController.popBackStack()
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-           "Редактирование",
-            style = MaterialTheme.typography.h6,
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { vm.emptyState() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+        },
+        onEditClick = { vm.emptyState() }
+    )
 }

@@ -227,7 +227,7 @@ fun CreateOrderScreen(
                 text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
                 value = state.isPaid
             ){
-                vm.updateIsPaid(state.isPaid)
+                vm.updateIsPaid(it)
             }
 
             Divider(
@@ -326,29 +326,13 @@ fun CreateOrderToolBar(
 ) {
     val state by vm.state.collectAsState()
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = {
+    ParamsToolBar(
+        text = "Новый заказ",
+        editIcon = R.drawable.ic_baseline_delete_24,
+        onBackClick = {
             navController.popBackStack()
             vm.removeOrder(state.id)
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            "Новый заказ",
-            style = MaterialTheme.typography.h6,
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { vm.emptyState() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+                      },
+        onEditClick = { vm.emptyState() }
+    )
 }

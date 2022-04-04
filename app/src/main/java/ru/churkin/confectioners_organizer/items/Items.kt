@@ -15,6 +15,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -227,8 +228,8 @@ fun ParamsSwipeItem(
 @Composable
 fun ParamsSwitchItem(
     text: String = "",
-    value: Boolean = false,
-    onValueChange: (String) -> Unit,
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
 
 ){
     Row(
@@ -248,7 +249,7 @@ fun ParamsSwitchItem(
         Switch(
             checked = value,
             onCheckedChange = {
-                onValueChange
+                onValueChange(it)
             },
             colors = SwitchDefaults.colors(
                 uncheckedThumbColor = Color(0xFFE61610),
@@ -350,4 +351,104 @@ fun ParamsToolDateBar(
         onDismiss = {
             isShowDatePicker = false
         })
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ParamsToolSearchBar(
+    searchText: String = "",
+    text: String = "Ингредиенты",
+    onTailClick: () -> Unit,
+    onFilterClick: (Int) -> Unit,
+    onSearch: (String) -> Unit,
+    onSubmit: (String) -> Unit
+){
+    var isShowSearch by remember { mutableStateOf(false) }
+    var counter by remember { mutableStateOf(0) }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        if (isShowSearch) {
+            SearchBar(
+                searchText = searchText,
+                onSearch = { onSearch(it) },
+                onSubmit = {
+                    onSubmit(it)
+                    isShowSearch = false
+                },
+                onDismiss = { isShowSearch = false })
+        } else {
+            IconButton(onClick = {
+                onTailClick()
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Меню навигации"
+                )
+            }
+            Text(
+                text,
+                style = MaterialTheme.typography.h6,
+            )
+            Spacer(Modifier.weight(1f, true))
+
+            IconButton(onClick = {
+                counter++
+                if (counter > 2) counter = 0
+                onFilterClick(counter)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+                    tint = when (counter) {
+                        1 -> colorResource(id = R.color.green)
+                        2 -> colorResource(id = R.color.red)
+                        else -> MaterialTheme.colors.onPrimary
+                    },
+                    contentDescription = "Сортировка"
+                )
+            }
+        }
+
+        IconButton(onClick = {
+            isShowSearch = true
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Найти"
+            )
+        }
+    }
+}
+
+@Composable
+fun ParamsToolBar(
+    text: String = "",
+    backIcon: Int = R.drawable.ic_baseline_arrow_back_24,
+    editIcon: Int = R.drawable.ic_baseline_edit_24,
+    onBackClick: () -> Unit,
+    onEditClick: () -> Unit
+){
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        IconButton(onClick = { onBackClick() }) {
+            Icon(
+                painter = painterResource(id = backIcon),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Назад"
+            )
+        }
+        Text(
+            text,
+            style = MaterialTheme.typography.h6,
+        )
+        Spacer(Modifier.weight(1f, true))
+
+        IconButton(onClick = { onEditClick()}) {
+            Icon(
+                painter = painterResource(id = editIcon),
+                tint = MaterialTheme.colors.onPrimary,
+                contentDescription = "Очистить"
+            )
+        }
+    }
 }

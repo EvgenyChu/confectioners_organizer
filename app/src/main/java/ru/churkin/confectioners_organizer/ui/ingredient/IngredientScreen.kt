@@ -23,6 +23,7 @@ import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
+import ru.churkin.confectioners_organizer.items.ParamsToolBar
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
 @InternalCoroutinesApi
@@ -146,28 +147,11 @@ fun IngredientToolBar(
 ) {
     val state by vm.state.collectAsState()
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = { navController.popBackStack() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            text = "Ингредиент",
-            style = MaterialTheme.typography.h6,
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { navController.navigate("ingredients/edit/${state.id}") }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+    ParamsToolBar(
+        text = "Ингредиент",
+        onBackClick = { navController.popBackStack() },
+        onEditClick = { navController.navigate("ingredients/edit/${state.id}") }
+    )
 }
 
 /*

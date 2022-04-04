@@ -25,6 +25,7 @@ import ru.churkin.confectioners_organizer.date.format
 import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsSwitchItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
+import ru.churkin.confectioners_organizer.items.ParamsToolBar
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
@@ -60,7 +61,7 @@ fun OrderScreen(
                 text = if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
                 value = state.isCooked
             ){
-                vm.updateIsCooked(if (state.isCooked == false) true else false)
+                vm.updateIsCooked(if (it == false) true else false)
             }
 
             Divider(color = MaterialTheme.colors.secondary)
@@ -254,28 +255,11 @@ fun OrderToolBar(
 ){
     val state by vm.state.collectAsState()
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = { navController.navigate(Screen.Orders.route) }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            "Заказ",
-            style = MaterialTheme.typography.h6,
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { navController.navigate("orders/edit/${state.id}") }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+    ParamsToolBar(
+        text = "Заказ",
+        onBackClick = { navController.navigate(Screen.Orders.route) },
+        onEditClick = { navController.navigate("orders/edit/${state.id}") }
+    )
 }
 
 

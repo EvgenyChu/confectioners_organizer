@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -25,6 +28,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsToolSearchBar
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
@@ -221,63 +225,14 @@ fun RecsToolBar(
     onMenuClick: ()-> Unit
 ){
     val searchText by vm.searchText.collectAsState()
-    var isShowSearch by remember { mutableStateOf(false) }
-    var counter by remember { mutableStateOf(0) }
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        if (isShowSearch) {
-            SearchBar(
-                searchText = searchText,
-                onSearch = { vm.searchRecepts(it) },
-                onSubmit = {
-                    vm.searchRecepts(it)
-                    isShowSearch = false
-                },
-                onDismiss = { isShowSearch = false })
-        } else {
-
-            IconButton(onClick = {
-                    onMenuClick()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Меню навигации"
-                )
-            }
-            Text(
-                "Список рецептов",
-                style = MaterialTheme.typography.h6,
-            )
-            Spacer(Modifier.weight(1f, true))
-
-            IconButton(onClick = {
-                counter++
-                if (counter > 2) counter = 0
-                vm.filterRecepts(counter)
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = when (counter) {
-                        1 -> colorResource(id = R.color.green)
-                        2 -> colorResource(id = R.color.red)
-                        else -> MaterialTheme.colors.onPrimary
-                    },
-                    contentDescription = "Сортировка"
-                )
-            }
-
-            IconButton(onClick = {
-                isShowSearch = true
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Найти"
-                )
-            }
-        }
-    }
+    ParamsToolSearchBar(
+        searchText = searchText,
+        onTailClick = {onMenuClick()},
+        onFilterClick ={vm.filterRecepts(it)},
+        onSearch = { vm.searchRecepts(it) },
+        onSubmit = {vm.searchRecepts(it)}
+    )
 }
 
 

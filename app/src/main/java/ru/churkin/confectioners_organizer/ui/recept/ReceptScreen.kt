@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -23,6 +22,7 @@ import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
+import ru.churkin.confectioners_organizer.items.ParamsToolBar
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
 @InternalCoroutinesApi
@@ -116,27 +116,9 @@ fun ReceptToolBar(
 ) {
     val state by vm.state.collectAsState()
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        IconButton(onClick = { navController.popBackStack() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            "Pецепт",
-            style = MaterialTheme.typography.h6,
-        )
-
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = { navController.navigate("recepts/edit/${state.id}") }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+    ParamsToolBar(
+        text = "Pецепт",
+        onBackClick = { navController.popBackStack() },
+        onEditClick = { navController.navigate("recepts/edit/${state.id}") }
+    )
 }

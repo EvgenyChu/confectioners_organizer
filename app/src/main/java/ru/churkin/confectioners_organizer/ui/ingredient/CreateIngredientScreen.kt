@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -22,10 +21,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsItem
-import ru.churkin.confectioners_organizer.items.ParamsSwitchItem
-import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
 
@@ -83,7 +79,7 @@ fun CreateIngredientScreen(
             ParamsSwitchItem(
                 text = if (state.availability) "В наличии" else "Отсутствует",
                 value = state.availability,
-                onValueChange = { vm.updateAvailability(state.availability) }
+                onValueChange = { vm.updateAvailability(it) }
             )
 
             Divider(color = MaterialTheme.colors.surface)
@@ -291,34 +287,15 @@ fun CreateIngredientToolBar(
         )
     }
 
-    TopAppBar() {
-        IconButton(onClick = {
+    ParamsToolBar(
+        text = title,
+        editIcon = R.drawable.ic_baseline_delete_24,
+        onBackClick = {
             navController.popBackStack()
             if (isCreate) vm.removeIngredient(state.id)
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Назад"
-            )
-        }
-        Text(
-            title,
-            style = MaterialTheme.typography.h6,
-            overflow = TextOverflow.Ellipsis
-        )
-        Spacer(Modifier.weight(1f, true))
-
-        IconButton(onClick = {
-            vm.emptyState()
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Очистить"
-            )
-        }
-    }
+                      },
+        onEditClick = { vm.emptyState() }
+    )
 }
 
 /*@Preview
