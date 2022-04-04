@@ -9,9 +9,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -19,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
+import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
+import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 
 @Composable
 fun ParamsTextItem(
@@ -278,4 +280,74 @@ fun ParamsActionItem(
             contentDescription = "Добавить"
         )
     }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ParamsToolDateBar(
+    searchText: String = "",
+    text: String = "Список заказов",
+    onTailClick: () -> Unit,
+    onSearch: (String) -> Unit,
+    onSubmit: (String) -> Unit,
+    onSearchDismiss: () -> Unit,
+    onSelect:(String) -> Unit,
+){
+    var isShowSearch by remember { mutableStateOf(false) }
+    var isShowDatePicker by remember { mutableStateOf(false) }
+
+    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
+        if (isShowSearch) {
+            SearchBar(
+                searchText = searchText,
+                onSearch = {onSearch(it)},
+                onSubmit = {
+                    onSubmit(it)
+                    isShowSearch = false
+                           },
+                onDismiss = {
+                    isShowSearch = false
+                    onSearchDismiss()
+                }
+            ) } else {
+            IconButton(onClick = {
+                onTailClick()
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Меню навигации"
+                )
+            }
+            Text(
+                text,
+                style = MaterialTheme.typography.h6,
+            )
+            Spacer(Modifier.weight(1f, true))
+
+            IconButton(onClick = { isShowDatePicker = true }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Календарь"
+                )
+            }
+
+            IconButton(onClick = { isShowSearch = true }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                    tint = MaterialTheme.colors.onPrimary,
+                    contentDescription = "Найти"
+                )
+            }
+        }
+    }
+    if (isShowDatePicker) DatePicker(
+        onSelect = {
+            onSelect(it)
+            isShowDatePicker = false
+        },
+        onDismiss = {
+            isShowDatePicker = false
+        })
 }

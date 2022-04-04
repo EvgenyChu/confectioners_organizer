@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -25,10 +28,10 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsToolDateBar
 import ru.churkin.confectioners_organizer.local.db.entity.Order
-import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
-import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersViewModel
 
@@ -116,25 +119,17 @@ fun OrdersScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                if (!vm.isShowDate.value) navController.navigate("orders/create")
-                else {
-                    vm.currentOrdersState()
-                    vm.isShowDate.value = false
-                }
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = if (vm.isShowDate.value) R.drawable.ic_baseline_arrow_back_24
+            else R.drawable.ic_baseline_add_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = if (vm.isShowDate.value) painterResource(id = R.drawable.ic_baseline_arrow_back_24)
-                else painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "Добавить"
-            )
+            if (!vm.isShowDate.value) navController.navigate("orders/create")
+            else {
+                vm.currentOrdersState()
+                vm.isShowDate.value = false
+            }
         }
     }
 }
@@ -240,65 +235,21 @@ fun OrdersToolBar(
 ){
 
     val searchText by vm.searchText.collectAsState()
-    var isShowSearch by remember { mutableStateOf(false) }
-    var isShowDatePicker by remember { mutableStateOf(false) }
 
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        if (isShowSearch) {
-            SearchBar(
-                searchText = searchText,
-                onSearch = { vm.searchOrders(it) },
-                onSubmit = {
-                    vm.searchOrders(it)
-                    isShowSearch = false
-                    vm.isShowDate.value = false
-                },
-                onDismiss = {
-                    isShowSearch = false
-                    vm.isShowDate.value = false
-                })
-        } else {
-            IconButton(onClick = {
-                    onMenuClick()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Меню навигации"
-                )
-            }
-            Text(
-                "Список заказов",
-                style = MaterialTheme.typography.h6,
-            )
-            Spacer(Modifier.weight(1f, true))
-
-            IconButton(onClick = { isShowDatePicker = true }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Календарь"
-                )
-                if (isShowDatePicker) DatePicker(
-                    onSelect = {
-                        vm.searchDeadLine(it)
-                        isShowDatePicker = false
-                        vm.isShowDate.value = true
-                    },
-                    onDismiss = {
-                        isShowDatePicker = false
-                    })
-            }
-
-            IconButton(onClick = { isShowSearch = true }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Найти"
-                )
-            }
-        }
+    ParamsToolDateBar(
+        searchText = searchText,
+    onTailClick = {onMenuClick()},
+    onSearch = { vm.searchOrders(it) },
+    onSubmit = {
+        vm.searchOrders(it)
+        vm.isShowDate.value = false
+    },
+    onSearchDismiss = {vm.isShowDate.value = false},
+    onSelect = {
+        vm.searchDeadLine(it)
+        vm.isShowDate.value = true
     }
+    )
 }
 
 
