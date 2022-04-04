@@ -22,7 +22,8 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
+import ru.churkin.confectioners_organizer.items.ParamsSwitchItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
@@ -55,11 +56,12 @@ fun OrderScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            ParamsSwipeItem(
+            ParamsSwitchItem(
                 text = if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
-                value = state.isCooked,
-                onValueChange = {vm.updateIsCooked(if (state.isCooked == false) true else false)}
-            )
+                value = state.isCooked
+            ){
+                vm.updateIsCooked(if (state.isCooked == false) true else false)
+            }
 
             Divider(color = MaterialTheme.colors.secondary)
 
@@ -197,20 +199,12 @@ fun OrderScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                navController.navigate(Screen.Orders.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить"
-            )
+            navController.navigate(Screen.Orders.route)
         }
     }
 }

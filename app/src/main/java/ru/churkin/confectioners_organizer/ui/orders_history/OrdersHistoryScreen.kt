@@ -1,20 +1,15 @@
 package ru.churkin.confectioners_organizer.history
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -23,8 +18,10 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.ui.list_orders.OrderItem
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
+import ru.churkin.confectioners_organizer.ui.list_orders.OrderItem
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.orders_history.OrdersHistoryViewModel
@@ -85,47 +82,14 @@ fun OrdersHistoryScreen(
                             if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
                                 vm.removeOrder(item.id)
                             }
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd,
-                                ),
-                                background = {
 
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    OrderItem(order = item, onClick = { id ->
-                                        navController.navigate("orders/$id")
-                                    })
-                                }
-                            )
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeOrder(item.id) },
+                            ){
+                                OrderItem(order = item, onClick = { id ->
+                                    navController.navigate("orders/$id")
+                                })
+                            }
                         }
                     }
                 }
@@ -145,25 +109,17 @@ fun OrdersHistoryScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                if (!vm.isShowDate.value) navController.navigate("orders")
-                else {
-                    vm.currentOrdersState()
-                    vm.isShowDate.value = false
-                }
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = if (vm.isShowDate.value) R.drawable.ic_baseline_arrow_back_24
+            else R.drawable.ic_baseline_add_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = if (vm.isShowDate.value) painterResource(id = R.drawable.ic_baseline_arrow_back_24)
-                else painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "Добавить"
-            )
+            if (!vm.isShowDate.value) navController.navigate("orders")
+            else {
+                vm.currentOrdersState()
+                vm.isShowDate.value = false
+            }
         }
     }
 }

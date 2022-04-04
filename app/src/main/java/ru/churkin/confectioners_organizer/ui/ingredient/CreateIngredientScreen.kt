@@ -22,8 +22,9 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsItem
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
+import ru.churkin.confectioners_organizer.items.ParamsSwitchItem
 import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredientViewModel
@@ -35,7 +36,10 @@ import ru.churkin.confectioners_organizer.view_models.ingredient.CreateIngredien
 fun CreateIngredientScreen(
     navController: NavController,
     id: Long?,
-    vm: CreateIngredientViewModel = viewModel(LocalContext.current as RootActivity,key = "create_ingredient")
+    vm: CreateIngredientViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_ingredient"
+    )
 ) {
 
     val state by vm.state.collectAsState()
@@ -76,10 +80,10 @@ fun CreateIngredientScreen(
                 label = "Наименование"
             )
 
-            ParamsSwipeItem(
+            ParamsSwitchItem(
                 text = if (state.availability) "В наличии" else "Отсутствует",
                 value = state.availability,
-                onValueChange = {vm.updateAvailability(state.availability)}
+                onValueChange = { vm.updateAvailability(state.availability) }
             )
 
             Divider(color = MaterialTheme.colors.surface)
@@ -147,22 +151,15 @@ fun CreateIngredientScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                vm.addIngredient()
-                navController.navigate(Screen.Ingredients.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить",
-            )
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+        ){
+            vm.addIngredient()
+        navController.navigate(Screen.Ingredients.route)
         }
+
     }
     if (openDialogUnits) {
         AlertDialog(
@@ -279,8 +276,11 @@ fun CreateIngredientScreen(
 @Composable
 fun CreateIngredientToolBar(
     navController: NavController,
-    vm: CreateIngredientViewModel = viewModel(LocalContext.current as RootActivity,key = "create_ingredient")
-){
+    vm: CreateIngredientViewModel = viewModel(
+        LocalContext.current as RootActivity,
+        key = "create_ingredient"
+    )
+) {
     val state by vm.state.collectAsState()
     val isCreate: Boolean by remember {
         mutableStateOf(navController.currentDestination?.route == "ingredients/create")

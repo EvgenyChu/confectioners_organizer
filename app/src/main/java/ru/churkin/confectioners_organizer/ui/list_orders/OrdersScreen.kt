@@ -1,9 +1,6 @@
 package ru.churkin.confectioners_organizer.ui.list_orders
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,13 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -31,6 +25,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
@@ -89,52 +84,13 @@ fun OrdersScreen(
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                         items(listState.orders, { it.id }) { item ->
 
-                            val dismissState = rememberDismissState()
-                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                                vm.removeOrder(item.id)
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeOrder(item.id) },
+                            ){
+                                OrderItem(order = item, onClick = { id ->
+                                    navController.navigate("orders/$id")
+                                })
                             }
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd,
-                                ),
-                                background = {
-
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    OrderItem(order = item, onClick = { id ->
-                                        Log.e("OrdersScreen", "navigate to order $id")
-                                        navController.navigate("orders/$id")
-                                    })
-                                }
-                            )
                         }
                     }
                 }

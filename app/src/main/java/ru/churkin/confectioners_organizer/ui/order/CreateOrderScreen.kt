@@ -1,8 +1,6 @@
 package ru.churkin.confectioners_organizer.ui.order
 
 import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,14 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,10 +24,8 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.Product
-import ru.churkin.confectioners_organizer.items.ParamsAddItem
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
-import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.order.data.CreateOrderViewModel
 
@@ -141,11 +133,12 @@ fun CreateOrderScreen(
                 )
             )
 
-            ParamsSwipeItem(
+            ParamsSwitchItem(
                 text = if (state.needDelivery) "Доставка" else "Без доставки",
-                value = state.needDelivery,
-                onValueChange = {vm.updateNeedDelivery(state.needDelivery)}
-            )
+                value = state.needDelivery
+            ){
+                vm.updateNeedDelivery(state.needDelivery)
+            }
 
             Divider(
                 color = MaterialTheme.colors.surface
@@ -188,53 +181,14 @@ fun CreateOrderScreen(
                     LazyColumn() {
                         items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
 
-                            val dismissState = rememberDismissState()
-
-                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                                vm.removeOrderProduct(item.id)
-                            }
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd
-                                ),
-                                background = {
-
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    OrderProductItem(product = item) {
-                                        navController.navigate("create_orders/${item.orderId}/products/${item.id}")
-                                        vm.addOrder()
-                                    }
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeOrderProduct(item.id) },
+                            ){
+                                OrderProductItem(product = item) {
+                                    navController.navigate("create_orders/${item.orderId}/products/${item.id}")
+                                    vm.addOrder()
                                 }
-                            )
+                            }
                         }
                     }
                 }
@@ -269,32 +223,11 @@ fun CreateOrderScreen(
                 inputType = KeyboardType.Number
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
-                    style = MaterialTheme.typography.subtitle1,
-                )
-
-                Spacer(Modifier.weight(1f, true))
-
-                Switch(
-                    checked = state.isPaid,
-                    onCheckedChange = {
-                        vm.updateIsPaid(it)
-                    },
-                    colors = SwitchDefaults.colors(
-                        uncheckedThumbColor = Color(0xFFE61610),
-                        uncheckedTrackColor = Color(0xFF840705),
-                        checkedThumbColor = Color(0xFF72BB53),
-                        checkedTrackColor = Color(0xFF4C7A34)
-                    )
-                )
+            ParamsSwitchItem(
+                text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
+                value = state.isPaid
+            ){
+                vm.updateIsPaid(state.isPaid)
             }
 
             Divider(
@@ -329,21 +262,13 @@ fun CreateOrderScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                vm.addOrder()
-                navController.navigate(Screen.Orders.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить"
-            )
+            vm.addOrder()
+            navController.navigate(Screen.Orders.route)
         }
     }
 }

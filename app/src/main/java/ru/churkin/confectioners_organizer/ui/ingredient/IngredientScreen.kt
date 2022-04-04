@@ -21,6 +21,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
@@ -125,20 +126,12 @@ fun IngredientScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                navController.navigate(Screen.Ingredients.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить"
-            )
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+        ){
+            navController.navigate(Screen.Ingredients.route)
         }
     }
 }

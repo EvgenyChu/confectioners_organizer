@@ -21,6 +21,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsTextItem
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
@@ -30,7 +31,7 @@ import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 @Composable
 fun ReceptScreen(
     navController: NavController,
-    id:Long,
+    id: Long,
     vm: ReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "recept")
 ) {
 
@@ -95,20 +96,12 @@ fun ReceptScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                navController.navigate(Screen.Recepts.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить"
-            )
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+        ){
+            navController.navigate(Screen.Recepts.route)
         }
     }
 }
@@ -120,7 +113,7 @@ fun ReceptScreen(
 fun ReceptToolBar(
     navController: NavController,
     vm: ReceptViewModel = viewModel(LocalContext.current as RootActivity, key = "recept")
-){
+) {
     val state by vm.state.collectAsState()
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {

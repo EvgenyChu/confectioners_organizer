@@ -1,20 +1,15 @@
 package ru.churkin.confectioners_organizer.ui.list_ingredients
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -24,6 +19,8 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 import ru.churkin.confectioners_organizer.ui.theme.Green
@@ -57,114 +54,68 @@ fun IngsScreen(
                 .fillMaxSize()
         ) {
 
-        when (val listState = state) {
-            is IngredientsState.Empty -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize(1f)
-                ) {
-                    Text("Не найдено")
+            when (val listState = state) {
+                is IngredientsState.Empty -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(1f)
+                    ) {
+                        Text("Не найдено")
+                    }
                 }
-            }
-            is IngredientsState.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize(1f)
-                        .background(color = MaterialTheme.colors.background)
-                ) {
-                    CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                is IngredientsState.Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize(1f)
+                            .background(color = MaterialTheme.colors.background)
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colors.secondary)
+                    }
                 }
-            }
-            is IngredientsState.Value -> {
-                LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
-                    items(listState.ingredients, { it.id }) { item ->
+                is IngredientsState.Value -> {
+                    LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
+                        items(listState.ingredients, { it.id }) { item ->
 
-                        val dismissState = rememberDismissState()
-                        if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                            vm.removeIngredient(item.id)
-                        }
-                        SwipeToDismiss(
-                            state = dismissState,
-                            directions = setOf(
-                                DismissDirection.StartToEnd,
-                            ),
-                            background = {
-
-                                val color by animateColorAsState(
-                                    when (dismissState.targetValue) {
-                                        DismissValue.Default -> MaterialTheme.colors.surface
-                                        else -> MaterialTheme.colors.secondary
-                                    }
-                                )
-
-                                val icon = Icons.Default.Delete
-
-                                val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                val alignment = Alignment.CenterStart
-
-
-                                Box(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .background(color)
-                                        .padding(start = 16.dp, end = 16.dp),
-                                    contentAlignment = alignment
-                                ) {
-                                    Icon(
-                                        icon,
-                                        contentDescription = "icon",
-                                        modifier = Modifier.scale(scale)
-                                    )
-                                }
-                            },
-                            dismissContent = {
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeIngredient(item.id) },
+                            ){
                                 IngredientItem(ingredient = item, onClick = { id ->
                                     navController.navigate("ingredients/$id")
                                 })
                             }
-                        )
+                        }
                     }
-                    /*item { Spacer(modifier = Modifier.height(56.dp)) }*/
                 }
+                is IngredientsState.ValueWithMessage -> {}
             }
-            is IngredientsState.ValueWithMessage -> {}
         }
-    }
 
-    Column(
-        verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier.fillMaxHeight()
-    ) {
-        BottomAppBar(
-            backgroundColor = MaterialTheme.colors.primary,
-            modifier = Modifier.height(56.dp)
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier.fillMaxHeight()
         ) {
+            BottomAppBar(
+                backgroundColor = MaterialTheme.colors.primary,
+                modifier = Modifier.height(56.dp)
+            ) {
 
-            Text(
-                "Похоже чего-то не хватает)",
-                modifier = Modifier.padding(start = 12.dp),
-                style = MaterialTheme.typography.body1
-            )
+                Text(
+                    "Похоже чего-то не хватает)",
+                    modifier = Modifier.padding(start = 12.dp),
+                    style = MaterialTheme.typography.body1
+                )
 
+            }
+        }
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_add_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+        ) {
+            navController.navigate("ingredients/create")
         }
     }
-    FloatingActionButton(
-        onClick = { navController.navigate("ingredients/create") },
-        modifier = Modifier
-            .align(alignment = Alignment.BottomEnd)
-            .padding(bottom = 28.dp, end = 16.dp),
-        backgroundColor = MaterialTheme.colors.secondary,
-        contentColor = MaterialTheme.colors.onSecondary
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_add_24),
-            contentDescription = "Добавить"
-        )
-    }
-}
-
 }
 
 @Composable
@@ -214,8 +165,8 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
 @Composable
 fun IngsToolBar(
     vm: IngsViewModel = viewModel(LocalContext.current as RootActivity, key = "ingredients"),
-    onMenuClick: ()-> Unit
-){
+    onMenuClick: () -> Unit
+) {
     val searchText by vm.searchText.collectAsState()
     var isShowSearch by remember { mutableStateOf(false) }
     var counter by remember { mutableStateOf(0) }

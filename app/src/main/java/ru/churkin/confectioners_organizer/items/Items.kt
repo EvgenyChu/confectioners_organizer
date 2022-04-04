@@ -173,9 +173,14 @@ fun ParamsAddItem (
 @ExperimentalMaterialApi
 @Composable
 fun ParamsSwipeItem(
-    dismissState: DismissState,
-    onTailClick: () -> Unit
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
 ){
+    val dismissState = rememberDismissState()
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
+        onDismiss()
+    }
+
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(
@@ -212,13 +217,13 @@ fun ParamsSwipeItem(
             }
         },
         dismissContent = {
-            onTailClick()
+            content()
         }
     )
 }
 
 @Composable
-fun ParamsSwipeItem(
+fun ParamsSwitchItem(
     text: String = "",
     value: Boolean = false,
     onValueChange: (String) -> Unit,
@@ -249,6 +254,28 @@ fun ParamsSwipeItem(
                 checkedThumbColor = Color(0xFF72BB53),
                 checkedTrackColor = Color(0xFF4C7A34)
             )
+        )
+    }
+}
+
+@Composable
+fun ParamsActionItem(
+    tailIcon: Int,
+    modifier: Modifier = Modifier,
+    onTailClick: () -> Unit
+){
+    FloatingActionButton(
+        onClick =  {
+            onTailClick()
+        },
+        modifier = modifier
+            .padding(bottom = 28.dp, end = 16.dp),
+        backgroundColor = MaterialTheme.colors.secondary,
+        contentColor = MaterialTheme.colors.onSecondary
+    ) {
+        Icon(
+            painter = painterResource(id = tailIcon),
+            contentDescription = "Добавить"
         )
     }
 }

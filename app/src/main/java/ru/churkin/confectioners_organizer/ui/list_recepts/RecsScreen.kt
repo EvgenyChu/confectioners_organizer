@@ -1,7 +1,5 @@
 package ru.churkin.confectioners_organizer.ui.list_recepts
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,13 +8,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -28,6 +23,8 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
+import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
@@ -84,51 +81,13 @@ fun RecsScreen(
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                         items(listState.recepts, { it.id }) { item ->
 
-                            val dismissState = rememberDismissState()
-                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                                vm.removeRecept(item.id)
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeRecept(item.id) },
+                            ){
+                                ReceptItem(recept = item, onClick = { id ->
+                                    navController.navigate("recepts/$id")
+                                })
                             }
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd,
-                                ),
-                                background = {
-
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    ReceptItem(recept = item, onClick = { id ->
-                                        navController.navigate("recepts/$id")
-                                    })
-                                }
-                            )
                         }
                     }
                 }
@@ -148,18 +107,12 @@ fun RecsScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = { navController.navigate("recepts/create") },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_add_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = "Добавить"
-            )
+            navController.navigate("recepts/create")
         }
     }
 }

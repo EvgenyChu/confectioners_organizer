@@ -31,9 +31,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.ParamsAddItem
-import ru.churkin.confectioners_organizer.items.ParamsItem
-import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.ProductIngredientItem
 import ru.churkin.confectioners_organizer.local.db.entity.ProductReceptItem
 import ru.churkin.confectioners_organizer.ui.recept.CreateIngredientsDialog
@@ -220,56 +218,11 @@ fun CreateProductScreen(
                     LazyColumn() {
                         items(state.ingredients, { it.id }) { item ->
 
-                            val dismissState = rememberDismissState()
-
-                            if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
-                                vm.removeProductIngredient(item.id)
+                            ParamsSwipeItem(
+                                onDismiss = { vm.removeProductIngredient(item.id) },
+                            ){
+                                ProductIngredientItem(productIngredientItem = item)
                             }
-
-                            /*ParamsSwipeItem(
-                                dismissState = dismissState,
-                                onTailClick = {ProductIngredientItem(productIngredientItem = item)}
-                            )*/
-
-                            SwipeToDismiss(
-                                state = dismissState,
-                                directions = setOf(
-                                    DismissDirection.StartToEnd
-                                ),
-                                background = {
-
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> MaterialTheme.colors.surface
-                                            else -> MaterialTheme.colors.secondary
-                                        }
-                                    )
-
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                    val alignment = Alignment.CenterStart
-
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(start = 16.dp, end = 16.dp),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "icon",
-                                            modifier = Modifier.scale(scale)
-                                        )
-                                    }
-                                },
-                                dismissContent = {
-                                    ProductIngredientItem(productIngredientItem = item)
-                                }
-                            )
                         }
                     }
                 }
@@ -323,27 +276,19 @@ fun CreateProductScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                vm.addProduct()
-                when (navController.currentDestination?.route) {
-                    "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
-                    "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
-                    "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
-                    "create_orders/{order_id}/products/{id}" -> navController.navigate("orders/create/${state.orderId}")
-                    else -> ""
-                }
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить",
-            )
+            vm.addProduct()
+            when (navController.currentDestination?.route) {
+                "orders/{order_id}/products/create" -> navController.navigate("orders/edit/${state.orderId}")
+                "orders/{order_id}/products/{id}" -> navController.navigate("orders/edit/${state.orderId}")
+                "create_orders/{order_id}/products/create" -> navController.navigate("orders/create/${state.orderId}")
+                "create_orders/{order_id}/products/{id}" -> navController.navigate("orders/create/${state.orderId}")
+                else -> ""
+            }
         }
     }
 

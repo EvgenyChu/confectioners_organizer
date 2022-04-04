@@ -32,9 +32,10 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
+import ru.churkin.confectioners_organizer.items.ParamsActionItem
 import ru.churkin.confectioners_organizer.items.ParamsAddItem
 import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
+import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
 import ru.churkin.confectioners_organizer.view_models.recept.CreateReceptViewModel
@@ -186,21 +187,13 @@ fun CreateReceptScreen(
 
             }
         }
-        FloatingActionButton(
-            onClick = {
-                vm.addRecept()
-                navController.navigate(Screen.Recepts.route)
-            },
-            modifier = Modifier
-                .align(alignment = Alignment.BottomEnd)
-                .padding(bottom = 28.dp, end = 16.dp),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+
+        ParamsActionItem(
+            tailIcon = R.drawable.ic_baseline_done_24,
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_done_24),
-                contentDescription = "Добавить"
-            )
+            vm.addRecept()
+            navController.navigate(Screen.Recepts.route)
         }
     }
 
