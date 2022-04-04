@@ -58,16 +58,6 @@ fun CreateProductScreen(
 
     var openDialogUnits by remember { mutableStateOf(false) }
 
-    val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
-    )
-
     LaunchedEffect(key1 = Unit) {
         vm.initState(id, orderId)
     }

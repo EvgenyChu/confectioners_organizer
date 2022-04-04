@@ -125,10 +125,9 @@ fun EditOrderScreen(
 
             ParamsSwitchItem(
                 text = if (state.needDelivery) "Доставка" else "Без доставки",
-                value = state.needDelivery
-            ) {
-                vm.updateNeedDelivery(state.needDelivery)
-            }
+                value = state.needDelivery,
+                onValueChange = { vm.updateNeedDelivery(it) }
+            )
 
             Divider(
                 color = MaterialTheme.colors.surface
@@ -167,13 +166,13 @@ fun EditOrderScreen(
             )
 
             if (state.products?.isNotEmpty() == true) {
-                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)){
+                Box(modifier = Modifier.heightIn(0.dp, 3000.dp)) {
                     LazyColumn() {
                         items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
 
                             ParamsSwipeItem(
                                 onDismiss = { vm.removeOrderProduct(item.id) },
-                            ){
+                            ) {
                                 OrderProductItem(product = item) {
                                     navController.navigate("orders/${item.orderId}/products/${item.id}")
                                     vm.addOrder()
@@ -215,10 +214,9 @@ fun EditOrderScreen(
 
             ParamsSwitchItem(
                 text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
-                value = state.isPaid
-            ) {
-                vm.updateIsPaid(state.isPaid)
-            }
+                value = state.isPaid,
+                onValueChange = { vm.updateIsPaid(it) }
+            )
 
             Divider(
                 modifier = Modifier
@@ -276,7 +274,7 @@ fun EditOrderScreen(
 fun EditOrderToolBar(
     navController: NavController,
     vm: EditOrderViewModel = viewModel(LocalContext.current as RootActivity, key = "edit_order")
-){
+) {
     ParamsToolBar(
         text = "Редактирование",
         editIcon = R.drawable.ic_baseline_delete_24,

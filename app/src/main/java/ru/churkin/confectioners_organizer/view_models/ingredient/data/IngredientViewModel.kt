@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
 import ru.churkin.confectioners_organizer.view_models.ingredient.IngredientState
-import ru.churkin.confectioners_organizer.view_models.recept.ReceptState
 
 class IngredientViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val id: Long? = savedStateHandle.get<Long>("id")
@@ -22,9 +21,11 @@ class IngredientViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         get() = state.value
 
     suspend fun initState(id: Long) {
-        checkNotNull(id)
 
         viewModelScope.launch {
+
+            _state.value = IngredientState()
+
             val ingredient = repository.loadIngredient(id)
 
             _state.value = currentState.copy(

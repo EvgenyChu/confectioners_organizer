@@ -20,9 +20,6 @@ class IngsViewModel() : ViewModel() {
     val state: StateFlow<IngredientsState>
         get() = _state
 
-    private val currentState: IngredientsState
-        get() = _state.value
-
     private fun initialState(): IngredientsState {
 
         return IngredientsState.Empty

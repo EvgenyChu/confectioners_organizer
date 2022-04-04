@@ -59,10 +59,9 @@ fun OrderScreen(
 
             ParamsSwitchItem(
                 text = if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
-                value = state.isCooked
-            ){
-                vm.updateIsCooked(if (it == false) true else false)
-            }
+                value = state.isCooked,
+                onValueChange = { vm.updateIsCooked(it) }
+            )
 
             Divider(color = MaterialTheme.colors.secondary)
 

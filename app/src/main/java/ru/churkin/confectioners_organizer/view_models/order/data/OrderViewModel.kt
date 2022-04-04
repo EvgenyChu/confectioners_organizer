@@ -20,7 +20,7 @@ class OrderViewModel() : ViewModel() {
         get() = state.value
 
     suspend fun initState(id:Long) {
-
+        _state.value = OrderState()
         viewModelScope.launch {
             val order = repository.loadOrderFull(id)
 

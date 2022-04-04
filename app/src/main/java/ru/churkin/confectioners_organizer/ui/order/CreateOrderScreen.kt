@@ -135,10 +135,9 @@ fun CreateOrderScreen(
 
             ParamsSwitchItem(
                 text = if (state.needDelivery) "Доставка" else "Без доставки",
-                value = state.needDelivery
-            ){
-                vm.updateNeedDelivery(state.needDelivery)
-            }
+                value = state.needDelivery,
+                onValueChange = { vm.updateNeedDelivery(it) }
+            )
 
             Divider(
                 color = MaterialTheme.colors.surface
