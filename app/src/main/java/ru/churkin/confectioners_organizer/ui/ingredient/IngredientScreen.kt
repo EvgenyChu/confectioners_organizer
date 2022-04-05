@@ -1,9 +1,13 @@
 package ru.churkin.confectioners_organizer.ingredient
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -20,10 +23,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.MainButton
-import ru.churkin.confectioners_organizer.items.ParamsChoiceItem
-import ru.churkin.confectioners_organizer.items.ParamsToolBar
-import ru.churkin.confectioners_organizer.items.TextItem
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
 @InternalCoroutinesApi
@@ -77,16 +77,10 @@ fun IngredientScreen(
 
             Divider(color = MaterialTheme.colors.secondary)
         }
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-            BottomAppBar(
-            ) {
-                Text(
-                    "Что бы с этим сделать?)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-            }
-        }
+
+        ParamsBottomBar(
+            text = "Что бы с этим сделать?)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,

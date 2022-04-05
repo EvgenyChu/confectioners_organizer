@@ -1,8 +1,10 @@
 package ru.churkin.confectioners_organizer.ui.list_ingredients
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -11,17 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.MainButton
-import ru.churkin.confectioners_organizer.items.SearchToolBar
-import ru.churkin.confectioners_organizer.items.SwipeItem
-import ru.churkin.confectioners_organizer.items.ToolBarAction
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -91,23 +89,9 @@ fun IngsScreen(
             }
         }
 
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Похоже чего-то не хватает)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Похоже чего-то не хватает)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_add_24,
@@ -125,32 +109,15 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
         modifier = Modifier
             .background(color = MaterialTheme.colors.background)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clickable { onClick(ingredient.id) }
-                .padding(end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-            Icon(
-                modifier = Modifier.padding(16.dp),
-                painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                tint = if (ingredient.availability) Green else Red,
-                contentDescription = "Наличие"
-            )
-            Text(
-                text = ingredient.title,
-                style = MaterialTheme.typography.subtitle1
-            )
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = "${ingredient.available}" +
-                        if (ingredient.unitsAvailable == "ед. изм.") "" else " ${ingredient.unitsAvailable}",
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
+        RowChoiceItem(
+            onClick = {onClick(ingredient.id)},
+        tint = if (ingredient.availability) Green else Red,
+        textFirst = ingredient.title,
+        textSecond = "${ingredient.available}" +
+                if (ingredient.unitsAvailable == "ед. изм.") "" else " ${ingredient.unitsAvailable}"
+        )
+
         Divider(color = MaterialTheme.colors.secondary)
     }
 }

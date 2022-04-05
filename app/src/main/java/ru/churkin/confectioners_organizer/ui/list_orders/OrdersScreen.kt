@@ -25,10 +25,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.MainButton
-import ru.churkin.confectioners_organizer.items.SearchToolBar
-import ru.churkin.confectioners_organizer.items.SwipeItem
-import ru.churkin.confectioners_organizer.items.ToolBarAction
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.Order
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
@@ -98,26 +95,16 @@ fun OrdersScreen(
                 }
             }
         }
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
 
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
+        ParamsBottomBar(
+            text = "Есть время! Нет заказов)",
+            icons = listOf(
                 Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_alarm_on_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Будильник"
+                    icon = R.drawable.ic_baseline_alarm_on_24,
+                    tint = MaterialTheme.colors.onPrimary
                 )
-                Text(
-                    "Есть время! Нет заказов)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+            )
+        )
 
         MainButton(
             tailIcon = if (vm.isShowDate.value) R.drawable.ic_baseline_arrow_back_24
@@ -214,12 +201,7 @@ fun OrderItem(order: Order, onClick: (Long) -> Unit) {
                 Spacer(modifier = Modifier.padding(top = 8.dp))
             }
         }
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp),
-            color = MaterialTheme.colors.secondary
-        )
+        Divider(color = MaterialTheme.colors.secondary)
     }
 }
 
@@ -262,20 +244,3 @@ fun OrdersToolBar(
         })
 }
 
-
-/*
-@Preview
-@Composable
-fun previewOrdersCard() {
-    AppTheme {
-        OrdersCard()
-    }
-}
-
-@Preview
-@Composable
-fun previewOrders() {
-    AppTheme {
-        OrdersScreen()
-    }
-}*/

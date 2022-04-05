@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -152,22 +154,9 @@ fun OrderScreen(
             Spacer(modifier = Modifier.height(56.dp))
         }
 
-
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Пора начать готовить)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Пора начать готовить)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
@@ -180,35 +169,13 @@ fun OrderScreen(
 
 @Composable
 fun OrderProduct(product: Product) {
-    Column(
-        modifier = Modifier
+    Column(modifier = Modifier
+        .background(color = MaterialTheme.colors.background)) {
 
-            .background(color = MaterialTheme.colors.background)
-    ) {
-        Row(
-            modifier = Modifier
-                .height(56.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = product.title,
-                style = MaterialTheme.typography.subtitle1
-            )
-            Spacer(Modifier.weight(1f))
-            Column() {
-                Text(
-                    text = "${product.weight} ${product.units}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = "${product.price} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-        }
+        TextItem(
+            text = "${product.title} ${product.weight} ${product.units} \n ${product.price} руб."
+        )
+
         Divider(color = MaterialTheme.colors.secondary)
     }
 }
@@ -230,12 +197,3 @@ fun OrderToolBar(
     )
 }
 
-
-/*
-@Preview
-@Composable
-fun previewOrder() {
-    AppTheme {
-        OrderScreen()
-    }
-}*/

@@ -2,7 +2,10 @@ package ru.churkin.confectioners_organizer.history
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -17,10 +20,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.MainButton
-import ru.churkin.confectioners_organizer.items.SearchToolBar
-import ru.churkin.confectioners_organizer.items.SwipeItem
-import ru.churkin.confectioners_organizer.items.ToolBarAction
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_orders.OrderItem
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
@@ -95,20 +95,10 @@ fun OrdersHistoryScreen(
                 }
             }
         }
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
 
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-                Text(
-                    "Отличная история получилась)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Отличная история получилась)"
+        )
 
         MainButton(
             tailIcon = if (vm.isShowDate.value) R.drawable.ic_baseline_arrow_back_24

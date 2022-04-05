@@ -241,21 +241,9 @@ fun EditOrderScreen(
             },
             onDismiss = { isShowDatePicker = false })
 
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Тут что-то не так?)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Тут что-то не так?)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,

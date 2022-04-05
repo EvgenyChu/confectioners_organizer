@@ -20,11 +20,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
+import ru.churkin.confectioners_organizer.ui.search_bar.SearchBar
 
 @Composable
 fun TextItem(
     text: String = "",
+    spacer: List<RowSpacer> = emptyList(),
     icons: List<Icon> = emptyList()
 ) {
     Row(
@@ -38,9 +39,12 @@ fun TextItem(
             text,
             style = MaterialTheme.typography.subtitle1
         )
+        spacer.forEach {
+            Spacer(modifier = it.modifier.weight(1f, true))
+        }
         icons.forEach {
             Icon(
-                modifier = it.modifier.padding(16.dp),
+                modifier = it.modifier.padding(start = 16.dp),
                 painter = painterResource(id = it.icon),
                 tint = it.tint,
                 contentDescription = "Наличие"
@@ -53,6 +57,10 @@ data class Icon(
     val icon: Int,
     val modifier: Modifier = Modifier,
     val tint: Color
+)
+
+data class RowSpacer(
+    val modifier: Modifier = Modifier
 )
 
 @Composable
@@ -184,7 +192,9 @@ fun ActionItem(
 fun AdditableItem(
     modifier: Modifier = Modifier,
     onTailClick: () -> Unit,
-    text: String = ""
+    text: String = "",
+    style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.subtitle2,
+    icon: Int = R.drawable.ic_baseline_add_circle_outline_24
 ) {
     Row(
         modifier = modifier
@@ -196,11 +206,11 @@ fun AdditableItem(
     ) {
         Text(
             text = text,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.subtitle2
+            style = style
         )
+        Spacer(Modifier.weight(1f, true))
         Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_add_circle_outline_24),
+            painter = painterResource(id = icon),
             tint = MaterialTheme.colors.secondary,
             contentDescription = "Наличие"
         )
@@ -421,6 +431,37 @@ fun ParamsToolBar(
 }
 
 @Composable
+fun ParamsBottomBar(
+    text: String = "",
+    icons: List<Icon> = emptyList()
+){
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        BottomAppBar(
+            backgroundColor = MaterialTheme.colors.primary,
+            modifier = Modifier.height(56.dp)
+        ) {
+            icons.forEach {
+                Icon(
+                    modifier = it.modifier.padding(start = 16.dp),
+                    painter = painterResource(id = it.icon),
+                    tint = it.tint,
+                    contentDescription = "Будильник"
+                )
+            }
+            Text(
+                text,
+                modifier = Modifier.padding(start = 12.dp),
+                style = MaterialTheme.typography.body1
+            )
+
+        }
+    }
+}
+
+@Composable
 fun ParamsChoiceItem(
     choiceIcon: Int = R.drawable.ic_baseline_check_circle,
     tintIcon: Boolean,
@@ -447,3 +488,77 @@ fun ParamsChoiceItem(
         )
     }
 }
+
+@Composable
+fun RowChoiceItem(
+    onClick: () -> Unit,
+    tint: Color,
+    textFirst: String,
+    textSecond: String
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .clickable { onClick() }
+            .padding(end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Icon(
+            modifier = Modifier.padding(16.dp),
+            painter = painterResource(id = R.drawable.ic_baseline_circle_24),
+            tint = tint,
+            contentDescription = "Наличие"
+        )
+        Text(
+            text = textFirst,
+            style = MaterialTheme.typography.subtitle1
+        )
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = textSecond,
+            style = MaterialTheme.typography.subtitle1
+        )
+    }
+}
+
+@Composable
+fun DialogItem(
+    onDismiss: () -> Unit,
+    actions: List<DialogAction> = emptyList(),
+    text: String = "Выберите единицу измерения",
+){
+    AlertDialog(
+        onDismissRequest = {
+            onDismiss()
+        },
+        title = {
+            Text(
+                style = MaterialTheme.typography.h6,
+                text = text,
+            )
+        },
+        buttons = {
+            Column(modifier = Modifier.padding(all = 16.dp)) {
+                actions.forEach {
+                    Text(
+                        style = MaterialTheme.typography.subtitle1,
+                        text = it.text,
+                        modifier = Modifier
+                            .height(44.dp)
+                            .fillMaxWidth()
+                            .clickable {
+                                it.action()
+                            }
+                    )
+                }
+            }
+        }
+    )
+}
+
+data class DialogAction(
+    val text: String,
+    val action: () -> Unit,
+)

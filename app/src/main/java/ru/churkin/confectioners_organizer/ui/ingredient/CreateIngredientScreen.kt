@@ -2,17 +2,20 @@ package ru.churkin.confectioners_organizer.ui.ingredient
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -108,21 +111,9 @@ fun CreateIngredientScreen(
             )
         }
 
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Жаль, что продукты кончаются)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Жаль, что продукты кончаются)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
@@ -134,104 +125,54 @@ fun CreateIngredientScreen(
 
     }
     if (openDialogUnits) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialogUnits = false
-            },
-            title = {
-                Text(
-                    style = MaterialTheme.typography.h6,
-                    text = "Выберите единицу измерения",
-                )
-            },
-            buttons = {
-                Column(modifier = Modifier.padding(all = 16.dp)) {
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "Грамм", modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsAvailable("г.")
-                                openDialogUnits = false
-                            }
-                    )
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "Миллилитр",
-                        modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsAvailable("мл")
-                                openDialogUnits = false
-                            }
-                    )
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "Штука",
-                        modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsAvailable("шт")
-                                openDialogUnits = false
-                            }
-                    )
-                }
-            }
-        )
+        DialogItem(
+            onDismiss = { openDialogUnits = false },
+        actions = listOf(
+            DialogAction(
+                text = "Грамм",
+                action = {
+                    vm.updateUnitsAvailable("г.")
+                    openDialogUnits = false
+                }),
+            DialogAction(
+                text = "Миллилитр",
+                action = {
+                    vm.updateUnitsAvailable("мл")
+                    openDialogUnits = false
+                }),
+            DialogAction(
+                text = "Штука",
+                action = {
+                    vm.updateUnitsAvailable("шт")
+                    openDialogUnits = false
+                })
+        ))
     }
 
     if (openDialogUnitsPrice) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialogUnitsPrice = false
-            },
-            title = {
-                Text(
-                    style = MaterialTheme.typography.h6,
-                    text = "Выберите единицу измерения",
-                )
-            },
-            buttons = {
-                Column(modifier = Modifier.padding(all = 16.dp)) {
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "руб./г.",
-                        modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsPrice("руб./г.")
-                                openDialogUnitsPrice = false
-                            }
-                    )
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "руб./мл",
-                        modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsPrice("руб./мл")
-                                openDialogUnitsPrice = false
-                            }
-                    )
-                    Text(
-                        style = MaterialTheme.typography.subtitle1,
-                        text = "руб./шт.",
-                        modifier = Modifier
-                            .height(44.dp)
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.updateUnitsPrice("руб./шт.")
-                                openDialogUnitsPrice = false
-                            }
-                    )
-                }
-            }
-        )
+
+        DialogItem(
+            onDismiss = { openDialogUnitsPrice = false },
+            actions = listOf(
+                DialogAction(
+                    text = "руб./г.",
+                    action = {
+                        vm.updateUnitsPrice("руб./г.")
+                        openDialogUnitsPrice = false
+                    }),
+                DialogAction(
+                    text = "руб./мл",
+                    action = {
+                        vm.updateUnitsPrice("руб./мл")
+                        openDialogUnitsPrice = false
+                    }),
+                DialogAction(
+                    text = "руб./шт.",
+                    action = {
+                        vm.updateUnitsPrice("руб./шт.")
+                        openDialogUnitsPrice = false
+                    })
+            ))
     }
 
     if (isShowDatePicker) DatePicker(

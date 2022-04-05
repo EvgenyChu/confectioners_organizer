@@ -8,13 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,15 +44,6 @@ fun CreateOrderScreen(
 
     var isShowDatePicker by remember { mutableStateOf(false) }
 
-    val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
-    )
     LaunchedEffect(key1 = Unit) {
         Log.e("CreateOrderScreen", "$id")
         vm.initState(id)
@@ -146,27 +138,13 @@ fun CreateOrderScreen(
                 }
             }
 
-            Row(
-                Modifier
-                    .height(56.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clickable {
-                        vm.updateCostPrice()
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Себестоимость: ${state.costPrice} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Spacer(Modifier.weight(1f, true))
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_calculate_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Калькулятор"
-                )
-            }
+            AdditableItem(
+                modifier = Modifier.height(56.dp),
+                onTailClick = { vm.updateCostPrice() },
+                text = "Себестоимость: ${state.costPrice} руб.",
+                style = MaterialTheme.typography.subtitle1,
+                icon = R.drawable.ic_baseline_calculate_24
+            )
 
             EditTextItem(
                 value = "${if (state.price == 0) "" else state.price}",
@@ -182,12 +160,7 @@ fun CreateOrderScreen(
                 vm.updateIsPaid(it)
             }
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.surface
-            )
+            Divider(color = MaterialTheme.colors.surface)
 
             EditTextItem(
                 value = state.note ?: "",
@@ -198,22 +171,9 @@ fun CreateOrderScreen(
             Spacer(modifier = Modifier.height(56.dp))
         }
 
-
-        Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
-
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                modifier = Modifier.height(56.dp)
-            ) {
-
-                Text(
-                    "Новый заказ - новая история)",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.body1
-                )
-
-            }
-        }
+        ParamsBottomBar(
+            text = "Новый заказ - новая история)"
+        )
 
         MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
@@ -231,30 +191,19 @@ fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
         modifier = Modifier
             .background(color = MaterialTheme.colors.background)
     ) {
-        TextItem(product.title)
-
-        Spacer(Modifier.weight(1f))
-        Column() {
-            Text(
-                text = "${product.weight} ${product.units}",
-                style = MaterialTheme.typography.subtitle1
+        TextItem(
+            text = "${product.title} ${product.weight} ${product.units} \n ${product.price} руб.",
+            spacer = listOf(RowSpacer(modifier = Modifier.weight(1f, true))),
+            icons = listOf(
+                Icon(
+                    icon = R.drawable.ic_baseline_edit_24,
+                    modifier = Modifier.clickable { onClick(product.id) },
+                    tint = MaterialTheme.colors.secondary
+                )
             )
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = "${product.price} руб.",
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
-        Spacer(Modifier.weight(1f))
-        IconButton(onClick = { onClick(product.id) }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                tint = MaterialTheme.colors.secondary,
-                contentDescription = "Очистить"
-            )
-        }
+        )
+        Divider(color = MaterialTheme.colors.secondary)
     }
-    Divider(color = MaterialTheme.colors.secondary)
 }
 
 @InternalCoroutinesApi
@@ -271,7 +220,7 @@ fun CreateOrderToolBar(
         text = "Новый заказ",
         editIcon = R.drawable.ic_baseline_delete_24,
         onBackClick = {
-            navController.popBackStack()
+            navController.navigate(Screen.Orders.route)
             vm.removeOrder(state.id)
         },
         onEditClick = { vm.emptyState() }
