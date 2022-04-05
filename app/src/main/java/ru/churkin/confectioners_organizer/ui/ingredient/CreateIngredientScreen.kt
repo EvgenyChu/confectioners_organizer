@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,17 +43,6 @@ fun CreateIngredientScreen(
     var openDialogUnitsPrice by remember { mutableStateOf(false) }
     var isShowDatePicker by remember { mutableStateOf(false) }
 
-
-    val colors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colors.onPrimary,
-        backgroundColor = MaterialTheme.colors.background,
-        disabledTextColor = MaterialTheme.colors.background,
-        placeholderColor = MaterialTheme.colors.background,
-        disabledPlaceholderColor = MaterialTheme.colors.background,
-        focusedIndicatorColor = MaterialTheme.colors.secondary,
-        cursorColor = MaterialTheme.colors.onPrimary
-    )
-
     LaunchedEffect(key1 = Unit) {
         vm.initState(id)
     }
@@ -70,13 +58,13 @@ fun CreateIngredientScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = if (state.title == "") "" else state.title,
                 onValueChange = { vm.updateTitle(it) },
                 label = "Наименование"
             )
 
-            ParamsSwitchItem(
+            ToggleItem(
                 text = if (state.availability) "В наличии" else "Отсутствует",
                 value = state.availability,
                 onValueChange = { vm.updateAvailability(it) }
@@ -84,7 +72,7 @@ fun CreateIngredientScreen(
 
             Divider(color = MaterialTheme.colors.surface)
 
-            ParamsItem(
+            ActionItem(
                 if (state.available == 0) "" else "${state.available}",
                 "Количество",
                 onValueChange = { vm.updateAvailable(it) },
@@ -94,7 +82,7 @@ fun CreateIngredientScreen(
                 optionsItem = state.unitsAvailable
             )
 
-            ParamsItem(
+            ActionItem(
                 state._costPrice,
                 state.errors["costPrice"] ?: "Цена",
                 onValueChange = { vm.updatecostPrice(it) },
@@ -105,30 +93,18 @@ fun CreateIngredientScreen(
                 isError = state.errors["costPrice"]?.isNotEmpty() ?: false
             )
 
-            TextField(
+            EditTextItem(
                 value = state.sellBy?.format() ?: "",
-                onValueChange = { vm.updateSellBy(it) },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable { isShowDatePicker = true },
-                textStyle = MaterialTheme.typography.subtitle1,
                 enabled = false,
-                placeholder = {
-                    Text(
-                        "Годен до: дд.мм.гггг",
-                        style = MaterialTheme.typography.subtitle2
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { isShowDatePicker = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Наличие"
-                        )
-                    }
-                },
-                colors = colors
+                onValueChange = { vm.updateSellBy(it) },
+                label = "Годен до: дд.мм.гггг",
+                actions = listOf(
+                    IconButton(
+                        icon = R.drawable.ic_baseline_calendar_month_24,
+                    action = { isShowDatePicker = true },
+                    tint = MaterialTheme.colors.secondary))
             )
         }
 
@@ -148,7 +124,7 @@ fun CreateIngredientScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ){
@@ -297,12 +273,3 @@ fun CreateIngredientToolBar(
         onEditClick = { vm.emptyState() }
     )
 }
-
-/*@Preview
-@Composable
-fun previewIng() {
-    val navController = rememberNavController()
-    AppTheme {
-        IngScreen(navController = navController)
-    }
-}*/

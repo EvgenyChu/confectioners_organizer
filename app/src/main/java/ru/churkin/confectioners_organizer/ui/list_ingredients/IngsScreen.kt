@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -21,9 +18,10 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
-import ru.churkin.confectioners_organizer.items.ParamsToolSearchBar
+import ru.churkin.confectioners_organizer.items.MainButton
+import ru.churkin.confectioners_organizer.items.SearchToolBar
+import ru.churkin.confectioners_organizer.items.SwipeItem
+import ru.churkin.confectioners_organizer.items.ToolBarAction
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -79,9 +77,9 @@ fun IngsScreen(
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                         items(listState.ingredients, { it.id }) { item ->
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeIngredient(item.id) },
-                            ){
+                            ) {
                                 IngredientItem(ingredient = item, onClick = { id ->
                                     navController.navigate("ingredients/$id")
                                 })
@@ -111,7 +109,7 @@ fun IngsScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_add_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
@@ -135,11 +133,11 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
                 .padding(end = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Icon(
                 modifier = Modifier.padding(16.dp),
                 painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                tint = if (ingredient.availability) Green
-                else Red,
+                tint = if (ingredient.availability) Green else Red,
                 contentDescription = "Наличие"
             )
             Text(
@@ -153,11 +151,7 @@ fun IngredientItem(ingredient: Ingredient, onClick: (Long) -> Unit) {
                 style = MaterialTheme.typography.subtitle1
             )
         }
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth(),
-            color = MaterialTheme.colors.secondary
-        )
+        Divider(color = MaterialTheme.colors.secondary)
     }
 }
 
@@ -170,33 +164,28 @@ fun IngsToolBar(
     onMenuClick: () -> Unit
 ) {
     val searchText by vm.searchText.collectAsState()
+    var counter by remember { mutableStateOf(0) }
 
-    ParamsToolSearchBar(
+    SearchToolBar(
         searchText = searchText,
-        onTailClick = {onMenuClick()},
-        onFilterClick ={vm.filterIngredients(it)},
+        text = "Ингредиенты",
+        onNavigate = { onMenuClick() },
+        actions = listOf(
+            ToolBarAction(
+                icon = R.drawable.ic_baseline_circle_24,
+                tint = when (counter) {
+                    1 -> R.color.green
+                    2 -> R.color.red
+                    else -> null
+                },
+                action = {
+                    counter++
+                    if (counter > 2) counter = 0
+                    vm.filterIngredients(counter)
+                })
+        ),
         onSearch = { vm.searchIngredients(it) },
-        onSubmit = {vm.searchIngredients(it)}
+        onSubmit = { vm.searchIngredients(it) },
+        onSearchDismiss = {}
     )
 }
-
-/*
-@Preview
-@Composable
-fun previewIngsCard() {
-    AppTheme {
-        IngsCard(
-            ingredient = Ingredient()
-        )
-    }
-}
-*/
-
-/*
-@Preview
-@Composable
-fun previewIngs() {
-    AppTheme {
-        IngsScreen()
-    }
-}*/

@@ -20,13 +20,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ru.churkin.confectioners_organizer.R
-import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_recepts.SearchBar
 
 @Composable
-fun ParamsTextItem(
-    text: String = ""
-){
+fun TextItem(
+    text: String = "",
+    icons: List<Icon> = emptyList()
+) {
     Row(
         Modifier
             .height(56.dp)
@@ -38,16 +38,33 @@ fun ParamsTextItem(
             text,
             style = MaterialTheme.typography.subtitle1
         )
+        icons.forEach {
+            Icon(
+                modifier = it.modifier.padding(16.dp),
+                painter = painterResource(id = it.icon),
+                tint = it.tint,
+                contentDescription = "Наличие"
+            )
+        }
     }
 }
 
+data class Icon(
+    val icon: Int,
+    val modifier: Modifier = Modifier,
+    val tint: Color
+)
+
 @Composable
-fun ParamsTextFieldItem(
+fun EditTextItem(
     value: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onValueChange: (String) -> Unit,
     label: String = "",
-    inputType: KeyboardType = KeyboardType.Text
-){
+    inputType: KeyboardType = KeyboardType.Text,
+    actions: List<IconButton> = emptyList()
+) {
     val colors = TextFieldDefaults.textFieldColors(
         textColor = MaterialTheme.colors.onPrimary,
         backgroundColor = MaterialTheme.colors.background,
@@ -61,7 +78,8 @@ fun ParamsTextFieldItem(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
         textStyle = MaterialTheme.typography.subtitle1,
         keyboardOptions = KeyboardOptions(keyboardType = inputType),
         label = {
@@ -70,12 +88,29 @@ fun ParamsTextFieldItem(
                 style = MaterialTheme.typography.subtitle2,
             )
         },
+        trailingIcon = {
+            actions.forEach {
+                IconButton(onClick = { it.action() }) {
+                    Icon(
+                        painter = painterResource(id = it.icon),
+                        tint = it.tint,
+                        contentDescription = "Календарь"
+                    )
+                }
+            }
+        },
         colors = colors
     )
 }
 
+data class IconButton(
+    val icon: Int,
+    val action: () -> Unit,
+    val tint: Color
+)
+
 @Composable
-fun ParamsItem(
+fun ActionItem(
     value: String,
     label: String,
     modifier: Modifier = Modifier,
@@ -146,7 +181,7 @@ fun ParamsItem(
 }
 
 @Composable
-fun ParamsAddItem (
+fun AdditableItem(
     modifier: Modifier = Modifier,
     onTailClick: () -> Unit,
     text: String = ""
@@ -172,13 +207,12 @@ fun ParamsAddItem (
     }
 }
 
-//fix this fun
 @ExperimentalMaterialApi
 @Composable
-fun ParamsSwipeItem(
+fun SwipeItem(
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
-){
+) {
     val dismissState = rememberDismissState()
     if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
         onDismiss()
@@ -226,12 +260,12 @@ fun ParamsSwipeItem(
 }
 
 @Composable
-fun ParamsSwitchItem(
+fun ToggleItem(
     text: String = "",
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
 
-){
+    ) {
     Row(
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp)
@@ -262,14 +296,14 @@ fun ParamsSwitchItem(
 }
 
 @Composable
-fun ParamsActionItem(
+fun MainButton(
     tailIcon: Int,
     modifier: Modifier = Modifier,
-    onTailClick: () -> Unit
-){
+    onClick: () -> Unit
+) {
     FloatingActionButton(
-        onClick =  {
-            onTailClick()
+        onClick = {
+            onClick()
         },
         modifier = modifier
             .padding(bottom = 28.dp, end = 16.dp),
@@ -285,34 +319,34 @@ fun ParamsActionItem(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ParamsToolDateBar(
+fun SearchToolBar(
     searchText: String = "",
     text: String = "Список заказов",
-    onTailClick: () -> Unit,
+    actions: List<ToolBarAction> = emptyList(),
+    onNavigate: () -> Unit,
     onSearch: (String) -> Unit,
     onSubmit: (String) -> Unit,
-    onSearchDismiss: () -> Unit,
-    onSelect:(String) -> Unit,
-){
+    onSearchDismiss: () -> Unit
+) {
     var isShowSearch by remember { mutableStateOf(false) }
-    var isShowDatePicker by remember { mutableStateOf(false) }
 
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         if (isShowSearch) {
             SearchBar(
                 searchText = searchText,
-                onSearch = {onSearch(it)},
+                onSearch = { onSearch(it) },
                 onSubmit = {
                     onSubmit(it)
                     isShowSearch = false
-                           },
+                },
                 onDismiss = {
                     isShowSearch = false
                     onSearchDismiss()
                 }
-            ) } else {
+            )
+        } else {
             IconButton(onClick = {
-                onTailClick()
+                onNavigate()
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
@@ -326,12 +360,15 @@ fun ParamsToolDateBar(
             )
             Spacer(Modifier.weight(1f, true))
 
-            IconButton(onClick = { isShowDatePicker = true }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Календарь"
-                )
+            actions.forEach {
+                IconButton(onClick = { it.action() }) {
+                    Icon(
+                        painter = painterResource(id = it.icon),
+                        tint = it.tint?.let { color -> colorResource(id = color) }
+                            ?: MaterialTheme.colors.onPrimary,
+                        contentDescription = "Календарь"
+                    )
+                }
             }
 
             IconButton(onClick = { isShowSearch = true }) {
@@ -343,83 +380,13 @@ fun ParamsToolDateBar(
             }
         }
     }
-    if (isShowDatePicker) DatePicker(
-        onSelect = {
-            onSelect(it)
-            isShowDatePicker = false
-        },
-        onDismiss = {
-            isShowDatePicker = false
-        })
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun ParamsToolSearchBar(
-    searchText: String = "",
-    text: String = "Ингредиенты",
-    onTailClick: () -> Unit,
-    onFilterClick: (Int) -> Unit,
-    onSearch: (String) -> Unit,
-    onSubmit: (String) -> Unit
-){
-    var isShowSearch by remember { mutableStateOf(false) }
-    var counter by remember { mutableStateOf(0) }
-
-    TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
-        if (isShowSearch) {
-            SearchBar(
-                searchText = searchText,
-                onSearch = { onSearch(it) },
-                onSubmit = {
-                    onSubmit(it)
-                    isShowSearch = false
-                },
-                onDismiss = { isShowSearch = false })
-        } else {
-            IconButton(onClick = {
-                onTailClick()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_dehaze_24),
-                    tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Меню навигации"
-                )
-            }
-            Text(
-                text,
-                style = MaterialTheme.typography.h6,
-            )
-            Spacer(Modifier.weight(1f, true))
-
-            IconButton(onClick = {
-                counter++
-                if (counter > 2) counter = 0
-                onFilterClick(counter)
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_circle_24),
-                    tint = when (counter) {
-                        1 -> colorResource(id = R.color.green)
-                        2 -> colorResource(id = R.color.red)
-                        else -> MaterialTheme.colors.onPrimary
-                    },
-                    contentDescription = "Сортировка"
-                )
-            }
-        }
-
-        IconButton(onClick = {
-            isShowSearch = true
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                tint = MaterialTheme.colors.onPrimary,
-                contentDescription = "Найти"
-            )
-        }
-    }
-}
+data class ToolBarAction(
+    val icon: Int,
+    val action: () -> Unit,
+    val tint: Int? = null
+)
 
 @Composable
 fun ParamsToolBar(
@@ -428,7 +395,7 @@ fun ParamsToolBar(
     editIcon: Int = R.drawable.ic_baseline_edit_24,
     onBackClick: () -> Unit,
     onEditClick: () -> Unit
-){
+) {
     TopAppBar(backgroundColor = MaterialTheme.colors.primary) {
         IconButton(onClick = { onBackClick() }) {
             Icon(
@@ -443,12 +410,40 @@ fun ParamsToolBar(
         )
         Spacer(Modifier.weight(1f, true))
 
-        IconButton(onClick = { onEditClick()}) {
+        IconButton(onClick = { onEditClick() }) {
             Icon(
                 painter = painterResource(id = editIcon),
                 tint = MaterialTheme.colors.onPrimary,
                 contentDescription = "Очистить"
             )
         }
+    }
+}
+
+@Composable
+fun ParamsChoiceItem(
+    choiceIcon: Int = R.drawable.ic_baseline_check_circle,
+    tintIcon: Boolean,
+    text: String,
+    content: String = "Доставка"
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.padding(start = 16.dp),
+            painter = painterResource(id = choiceIcon),
+            tint = if (!tintIcon) MaterialTheme.colors.surface else MaterialTheme.colors.secondary,
+            contentDescription = content
+        )
+        Text(
+            text = text,
+            modifier = Modifier
+                .padding(start = 16.dp),
+            style = MaterialTheme.typography.subtitle1,
+        )
     }
 }

@@ -68,72 +68,43 @@ fun CreateOrderScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            TextField(
+            EditTextItem(
                 value = state.customer,
                 onValueChange = { vm.updateCustomer(it) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                label = {
-                    Text(
-                        "ФИО заказчика",
-                        style = MaterialTheme.typography.subtitle2,
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Поиск контактов"
-                        )
-                    }
-                },
-                colors = colors
+                label = "ФИО заказчика"
             )
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = state.phone ?: "",
                 onValueChange = { vm.updatePhone(it) },
                 label = "Телефон заказчика",
                 inputType = KeyboardType.Phone
             )
 
-            TextField(
+            EditTextItem(
                 value = state.deadLine?.format() ?: "",
-                onValueChange = { vm.updateDeadLine(it) },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable { isShowDatePicker = true },
-                textStyle = MaterialTheme.typography.subtitle1,
                 enabled = false,
-                placeholder = {
-                    Text(
-                        "дата выполнения: дд/мм/гггг",
-                        style = MaterialTheme.typography.subtitle2,
+                onValueChange = { vm.updateDeadLine(it) },
+                label = "дата выполнения: дд/мм/гггг",
+                actions = listOf(
+                    IconButton(
+                        icon = R.drawable.ic_baseline_calendar_month_24,
+                        action = { isShowDatePicker = true },
+                        tint = MaterialTheme.colors.secondary
                     )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { isShowDatePicker = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_calendar_month_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Календарь"
-                        )
-                    }
-                    if (isShowDatePicker) DatePicker(
-                        onSelect = {
-                            vm.updateDeadLine(it)
-                            isShowDatePicker = false
-                        },
-                        onDismiss = { isShowDatePicker = false })
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.onPrimary,
-                    backgroundColor = MaterialTheme.colors.background
                 )
             )
 
-            ParamsSwitchItem(
+            if (isShowDatePicker) DatePicker(
+                onSelect = {
+                    vm.updateDeadLine(it)
+                    isShowDatePicker = false
+                },
+                onDismiss = { isShowDatePicker = false })
+
+            ToggleItem(
                 text = if (state.needDelivery) "Доставка" else "Без доставки",
                 value = state.needDelivery,
                 onValueChange = { vm.updateNeedDelivery(it) }
@@ -143,31 +114,13 @@ fun CreateOrderScreen(
                 color = MaterialTheme.colors.surface
             )
 
-            TextField(
+            EditTextItem(
                 value = state.address ?: "",
                 onValueChange = { vm.updateAddress(it) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.subtitle1,
-                enabled = state.needDelivery,
-                placeholder = {
-                    Text(
-                        "Адрес доставки",
-                        style = MaterialTheme.typography.subtitle2,
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_location_on_24),
-                            tint = MaterialTheme.colors.secondary,
-                            contentDescription = "Геолокация"
-                        )
-                    }
-                },
-                colors = colors
+                label = "Адрес доставки"
             )
 
-            ParamsAddItem(
+            AdditableItem(
                 onTailClick = {
                     navController.navigate("create_orders/${state.id}/products/create")
                     vm.addOrder()
@@ -180,9 +133,9 @@ fun CreateOrderScreen(
                     LazyColumn() {
                         items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeOrderProduct(item.id) },
-                            ){
+                            ) {
                                 OrderProductItem(product = item) {
                                     navController.navigate("create_orders/${item.orderId}/products/${item.id}")
                                     vm.addOrder()
@@ -215,17 +168,17 @@ fun CreateOrderScreen(
                 )
             }
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = "${if (state.price == 0) "" else state.price}",
                 onValueChange = { vm.updatePrice(it) },
                 label = "Стоимость заказа, руб.",
                 inputType = KeyboardType.Number
             )
 
-            ParamsSwitchItem(
+            ToggleItem(
                 text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
                 value = state.isPaid
-            ){
+            ) {
                 vm.updateIsPaid(it)
             }
 
@@ -236,7 +189,7 @@ fun CreateOrderScreen(
                 color = MaterialTheme.colors.surface
             )
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = state.note ?: "",
                 onValueChange = { vm.updateNote(it) },
                 label = "Примечание"
@@ -262,7 +215,7 @@ fun CreateOrderScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
@@ -276,43 +229,32 @@ fun CreateOrderScreen(
 fun OrderProductItem(product: Product, onClick: (id: Long) -> Unit) {
     Column(
         modifier = Modifier
-
             .background(color = MaterialTheme.colors.background)
     ) {
-        Row(
-            modifier = Modifier
-                .height(56.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        TextItem(product.title)
+
+        Spacer(Modifier.weight(1f))
+        Column() {
             Text(
-                text = product.title,
+                text = "${product.weight} ${product.units}",
                 style = MaterialTheme.typography.subtitle1
             )
             Spacer(Modifier.weight(1f))
-            Column() {
-                Text(
-                    text = "${product.weight} ${product.units}",
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = "${product.price} руб.",
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = { onClick(product.id) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = "Очистить"
-                )
-            }
+            Text(
+                text = "${product.price} руб.",
+                style = MaterialTheme.typography.subtitle1
+            )
         }
-        Divider(color = MaterialTheme.colors.secondary)
+        Spacer(Modifier.weight(1f))
+        IconButton(onClick = { onClick(product.id) }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                tint = MaterialTheme.colors.secondary,
+                contentDescription = "Очистить"
+            )
+        }
     }
+    Divider(color = MaterialTheme.colors.secondary)
 }
 
 @InternalCoroutinesApi
@@ -331,7 +273,7 @@ fun CreateOrderToolBar(
         onBackClick = {
             navController.popBackStack()
             vm.removeOrder(state.id)
-                      },
+        },
         onEditClick = { vm.emptyState() }
     )
 }

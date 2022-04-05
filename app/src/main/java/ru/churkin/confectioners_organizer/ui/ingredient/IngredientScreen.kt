@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -21,9 +20,10 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsTextItem
+import ru.churkin.confectioners_organizer.items.MainButton
+import ru.churkin.confectioners_organizer.items.ParamsChoiceItem
 import ru.churkin.confectioners_organizer.items.ParamsToolBar
+import ru.churkin.confectioners_organizer.items.TextItem
 import ru.churkin.confectioners_organizer.view_models.ingredient.data.IngredientViewModel
 
 @InternalCoroutinesApi
@@ -53,82 +53,42 @@ fun IngredientScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            ParamsTextItem(state.title)
+            TextItem(state.title)
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
+            Divider(color = MaterialTheme.colors.secondary)
+
+            ParamsChoiceItem(
+                tintIcon = state.availability,
+                text = if (state.availability) "В наличии" else "Отсутствует",
+                content = "Наличие ингредиента"
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_check_circle),
-                    tint = if (state.availability) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
-                    contentDescription = "Наличие"
-                )
-                Text(
-                    text = if (state.availability) "В наличии" else "Отсутствует",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
-            )
+            Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem("В наличии: ${state.available} ${state.unitsAvailable}")
+            TextItem("В наличии: ${state.available} ${state.unitsAvailable}")
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
-            )
+            Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem("Цена: ${state.costPrice} ${state.unitsPrice}")
+            TextItem("Цена: ${state.costPrice} ${state.unitsPrice}")
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
-            )
+            Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem("Годен до: ${state.sellBy?.format("dd.MM.yyyy")}")
+            TextItem("Годен до: ${state.sellBy?.format("dd.MM.yyyy")}")
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp),
-                color = MaterialTheme.colors.secondary
-            )
+            Divider(color = MaterialTheme.colors.secondary)
         }
         Column(verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxHeight()) {
             BottomAppBar(
             ) {
-
                 Text(
                     "Что бы с этим сделать?)",
                     modifier = Modifier.padding(start = 12.dp),
                     style = MaterialTheme.typography.body1
                 )
-
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ){
@@ -153,22 +113,3 @@ fun IngredientToolBar(
         onEditClick = { navController.navigate("ingredients/edit/${state.id}") }
     )
 }
-
-/*
-@Preview
-@Composable
-fun previewRealIng() {
-    AppTheme {
-        RealIngScreen(
-            ingredient = IngredientState.makeIngredient(
-                title = "Огонь",
-                _costPrice = "0.0",
-                availability = true,
-                available = 10,
-                unitsPrice = "руб./г.",
-                sellBy = Date(),
-                unitsAvailable = "г."
-            )
-        )
-    }
-}*/

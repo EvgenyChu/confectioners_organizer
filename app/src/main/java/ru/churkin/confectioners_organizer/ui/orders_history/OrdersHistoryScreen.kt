@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -20,9 +17,11 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
-import ru.churkin.confectioners_organizer.items.ParamsToolDateBar
+import ru.churkin.confectioners_organizer.items.MainButton
+import ru.churkin.confectioners_organizer.items.SearchToolBar
+import ru.churkin.confectioners_organizer.items.SwipeItem
+import ru.churkin.confectioners_organizer.items.ToolBarAction
+import ru.churkin.confectioners_organizer.ui.date_picker.DatePicker
 import ru.churkin.confectioners_organizer.ui.list_orders.OrderItem
 import ru.churkin.confectioners_organizer.view_models.list_orders.OrdersState
 import ru.churkin.confectioners_organizer.view_models.orders_history.OrdersHistoryViewModel
@@ -84,7 +83,7 @@ fun OrdersHistoryScreen(
                                 vm.removeOrder(item.id)
                             }
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeOrder(item.id) },
                             ){
                                 OrderItem(order = item, onClick = { id ->
@@ -111,7 +110,7 @@ fun OrdersHistoryScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = if (vm.isShowDate.value) R.drawable.ic_baseline_arrow_back_24
             else R.drawable.ic_baseline_add_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
@@ -134,22 +133,33 @@ fun OrdersHistoryToolBar(
     onMenuClick: ()-> Unit
 ){
     val searchText by vm.searchText.collectAsState()
+    var isShowDatePicker by remember { mutableStateOf(false) }
 
-    ParamsToolDateBar(
+    SearchToolBar(
         searchText = searchText,
         text = "История заказов",
-        onTailClick = {onMenuClick()},
+        actions = listOf(
+            ToolBarAction(
+                icon = R.drawable.ic_baseline_calendar_month_24,
+                action = { isShowDatePicker = true }
+            )),
+        onNavigate = { onMenuClick() },
         onSearch = { vm.searchOrders(it) },
         onSubmit = {
             vm.searchOrders(it)
             vm.isShowDate.value = false
         },
-        onSearchDismiss = {vm.isShowDate.value = false},
+        onSearchDismiss = { vm.isShowDate.value = false },
+    )
+    if (isShowDatePicker) DatePicker(
         onSelect = {
             vm.searchDeadLine(it)
             vm.isShowDate.value = true
-        }
-    )
+            isShowDatePicker = false
+        },
+        onDismiss = {
+            isShowDatePicker = false
+        })
 }
 
 

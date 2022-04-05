@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,9 +23,10 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsSwipeItem
-import ru.churkin.confectioners_organizer.items.ParamsToolSearchBar
+import ru.churkin.confectioners_organizer.items.MainButton
+import ru.churkin.confectioners_organizer.items.SearchToolBar
+import ru.churkin.confectioners_organizer.items.SwipeItem
+import ru.churkin.confectioners_organizer.items.ToolBarAction
 import ru.churkin.confectioners_organizer.local.db.entity.Recept
 import ru.churkin.confectioners_organizer.view_models.list_recepts.ReceptsState
 import ru.churkin.confectioners_organizer.view_models.list_recepts.RecsViewModel
@@ -85,7 +83,7 @@ fun RecsScreen(
                     LazyColumn(contentPadding = PaddingValues(bottom = 56.dp)) {
                         items(listState.recepts, { it.id }) { item ->
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeRecept(item.id) },
                             ){
                                 ReceptItem(recept = item, onClick = { id ->
@@ -112,7 +110,7 @@ fun RecsScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_add_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
@@ -225,13 +223,29 @@ fun RecsToolBar(
     onMenuClick: ()-> Unit
 ){
     val searchText by vm.searchText.collectAsState()
+    var counter by remember { mutableStateOf(0) }
 
-    ParamsToolSearchBar(
+    SearchToolBar(
         searchText = searchText,
-        onTailClick = {onMenuClick()},
-        onFilterClick ={vm.filterRecepts(it)},
+        text = "Рецепты",
+        onNavigate = { onMenuClick() },
+        actions = listOf(
+            ToolBarAction(
+                icon = R.drawable.ic_baseline_circle_24,
+                tint = when (counter) {
+                    1 -> R.color.green
+                    2 -> R.color.red
+                    else -> null
+                },
+                action = {
+                    counter++
+                    if (counter > 2) counter = 0
+                    vm.filterRecepts(counter)
+                })
+        ),
         onSearch = { vm.searchRecepts(it) },
-        onSubmit = {vm.searchRecepts(it)}
+        onSubmit = { vm.searchRecepts(it) },
+        onSearchDismiss = {}
     )
 }
 

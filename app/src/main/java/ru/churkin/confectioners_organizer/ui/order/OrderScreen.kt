@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -22,10 +21,7 @@ import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
 import ru.churkin.confectioners_organizer.date.format
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsSwitchItem
-import ru.churkin.confectioners_organizer.items.ParamsTextItem
-import ru.churkin.confectioners_organizer.items.ParamsToolBar
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.Product
 import ru.churkin.confectioners_organizer.view_models.order.data.OrderViewModel
 
@@ -57,7 +53,7 @@ fun OrderScreen(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            ParamsSwitchItem(
+            ToggleItem(
                 text = if (!state.isCooked) "Заказ в работе" else "Заказ выполнен",
                 value = state.isCooked,
                 onValueChange = { vm.updateIsCooked(it) }
@@ -65,17 +61,17 @@ fun OrderScreen(
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem("Заказчик: ${state.customer}")
+            TextItem("Заказчик: ${state.customer}")
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem(
+            TextItem(
                 if (state.phone == null) "тел. +7хххххххххх" else "тел. ${state.phone}"
             )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem(
+            TextItem(
                 if (state.deadLine == null) "Дата выполнения: _._._ г." else "Дата выполнения: ${
                     state.deadLine?.format(
                         "dd.MM.yyyy"
@@ -90,25 +86,11 @@ fun OrderScreen(
                 color = MaterialTheme.colors.secondary
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_check_circle),
-                    tint = if (!state.needDelivery) MaterialTheme.colors.surface else MaterialTheme.colors.secondary,
-                    contentDescription = "Доставка"
-                )
-                Text(
-                    text = if (state.needDelivery) "Доставка" else "Без доставки",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+            ParamsChoiceItem(
+            tintIcon = state.needDelivery,
+            text = if (state.needDelivery) "Доставка" else "Без доставки"
+            )
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,13 +98,13 @@ fun OrderScreen(
                 color = MaterialTheme.colors.secondary
             )
 
-            ParamsTextItem(
+            TextItem(
                 if (state.address == null) "Адрес доставки не указан" else "Адрес: ${state.address}"
             )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem(
+            TextItem(
                 "Список изделий для заказа:"
             )
 
@@ -130,37 +112,24 @@ fun OrderScreen(
                     OrderProduct(product = product)
                 }
 
-            ParamsTextItem(
+            TextItem(
                 "Себестоимость: ${state.costPrice} руб."
             )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem(
+            TextItem(
                 "Цена заказа: ${state.price} руб."
             )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 16.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_check_circle),
-                    tint = if (state.isPaid) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
-                    contentDescription = "Доставка"
-                )
-                Text(
-                    text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+            ParamsChoiceItem(
+                tintIcon = state.isPaid,
+                text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
+                content = "Оплата"
+            )
+
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -168,13 +137,13 @@ fun OrderScreen(
                 color = MaterialTheme.colors.secondary
             )
 
-            ParamsTextItem(
+            TextItem(
                 "Отсутствуют продукты: \n${state.missingIngredients}"
             )
 
             Divider(color = MaterialTheme.colors.secondary)
 
-            ParamsTextItem(
+            TextItem(
                 "Примечание: \n${state.note}"
             )
 
@@ -200,7 +169,7 @@ fun OrderScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {

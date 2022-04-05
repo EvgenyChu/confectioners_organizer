@@ -87,7 +87,7 @@ fun EditOrderScreen(
                 colors = colors
             )
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = state.phone ?: "",
                 onValueChange = { vm.updatePhone(it) },
                 label = "Телефон заказчика",
@@ -123,7 +123,7 @@ fun EditOrderScreen(
                 )
             )
 
-            ParamsSwitchItem(
+            ToggleItem(
                 text = if (state.needDelivery) "Доставка" else "Без доставки",
                 value = state.needDelivery,
                 onValueChange = { vm.updateNeedDelivery(it) }
@@ -157,7 +157,7 @@ fun EditOrderScreen(
                 colors = colors
             )
 
-            ParamsAddItem(
+            AdditableItem(
                 onTailClick = {
                     navController.navigate("orders/${state.id}/products/create")
                     vm.addOrder()
@@ -170,7 +170,7 @@ fun EditOrderScreen(
                     LazyColumn() {
                         items(state.products!!.sortedBy { it.title }, { it.id }) { item ->
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeOrderProduct(item.id) },
                             ) {
                                 OrderProductItem(product = item) {
@@ -205,14 +205,14 @@ fun EditOrderScreen(
                 )
             }
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = "${if (state.price == 0) "" else state.price}",
                 onValueChange = { vm.updatePrice(it) },
                 label = "Стоимость заказа, руб.",
                 inputType = KeyboardType.Number
             )
 
-            ParamsSwitchItem(
+            ToggleItem(
                 text = if (state.isPaid) "Заказ оплачен" else "Заказ не оплачен",
                 value = state.isPaid,
                 onValueChange = { vm.updateIsPaid(it) }
@@ -225,7 +225,7 @@ fun EditOrderScreen(
                 color = MaterialTheme.colors.surface
             )
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = state.note ?: "",
                 onValueChange = { vm.updateNote(it) },
                 label = "Примечание"
@@ -257,7 +257,7 @@ fun EditOrderScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {

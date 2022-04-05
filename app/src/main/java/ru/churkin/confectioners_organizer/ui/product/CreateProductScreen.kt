@@ -73,13 +73,13 @@ fun CreateProductScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = state.title,
                 onValueChange = { vm.updateTitle(it) },
                 label = "Название изделия"
             )
 
-            ParamsItem(
+            ActionItem(
                 if (state.weight == 0) "" else "${state.weight}",
                 "Количество изделия",
                 onValueChange = { vm.updateWeight(it) },
@@ -89,7 +89,7 @@ fun CreateProductScreen(
                 optionsItem = state.units
             )
 
-            ParamsAddItem(
+            AdditableItem(
                 onTailClick = { vm.showCreateReceptDialog() },
                 text = "Добавьте рецепт, кол-во"
             )
@@ -148,7 +148,7 @@ fun CreateProductScreen(
                 }
             }
 
-            ParamsAddItem(
+            AdditableItem(
                 onTailClick = { vm.showCreateIngredientDialog() },
                 text = "Добавьте ингредиент, кол-во"
             )
@@ -208,7 +208,7 @@ fun CreateProductScreen(
                     LazyColumn() {
                         items(state.ingredients, { it.id }) { item ->
 
-                            ParamsSwipeItem(
+                            SwipeItem(
                                 onDismiss = { vm.removeProductIngredient(item.id) },
                             ){
                                 ProductIngredientItem(productIngredientItem = item)
@@ -240,7 +240,7 @@ fun CreateProductScreen(
                 )
             }
 
-            ParamsTextFieldItem(
+            EditTextItem(
                 value = "${if (state.price == 0) "" else state.price}",
                 onValueChange = { vm.updatePrice(it) },
                 label = "Стоимость изделия, руб.",
@@ -267,7 +267,7 @@ fun CreateProductScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {

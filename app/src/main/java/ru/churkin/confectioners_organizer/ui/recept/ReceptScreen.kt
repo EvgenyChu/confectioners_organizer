@@ -20,8 +20,8 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsTextItem
+import ru.churkin.confectioners_organizer.items.MainButton
+import ru.churkin.confectioners_organizer.items.TextItem
 import ru.churkin.confectioners_organizer.items.ParamsToolBar
 import ru.churkin.confectioners_organizer.view_models.recept.ReceptViewModel
 
@@ -54,25 +54,25 @@ fun ReceptScreen(
 
             Column(Modifier.verticalScroll(rememberScrollState())) {
 
-                ParamsTextItem(state.title)
+                TextItem(state.title)
 
                 Divider(color = MaterialTheme.colors.secondary)
 
-                ParamsTextItem("Выход: ${state.weight} грамм")
+                TextItem("Выход: ${state.weight} грамм")
 
                 Divider(color = MaterialTheme.colors.secondary)
 
-                ParamsTextItem("Время приготовления: ${state.time} мин.")
+                TextItem("Время приготовления: ${state.time} мин.")
 
                 Divider(color = MaterialTheme.colors.secondary)
 
-                ParamsTextItem("Список ингредиентов для рецепта:")
+                TextItem("Список ингредиентов для рецепта:")
 
                 if (state.ingredients.isNotEmpty()) state.ingredients.forEach {
                     ReceptIngItem(receptIngredientItem = it)
                 }
 
-                ParamsTextItem("Примечание: \n${state.note}")
+                TextItem("Примечание: \n${state.note}")
 
                 Divider(color = MaterialTheme.colors.secondary)
 
@@ -97,7 +97,7 @@ fun ReceptScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ){

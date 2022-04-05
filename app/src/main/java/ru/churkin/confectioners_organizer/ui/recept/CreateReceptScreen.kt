@@ -1,8 +1,6 @@
 package ru.churkin.confectioners_organizer.ui.recept
 
 import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,13 +10,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,10 +26,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import ru.churkin.confectioners_organizer.R
 import ru.churkin.confectioners_organizer.RootActivity
 import ru.churkin.confectioners_organizer.Screen
-import ru.churkin.confectioners_organizer.items.ParamsActionItem
-import ru.churkin.confectioners_organizer.items.ParamsAddItem
-import ru.churkin.confectioners_organizer.items.ParamsTextFieldItem
-import ru.churkin.confectioners_organizer.items.ParamsToolBar
+import ru.churkin.confectioners_organizer.items.*
 import ru.churkin.confectioners_organizer.local.db.entity.ReceptIngredientItem
 import ru.churkin.confectioners_organizer.ui.theme.Green
 import ru.churkin.confectioners_organizer.ui.theme.Red
@@ -82,27 +74,27 @@ fun CreateReceptScreen(
         ) {
             Column(Modifier.verticalScroll(rememberScrollState())) {
 
-                ParamsTextFieldItem(
+                EditTextItem(
                     value = state.title,
                     onValueChange = { vm.updateTitle(it) },
                     label = "Название рецепта"
                 )
 
-                ParamsTextFieldItem(
+                EditTextItem(
                     value = "${if (state.weight == 0) "" else state.weight}",
                     onValueChange = { vm.updateWeight(it) },
                     label = "Выход, грамм",
                     inputType = KeyboardType.Number
                 )
 
-                ParamsTextFieldItem(
+                EditTextItem(
                     value = "${if (state.time == 0) "" else state.time}",
                     onValueChange = { vm.updateTime(it) },
                     label = "Время приготовления, мин.",
                     inputType = KeyboardType.Number
                 )
 
-                ParamsAddItem(
+                AdditableItem(
                     onTailClick = { vm.showCreateDialog() },
                     text = "Добавьте ингредиент, кол-во"
                 )
@@ -117,51 +109,18 @@ fun CreateReceptScreen(
                                 if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
                                     vm.removeReceptIngredient(item.id)
                                 }
-                                SwipeToDismiss(
-                                    state = dismissState,
-                                    directions = setOf(
-                                        DismissDirection.StartToEnd
-                                    ),
-                                    background = {
 
-                                        val color by animateColorAsState(
-                                            when (dismissState.targetValue) {
-                                                DismissValue.Default -> MaterialTheme.colors.surface
-                                                else -> MaterialTheme.colors.secondary
-                                            }
-                                        )
-
-                                        val icon = Icons.Default.Delete
-
-                                        val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1.2f)
-
-                                        val alignment = Alignment.CenterStart
-
-
-                                        Box(
-                                            Modifier
-                                                .fillMaxSize()
-                                                .background(color)
-                                                .padding(start = 16.dp, end = 16.dp),
-                                            contentAlignment = alignment
-                                        ) {
-                                            Icon(
-                                                icon,
-                                                contentDescription = "icon",
-                                                modifier = Modifier.scale(scale)
-                                            )
-                                        }
-                                    },
-                                    dismissContent = {
-                                        ReceptIngItem(receptIngredientItem = item)
-                                    }
-                                )
+                                SwipeItem(
+                                    onDismiss = { vm.removeReceptIngredient(item.id) },
+                                ){
+                                    ReceptIngItem(receptIngredientItem = item)
+                                }
                             }
                         }
                     }
                 }
 
-                ParamsTextFieldItem(
+                EditTextItem(
                     value = state.note,
                     onValueChange = { vm.updateNote(it) },
                     label = "Примечание"
@@ -188,7 +147,7 @@ fun CreateReceptScreen(
             }
         }
 
-        ParamsActionItem(
+        MainButton(
             tailIcon = R.drawable.ic_baseline_done_24,
             modifier = Modifier.align(alignment = Alignment.BottomEnd)
         ) {
@@ -305,7 +264,7 @@ fun CreateIngredientsDialog(
                     }
                 }
 
-                ParamsTextFieldItem(
+                EditTextItem(
                     value = "${if (ingredientCount == 0) "" else ingredientCount}",
                     onValueChange = {
                         try {
