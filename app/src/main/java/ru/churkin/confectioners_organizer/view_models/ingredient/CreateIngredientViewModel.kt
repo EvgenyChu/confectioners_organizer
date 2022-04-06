@@ -6,13 +6,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import ru.churkin.confectioners_organizer.date.parseDate
 import ru.churkin.confectioners_organizer.local.db.entity.Ingredient
 import ru.churkin.confectioners_organizer.repositories.IngredientsRepository
@@ -144,18 +137,3 @@ data class IngredientState(
 }
 
 fun IngredientState.toIngredient()  = Ingredient(id, title, availability, available, unitsAvailable, unitsPrice, costPrice, sellBy)
-
-@Serializer(forClass = DateSerializer::class)
-object DateSerializer : KSerializer<Date> {
-
-    override fun serialize(output: Encoder, obj: Date) {
-        output.encodeString(obj.time.toString())
-    }
-
-    override fun deserialize(input: Decoder): Date {
-        return Date(input.decodeString().toLong())
-    }
-
-    override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
-}

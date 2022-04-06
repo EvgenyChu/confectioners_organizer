@@ -48,7 +48,7 @@ fun SearchBar(
                 keyboardController?.hide()
             }),
             textStyle = MaterialTheme.typography.h5,
-            placeholder = {
+            label = {
                 Text(
                     "Поиск",
                     style = MaterialTheme.typography.overline,
